@@ -28,7 +28,7 @@ function page() {
           <label htmlFor="forget" className='text-verde-600 font-semibold hover:text-verde-700'>Trocar Senha</label>
         </div>
       </div>
-      <div className='justify-self-center   w-1/2 '>
+      <div className='justify-self-center w-1/2'>
         <button className='bg-verde-600 hover:bg-verde-700 p-2 w-full rounded-lg  text-white font-bold'>
           Entrar
         </button>

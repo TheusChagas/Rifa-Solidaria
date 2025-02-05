@@ -6,6 +6,16 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+[data-radix-dropdown-menu-item]:focus {
+  outline: none;
+  background-color: #f0fdf4;
+}
+
+[data-radix-dropdown-menu-content] {
+  animation-duration: 200ms !important;
+  animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;

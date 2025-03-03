@@ -1,40 +1,45 @@
 import { cn } from "@/lib/utils";
 import { Card as UiCard, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { Progress } from "./ui/progress";
 
 interface CardProps {
+    id: number;
     title: string;
-    variant?: "rifa" | "destaque" | "simples";
-    description?: string;
+    total?: number;
     progress?: number;
 }
 
-export default function Card({ title, variant = "simples", description, progress }: CardProps) {
+export default function Card({ title, progress, total }: CardProps) {
     return (
-        <UiCard className={cn("border border-gray-300 rounded-lg shadow-sm p-4", {
-            "border-green-500": variant === "destaque",
-        })}>
+        <UiCard className={cn("border border-gray-300 rounded-lg shadow-sm lg:w-[400px] h-auto",
+        )}>
             <CardHeader>
-                <CardTitle className="text-lg font-semibold">{title}</CardTitle>
+                <CardTitle className="text-xl ml-1 font-bold">{title}</CardTitle>
             </CardHeader>
             <CardContent>
-                {variant === "rifa" && (
-                    <div>
-                        <p className="text-sm text-gray-600">{progress}% de 100 bilhetes</p>
-                        <div className="mt-3 flex gap-2">
-                            <Button className="bg-black text-white text-sm">Publicar</Button>
-                            <Button variant="outline" className="text-sm">Visualizar</Button>
-                        </div>
+                <div>
+                    <Progress value={progress} className="" indicatorColor="bg-verde-400"/>
+                    <p className="text-sm ml-1 text-gray-600">{progress}% de {total} bilhetes vendidos</p>
+                    <div className="mt-5 flex gap-4">
+                        <Button className={cn(
+                            buttonVariants({ variant: "outline"}),
+                            "w-[100px] md:w-[120px] h-[35px] rounded-xl border-2 border-green-500",
+                            "text-green-500 font-semibold hover:bg-green-500 hover:text-white",
+                            "hover:scale-[103%] md:hover:scale-[115%] transition-transform"
+                        )}>
+                            Detalhes
+                        </Button>
+                        <Button className={cn(
+                            buttonVariants({ variant: "outline"}),
+                            "w-[100px] md:w-[120px] h-[35px] rounded-xl border-2 border-green-500",
+                            "text-green-500 font-semibold hover:bg-green-500 hover:text-white",
+                            "hover:scale-[103%] md:hover:scale-[115%] transition-transform"
+                        )}>
+                            Visualizar
+                        </Button>
                     </div>
-                )}
-
-                {variant === "destaque" && (
-                    <p className="text-sm font-medium text-green-600">Esta rifa está em destaque!</p>
-                )}
-
-                {variant === "simples" && description && (
-                    <p className="text-sm text-gray-500">{description}</p>
-                )}
+                </div>
             </CardContent>
         </UiCard>
     );

@@ -24,7 +24,7 @@ export default function rifas() {
     const filteredRifas = rifas.filter((rifa) => rifa.status === selectedStatus);
 
     return (
-        <div className="absolute top-24 left-72 w-[70%] overflow-x-hidden">
+        <div className="absolute top-20 left-8 md:top-24 md:left-72 w-[70%] overflow-x-hidden">
             <div className="flex items-center gap-2 text-lg font-semibold">
                 <span>👋 Olá, usuário!</span>
             </div>
@@ -84,10 +84,10 @@ export default function rifas() {
                 <div className="overflow-x-auto">
                     <div className="flex gap-4">
                         {filteredRifas.map((rifa) => (
-                            <div key={rifa.id} className="min-w-[250px]">
+                            <div key={rifa.id} className="">
                                 <Card
+                                    id={rifa.id}
                                     title={rifa.nome}
-                                    variant="rifa"
                                     progress={rifa.progress}
                                 />
                             </div>
@@ -95,7 +95,7 @@ export default function rifas() {
                         <div className="min-w-[50px]" />
                     </div>
                 </div>
-                <div className="pointer-events-none absolute top-0 right-0 h-[95%] w-24 bg-gradient-to-l from-white to-transparent" />
+                <div className="pointer-events-none absolute top-0 right-0 h-[95%] w-24 bg-gradient-to-l from-branco-200 to-transparent" />
             </div>
         </div>
     );

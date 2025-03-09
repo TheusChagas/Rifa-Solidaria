@@ -1,11 +1,10 @@
+// components/Navbar.tsx
 "use client";
 
-import { useState } from "react"
-import Link from "next/link"
-import Image from "next/image"
-import Logo from "@/assets/Logo.png"
-import { Menu, X } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { useState } from "react";
+import Link from "next/link";
+import { Menu, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -27,16 +26,8 @@ export function Navbar() {
         <nav className="w-full border-b bg-white">
             <div className="container mx-auto flex h-16 items-center justify-between px-4">
                 {/* Logo */}
-                <Link href="/" className="flex items-center gap-2">
-                    <Image
-                        src={Logo}
-                        alt="RifaFácil Logo"
-                        className="h-[72px] w-auto"
-                    />
-                    <div className="flex flex-col hidden">
-                        <span className="text-xl font-bold text-green-500 leading-[16px]">Rifa entre</span>
-                        <span className="text-xl font-bold text-green-500 leading-[16px] mr-[20px]">Amigos</span>
-                    </div>
+                <Link href="/" className="text-xl font-bold text-green-500">
+                    RifaFácil
                 </Link>
 
                 {/* Desktop Navigation */}

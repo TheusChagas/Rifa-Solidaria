@@ -10,17 +10,12 @@ export const metadata: Metadata = {
     description: "Venda suas rifas de forma facil e rapida!",
 };
 
-export default function RootLayout({
-    children,
-}: Readonly<{
-    children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }: { children: React.ReactNode; }) {
     return (
         <html lang="pt">
-            <body className={`${inter.className} antialiased bg-branco-200`}>
+            <body className={`${inter.className} antialiased`}>
                 <div className="flex">
                     <Sidebar />
-
                     <main className="flex-1 md:ml-64">
                         {children}
                     </main>

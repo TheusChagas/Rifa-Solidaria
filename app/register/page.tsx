@@ -151,7 +151,7 @@ export default function Page() {
                         <label htmlFor="termo" id='termo'>Ao se registrar, você aceita os <a className='text-black underline' href='register/termo'>Termos de Uso</a> e a <a className='text-black underline' href='register/privacidade'>nossa Politica de Privacidade</a>.   </label>
                     </div>
                     <div className='flex items-center space-x-44   xl:justify-between'>
-                        <a className='text-gray-500 font-medium'>Já tem conta?</a>
+                        <a className='text-gray-500 font-medium' href='login'>Já tem conta?</a>
                         <Button type="submit" className='bg-verde-600 hover:bg-verde-700 p-2 xl:w-1/5 1/4 rounded-lg  text-white font-bold'>Registre-se</Button>
                     </div>
                 </form>

@@ -29,13 +29,14 @@ export default function Rifas() {
                 <span>👋 Olá, usuário!</span>
             </div>
             <div className="mt-2">
-                <Button className="flex rounded-xl bg-branco-100 items-center gap-1 text-sm font-bold text-preto-700 shadow-xl
+                <a className="flex max-w-[160px] rounded-xl bg-branco-100 items-center gap-1 text-sm font-bold text-preto-700 shadow-xl
                             relative px-4 py-2 text-sm font-medium rounded-md transition-colors overflow-hidden
                             before:absolute before:inset-0 before:bg-verde-200 before:scale-x-0 before:origin-left
-                            before:transition-transform before:duration-300 hover:before:scale-x-100">
+                            before:transition-transform before:duration-300 hover:before:scale-x-100"
+                            href="/vendedor/rifas/cria">
                     <Plus className="z-10" size={16} />
                     <span className="z-10">CRIAR RIFA</span>
-                </Button>
+                </a>
             </div>
 
             <div className="mt-6">

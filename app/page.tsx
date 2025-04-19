@@ -3,29 +3,34 @@ import { HeroButtons } from "@/components/HeroButton";
 import { Play, Lightbulb, Send, DollarSign, Phone, Clock, Mail } from "lucide-react";
 import { SupportButton } from "@/components/SupportButton";
 import { cn } from "@/lib/utils";
+import { useState } from "react";
 
 export default function Home() {
+    const [isHeroVisible, setIsHeroVisible] = useState(true);
+
     return (
         <div>
             <main className="flex flex-col items-center text-center overflow-x-hidden">
                 {/* Navbar - Verificar se já é responsivo internamente */}
-                <Navbar />
+                <Navbar isHeroVisible={isHeroVisible} />
 
                 {/* Hero Section - Ajustes de tamanho e espaçamento */}
-                <section className="w-full max-w-4xl text-center mt-8 md:mt-12 py-16 md:py-32">
-                    <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold px-4">
-                        Desperte o <span className="text-green-500">empreendedor</span> em você e comece
-                        a vender rifas de sucesso!
-                    </h2>
-                    <p className="text-gray-600 text-base sm:text-lg mt-6 md:mt-12 mb-8">
-                        Uma solução abrangente para simplificar a criação e gestão das suas rifas.
-                    </p>
+                <div className="w-screen">
+                    <section className="w-full max-w-4xl text-center mt-8 md:mt-12 py-16 md:py-32 mx-auto opacity-100">
+                        <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold px-4">
+                            Desperte o <span className="text-green-500">empreendedor</span> em você e comece
+                            a vender rifas de sucesso!
+                        </h2>
+                        <p className="text-gray-600 text-base sm:text-lg mt-6 md:mt-12 mb-8">
+                            Uma solução abrangente para simplificar a criação e gestão das suas rifas.
+                        </p>
 
-                    <HeroButtons />
-                </section>
+                        <HeroButtons />
+                    </section>
+                </div>
 
                 {/* Features Section - Grid e tamanhos responsivos */}
-                <section className="w-full bg-gradient-to-r from-green-500 to-teal-500 text-white py-12 md:py-16 px-6 sm:px-12">
+                <section className="w-full bg-gradient-to-l from-green-500 to-teal-500 text-white py-12 md:py-16 px-6 sm:px-12">
                     <h3 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6">Simples assim.</h3>
                     <p className="text-gray-200 text-sm sm:text-lg mb-8 sm:mb-12">
                         Simplicidade e tranquilidade na criação das suas rifas.

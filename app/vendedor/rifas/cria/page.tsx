@@ -1,233 +1,110 @@
-'use client'
+"use client";
+import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
-import { useState } from 'react'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Calendar } from '@/components/ui/calendar'
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { format } from 'date-fns'
-import { CalendarIcon, Plus, Trash } from 'lucide-react'
-
-type Prize = {
-  name: string
-  description: string
-  image?: File
-}
-
-type RaffleType = 'NUMERIC' | 'NAMES' | 'RANDOM'
-
-export default function CreateRafflePage() {
-  const [step, setStep] = useState(1)
-  const [raffleType, setRaffleType] = useState<RaffleType>('NUMERIC')
-  const [drawDate, setDrawDate] = useState<Date>()
-  const [prizes, setPrizes] = useState<Prize[]>([{ name: '', description: '' }])
-  const [ticketQuantity, setTicketQuantity] = useState('')
-  const [ticketPrice, setTicketPrice] = useState('')
-  const [reservationTime, setReservationTime] = useState('12')
-
-  const handleAddPrize = () => {
-    setPrizes([...prizes, { name: '', description: '' }])
-  }
-
-  const handlePrizeChange = (
-    index: number,
-    field: 'name' | 'description',
-    value: string
-  ) => {
-    const newPrizes = [...prizes]
-    newPrizes[index][field] = value
-    setPrizes(newPrizes)
-  }
-
-  const handleImageUpload = (index: number, file: File) => {
-    const newPrizes = [...prizes]
-    newPrizes[index].image = file
-    setPrizes(newPrizes)
-  }
-
-  const validateStep = () => {
-    // Adicione validações aqui
-    setStep(step + 1)
-  }
-
+export default function CreateCampaignPage() {
   return (
-    <div className="max-w-2xl mx-auto p-6">
-      <Card>
-        <CardHeader>
-          <CardTitle>Criar Nova Rifa</CardTitle>
-        </CardHeader>
+    <div className="container max-w-2xl py-8">
+      <Card className="p-6">
+        <h1 className="text-2xl font-bold mb-6">Criar Rifa</h1>
+        <p className="text-muted-foreground mb-8">
+          Insira os dados de como deseja a sua rifa abaixo
+        </p>
 
-        <CardContent>
-          {step === 1 && (
-            <div className="space-y-6">
-              <div>
-                <Label>Tipo de Rifa</Label>
-                <div className="flex gap-4 mt-2">
-                  <Button
-                    variant={raffleType === 'NUMERIC' ? 'default' : 'outline'}
-                    onClick={() => setRaffleType('NUMERIC')}
-                  >
-                    Numérica
-                  </Button>
-                  <Button
-                    variant={raffleType === 'NAMES' ? 'default' : 'outline'}
-                    onClick={() => setRaffleType('NAMES')}
-                  >
-                    Nomes
-                  </Button>
-                  <Button
-                    variant={raffleType === 'RANDOM' ? 'default' : 'outline'}
-                    onClick={() => setRaffleType('RANDOM')}
-                  >
-                    Aleatória
-                  </Button>
-                </div>
-              </div>
-
-              <div className="space-y-3">
-                <Label>Data e Hora do Sorteio</Label>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button variant="outline">
-                      <CalendarIcon className="mr-2 h-4 w-4" />
-                      {drawDate ? format(drawDate, 'dd/MM/yyyy HH:mm') : 'Selecione a data'}
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0">
-                    <Calendar
-                      mode="single"
-                      selected={drawDate}
-                      onSelect={setDrawDate}
-                      disabled={(date) => date < new Date()}
-                    />
-                    <Input
-                      type="time"
-                      className="mt-2"
-                      value={drawDate?.toTimeString().slice(0, 5) || ''}
-                      onChange={(e) => {
-                        const [hours, minutes] = e.target.value.split(':')
-                        const newDate = drawDate || new Date()
-                        newDate.setHours(Number(hours))
-                        newDate.setMinutes(Number(minutes))
-                        setDrawDate(newDate)
-                      }}
-                    />
-                  </PopoverContent>
-                </Popover>
-              </div>
-            </div>
-          )}
-
-          {step === 2 && (
-            <div className="space-y-6">
-              {prizes.map((prize, index) => (
-                <div key={index} className="space-y-4 border p-4 rounded-lg">
-                  <div className="flex justify-between items-center">
-                    <Label>Prêmio {index + 1}</Label>
-                    {index > 0 && (
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => setPrizes(prizes.filter((_, i) => i !== index))}
-                      >
-                        <Trash className="h-4 w-4" />
-                      </Button>
-                    )}
-                  </div>
-
-                  <Input
-                    placeholder="Nome do prêmio"
-                    value={prize.name}
-                    onChange={(e) => handlePrizeChange(index, 'name', e.target.value)}
-                  />
-
-                  <Input
-                    placeholder="Descrição"
-                    value={prize.description}
-                    onChange={(e) => handlePrizeChange(index, 'description', e.target.value)}
-                  />
-
-                  <Input
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) => e.target.files?.[0] && handleImageUpload(index, e.target.files[0])}
-                  />
-                </div>
-              ))}
-
-              <Button variant="outline" onClick={handleAddPrize}>
-                <Plus className="mr-2 h-4 w-4" />
-                Adicionar Prêmio
-              </Button>
-            </div>
-          )}
-
-          {step === 3 && (
-            <div className="space-y-6">
-              <div>
-                <Label>Quantidade de Bilhetes</Label>
-                <Input
-                  type="number"
-                  value={ticketQuantity}
-                  onChange={(e) => setTicketQuantity(e.target.value)}
-                />
-              </div>
-
-              <div>
-                <Label>Valor por Número</Label>
-                <Input
-                  type="number"
-                  step="0.01"
-                  value={ticketPrice}
-                  onChange={(e) => setTicketPrice(e.target.value)}
-                />
-              </div>
-
-              <div>
-                <Label>Tempo para Reserva</Label>
-                <select
-                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background"
-                  value={reservationTime}
-                  onChange={(e) => setReservationTime(e.target.value)}
-                >
-                  <option value="1">1 hora</option>
-                  <option value="2">2 horas</option>
-                  <option value="6">6 horas</option>
-                  <option value="12">12 horas</option>
-                  <option value="24">24 horas</option>
-                </select>
-              </div>
-            </div>
-          )}
-
-          <div className="flex justify-between mt-8">
-            {step > 1 && (
-              <Button variant="outline" onClick={() => setStep(step - 1)}>
-                Voltar
-              </Button>
-            )}
-
-            {step < 3 ? (
-              <Button className="ml-auto" onClick={validateStep}>
-                Próximo
-              </Button>
-            ) : (
-              <Button onClick={() => console.log({
-                raffleType,
-                drawDate,
-                prizes,
-                ticketQuantity,
-                ticketPrice,
-                reservationTime
-              })}>
-                Criar Rifa
-              </Button>
-            )}
+        <div className="space-y-8">
+          {/* Seção Título */}
+          <div>
+            <Label className="font-bold block mb-4">Título</Label>
+            <Input 
+              placeholder="Digite o título da sua campanha" 
+              className="text-lg py-6"
+            />
           </div>
-        </CardContent>
+
+          {/* Tabela de Cotas */}
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <Label className="block mb-2">Quantidade de números</Label>
+              <Select defaultValue="option">
+                <SelectTrigger className="w-full pl-8 py-6 ">
+                  <SelectValue placeholder="Escolha uma opção"/>
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="option25">25 números</SelectItem>
+                  <SelectItem value="option50">50 números</SelectItem>
+                  <SelectItem value="option100">100 números</SelectItem>
+                  <SelectItem value="option200">200 números</SelectItem>
+                  <SelectItem value="option300">300 números</SelectItem>
+                  <SelectItem value="option400">400 números</SelectItem>
+                  <SelectItem value="option500">500 números</SelectItem>
+                  <SelectItem value="option600">600 números</SelectItem>
+                  <SelectItem value="option700">700 números</SelectItem>
+                  <SelectItem value="option800">800 números</SelectItem>
+                  <SelectItem value="option900">900 números</SelectItem>
+                  <SelectItem value="option1000">1.000 números</SelectItem>
+                  <SelectItem value="option2000">2.000 números</SelectItem>
+                  <SelectItem value="option3000">3.000 números</SelectItem>
+                  <SelectItem value="option4000">4.000 números</SelectItem>
+                  <SelectItem value="option5000">5.000 números</SelectItem>
+                  <SelectItem value="option6000">6.000 números</SelectItem>
+                  <SelectItem value="option10000">10.000 números</SelectItem>
+                  <SelectItem value="option20000">20.000 números</SelectItem>
+                  <SelectItem value="option30000">30.000 números</SelectItem>
+                  <SelectItem value="option50000">50.000 números</SelectItem>
+                  <SelectItem value="option92000">92.000 números</SelectItem>
+                  <SelectItem value="option96000">96.000 números</SelectItem>
+                  <SelectItem value="option100000">100.000 números</SelectItem>
+                  <SelectItem value="option500000">500.000 números</SelectItem>
+                  <SelectItem value="option1000000">1.000.000 números</SelectItem>
+                  <SelectItem value="option1500000">1.500.000 números</SelectItem>
+                  <SelectItem value="option10000000">10.000.000 números</SelectItem>
+                  <SelectItem value="fazendinha">Fazendinha</SelectItem>
+                  
+                  
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label className="block mb-2">Valor da cota</Label>
+              <div className="relative">
+                <span className="absolute left-3 top-3.5 text-muted-foreground">R$</span>
+                <Input placeholder="0,00" className="pl-8 py-6 text-lg"/>
+              </div>
+            </div>
+          </div>
+
+          {/* Sorteio */}
+          <div>
+            <Label className="font-bold block mb-4">
+              Por onde será feito o sorteio?
+            </Label>
+            <RadioGroup defaultValue="option" className="space-y-2">
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="option" id="option" />
+                <Label htmlFor="option">Escolha uma opção</Label>
+              </div>
+            </RadioGroup>
+          </div>
+
+          {/* Número de celular */}
+          <div>
+            <Label className="block mb-2">Número de celular</Label>
+            <Input placeholder="(00) 00000-0000" />
+          </div>
+
+          <Button className="w-full py-6 text-lg">Criar Campanha</Button>
+        </div>
       </Card>
     </div>
-  )
+  );
 }

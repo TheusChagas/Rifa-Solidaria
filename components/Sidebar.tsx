@@ -86,11 +86,10 @@ export function Sidebar() {
                             <Link
                                 key={item.name}
                                 href={item.href}
-                                className="relative px-4 py-2 text-sm font-medium rounded-md transition-colors overflow-hidden
-                                before:absolute before:inset-0 before:bg-verde-200 before:scale-x-0 before:origin-left
-                                before:transition-transform before:duration-300 hover:before:scale-x-100"
+                                className="relative px-4 py-2 text-sm font-medium rounded-md overflow-hidden
+                                 hover:before:scale-x-100"
                             >
-                                <span className="relative z-10 text-black transition-colors duration-300 hover:text-white">
+                                <span className="relative z-10 text-black  focus:text-green-700  hover:text-green-700">
                                     {item.name}
                                 </span>
                             </Link>

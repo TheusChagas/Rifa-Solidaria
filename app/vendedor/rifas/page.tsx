@@ -24,7 +24,7 @@ export default function Rifas() {
     const filteredRifas = rifas.filter((rifa) => (rifa.progresso === 100 ? 1 : 0) === selectedStatus);
 
     return (
-        <div className="absolute top-20 left-8 md:top-24 md:left-72 w-[70%] overflow-x-hidden">
+        <div className="absolute top-20 left-8 md:top12 md:left-72 w-[70%] overflow-x-hidden">
             <div className="flex items-center gap-2 text-lg font-semibold">
                 <span>👋 Olá, usuário!</span>
             </div>

@@ -1,3 +1,5 @@
+'use client'
+
 import { Navbar } from "@/components/Navbar"
 import { HeroButtons } from "@/components/HeroButton";
 import { Play, Lightbulb, Send, DollarSign, Phone, Clock, Mail } from "lucide-react";

@@ -40,37 +40,12 @@ export default function CreateCampaignPage() {
                   <SelectValue placeholder="Escolha uma opção"/>
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="option25">25 números</SelectItem>
-                  <SelectItem value="option50">50 números</SelectItem>
+                <SelectItem value="fazendinha">Fazendinha</SelectItem>
                   <SelectItem value="option100">100 números</SelectItem>
-                  <SelectItem value="option200">200 números</SelectItem>
-                  <SelectItem value="option300">300 números</SelectItem>
-                  <SelectItem value="option400">400 números</SelectItem>
-                  <SelectItem value="option500">500 números</SelectItem>
-                  <SelectItem value="option600">600 números</SelectItem>
-                  <SelectItem value="option700">700 números</SelectItem>
-                  <SelectItem value="option800">800 números</SelectItem>
-                  <SelectItem value="option900">900 números</SelectItem>
                   <SelectItem value="option1000">1.000 números</SelectItem>
-                  <SelectItem value="option2000">2.000 números</SelectItem>
-                  <SelectItem value="option3000">3.000 números</SelectItem>
-                  <SelectItem value="option4000">4.000 números</SelectItem>
-                  <SelectItem value="option5000">5.000 números</SelectItem>
-                  <SelectItem value="option6000">6.000 números</SelectItem>
                   <SelectItem value="option10000">10.000 números</SelectItem>
-                  <SelectItem value="option20000">20.000 números</SelectItem>
-                  <SelectItem value="option30000">30.000 números</SelectItem>
-                  <SelectItem value="option50000">50.000 números</SelectItem>
-                  <SelectItem value="option92000">92.000 números</SelectItem>
-                  <SelectItem value="option96000">96.000 números</SelectItem>
                   <SelectItem value="option100000">100.000 números</SelectItem>
-                  <SelectItem value="option500000">500.000 números</SelectItem>
-                  <SelectItem value="option1000000">1.000.000 números</SelectItem>
-                  <SelectItem value="option1500000">1.500.000 números</SelectItem>
-                  <SelectItem value="option10000000">10.000.000 números</SelectItem>
-                  <SelectItem value="fazendinha">Fazendinha</SelectItem>
-                  
-                  
+                  <SelectItem value="option500000">Personalizados</SelectItem>
                 </SelectContent>
               </Select>
             </div>

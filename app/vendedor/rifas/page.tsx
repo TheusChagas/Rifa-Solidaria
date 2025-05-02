@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from "react";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Plus, Ticket } from "lucide-react";
 import Card from "@/components/Card";
@@ -24,18 +25,23 @@ export default function Rifas() {
     const filteredRifas = rifas.filter((rifa) => (rifa.progresso === 100 ? 1 : 0) === selectedStatus);
 
     return (
-        <div className="absolute top-20 left-8 md:top12 md:left-72 w-[70%] overflow-x-hidden">
+        <div className="absolute top-20 left-8 md:top-16 md:left-72 w-[70%] overflow-x-hidden">
             <div className="flex items-center gap-2 text-lg font-semibold">
                 <span>👋 Olá, usuário!</span>
             </div>
             <div className="mt-2">
-                <Button className="flex rounded-xl bg-branco-100 items-center gap-1 text-sm font-bold text-preto-700 shadow-xl
-                            relative px-4 py-2 text-sm font-medium rounded-md transition-colors overflow-hidden
-                            before:absolute before:inset-0 before:bg-verde-200 before:scale-x-0 before:origin-left
-                            before:transition-transform before:duration-300 hover:before:scale-x-100">
-                    <Plus className="z-10" size={16} />
-                    <span className="z-10">CRIAR RIFA</span>
-                </Button>
+                <Link href="/vendedor/rifas/cria">
+                    <Button
+                        className="flex rounded-xl bg-branco-100 items-center gap-1 text-sm font-bold text-preto-700 shadow-xl
+                                relative px-4 py-2 text-sm font-medium rounded-md transition-colors overflow-hidden
+                                before:absolute before:inset-0 before:bg-verde-200 before:scale-x-0 before:origin-left
+                                before:transition-transform before:duration-300 hover:before:scale-x-100 cursor-pointer"
+                        role="link"
+                    >
+                        <Plus className="z-10" size={16} />
+                        <span className="z-10">CRIAR RIFA</span>
+                    </Button>
+                </Link>
             </div>
 
             <div className="mt-6">

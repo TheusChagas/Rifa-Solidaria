@@ -1,88 +1,241 @@
+'use client'
+
+import { useState, useEffect, useMemo } from "react"
 import {
     Select,
     SelectContent,
     SelectGroup,
     SelectItem,
-    SelectLabel,
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
+import { Button } from "@/components/ui/button"
+import { EyeOff, ChevronUp, ChevronDown } from "lucide-react"
 import {
     Table,
-    TableBody,
-    TableCaption,
-    TableCell,
-    TableFooter,
-    TableHead,
     TableHeader,
+    TableBody,
     TableRow,
+    TableHead,
+    TableCell,
 } from "@/components/ui/table"
 
-const invoices = [
-    { invoice: "INV001", paymentStatus: "Paid", totalAmount: "$250.00", paymentMethod: "Credit Card" },
-    { invoice: "INV002", paymentStatus: "Pending", totalAmount: "$150.00", paymentMethod: "PayPal" },
-    { invoice: "INV003", paymentStatus: "Unpaid", totalAmount: "$350.00", paymentMethod: "Bank Transfer" },
-    { invoice: "INV004", paymentStatus: "Paid", totalAmount: "$250.00", paymentMethod: "Credit Card" },
-    { invoice: "INV005", paymentStatus: "Pending", totalAmount: "$150.00", paymentMethod: "PayPal" },
-    { invoice: "INV006", paymentStatus: "Unpaid", totalAmount: "$350.00", paymentMethod: "Bank Transfer" },
-    { invoice: "INV007", paymentStatus: "Paid", totalAmount: "$250.00", paymentMethod: "Credit Card" },
-    { invoice: "INV008", paymentStatus: "Pending", totalAmount: "$150.00", paymentMethod: "PayPal" },
-    { invoice: "INV009", paymentStatus: "Unpaid", totalAmount: "$350.00", paymentMethod: "Bank Transfer" },
+type Row = {
+    position: number
+    sellerName: string
+    amountCollected: string
+    ticketsSold: number
+    campaign: string
+}
 
+// Dados de exemplo
+const rankingData: Row[] = [
+    { position: 1, sellerName: "João Silva", amountCollected: "R$ 2.500,00", ticketsSold: 45, campaign: "campanha-1" },
+    { position: 2, sellerName: "Maria Souza", amountCollected: "R$ 2.300,00", ticketsSold: 42, campaign: "campanha-2" },
+    { position: 3, sellerName: "Carlos Lima", amountCollected: "R$ 2.100,00", ticketsSold: 38, campaign: "campanha-3" },
+    // … mais itens
+    ...Array.from({ length: 27 }, (_, i) => ({
+        position: i + 4,
+        sellerName: `Vendedor ${i + 4}`,
+        amountCollected: `R$ ${(2000 - i * 50).toLocaleString("pt-BR")},00`,
+        ticketsSold: 35 - i,
+        campaign: i % 3 === 0 ? "campanha-1" : i % 3 === 1 ? "campanha-2" : "campanha-3",
+    })),
 ]
 
-export default function ranking() {
+export default function Ranking() {
+    // filtro e paginação
+    const [selectedCampaign, setSelectedCampaign] = useState("all")
+    const [currentPage, setCurrentPage] = useState(1)
+    const itemsPerPage = 10
+
+    // configuração de sort: { key, direction }
+    const [sortConfig, setSortConfig] = useState<{
+        key: keyof Row
+        direction: "asc" | "desc"
+    } | null>(null)
+
+    // sempre volta pra página 1 ao trocar o filtro
+    useEffect(() => {
+        setCurrentPage(1)
+    }, [selectedCampaign])
+
+    // 1) Filtra
+    const filteredData = useMemo(() => {
+        return selectedCampaign === "all"
+            ? rankingData
+            : rankingData.filter((r) => r.campaign === selectedCampaign)
+    }, [selectedCampaign])
+
+    // 2) Ordena
+    const sortedData = useMemo(() => {
+        if (!sortConfig) return filteredData
+
+        return [...filteredData].sort((a, b) => {
+            let aVal: string | number = a[sortConfig.key]
+            let bVal: string | number = b[sortConfig.key]
+
+            // special: converter "R$ 1.234,56" para number
+            if (sortConfig.key === "amountCollected") {
+                const parseAmt = (s: string) =>
+                    parseFloat(s.replace(/[^\d,.-]/g, "").replace(/\./g, "").replace(",", "."))
+                aVal = parseAmt(a.amountCollected)
+                bVal = parseAmt(b.amountCollected)
+            }
+
+            if (typeof aVal === "string" && typeof bVal === "string") {
+                return sortConfig.direction === "asc"
+                    ? aVal.localeCompare(bVal)
+                    : bVal.localeCompare(aVal)
+            }
+            if (typeof aVal === "number" && typeof bVal === "number") {
+                return sortConfig.direction === "asc"
+                    ? aVal - bVal
+                    : bVal - aVal
+            }
+            return 0
+        })
+    }, [filteredData, sortConfig])
+
+    // 3) Paginado sobre sortedData
+    const totalPages = Math.ceil(sortedData.length / itemsPerPage)
+    const start = (currentPage - 1) * itemsPerPage
+    const currentData = sortedData.slice(start, start + itemsPerPage)
+
+    // alterna direção ao clicar no header
+    function handleSort(key: keyof Row) {
+        const direction =
+            !sortConfig || sortConfig.key !== key
+                ? "asc"
+                : sortConfig.direction === "asc"
+                    ? "desc"
+                    : "asc"
+        setSortConfig({ key, direction })
+    }
+
+    // helper para mostrar ícone
+    function SortIcon({ column }: { column: keyof Row }) {
+        if (!sortConfig || sortConfig.key !== column) return null
+        return sortConfig.direction === "asc" ? (
+            <ChevronUp className="w-4 h-4 ml-1" />
+        ) : (
+            <ChevronDown className="w-4 h-4 ml-1" />
+        )
+    }
+
     return (
-        <div className="absolute top-20 left-8 md:top-24 md:left-[22%] md:w-[70%] overflow-x-hidden">
-            <h1 className='font-semibold text-2xl text-black'>
-                Ranking entre Vendedores
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-8">
+                Ranking de Vendedores
             </h1>
 
-            <Select>
-                <SelectTrigger className="mt-6 w-[220px]">
-                    <SelectValue placeholder="Selecione um filtro" />
-                </SelectTrigger>
-                <SelectContent>
-                    <SelectGroup>
-                        <SelectLabel>filtros</SelectLabel>
-                        <SelectItem className="hover:bg-verde-200 hover:font-semibold hover:scale-[108%] transition" value="todos">Todos</SelectItem>
-                        <SelectItem className="hover:bg-verde-200 hover:font-semibold hover:scale-[108%] transition" value="contatos">Contatos</SelectItem>
-                        <SelectItem className="hover:bg-verde-200 hover:font-semibold hover:scale-[108%] transition" value="amigos">Amigos</SelectItem>
-                    </SelectGroup>
-                </SelectContent>
-            </Select>
-
-
-            <div className="w-[95%]">
-                <Table className="min-w-[600px]">
-                    <TableCaption>Lista com rifas de outros usuarios</TableCaption>
-                    <TableHeader>
-                        <TableRow>
-                            <TableHead className="w-[100px]">Invoice</TableHead>
-                            <TableHead>Status</TableHead>
-                            <TableHead>Method</TableHead>
-                            <TableHead className="text-right">Amount</TableHead>
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                        {invoices.map((invoice) => (
-                            <TableRow key={invoice.invoice}>
-                                <TableCell className="font-medium">{invoice.invoice}</TableCell>
-                                <TableCell>{invoice.paymentStatus}</TableCell>
-                                <TableCell>{invoice.paymentMethod}</TableCell>
-                                <TableCell className="text-right">{invoice.totalAmount}</TableCell>
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                    <TableFooter>
-                        <TableRow>
-                            <TableCell colSpan={3}>Total</TableCell>
-                            <TableCell className="text-right">$2,500.00</TableCell>
-                        </TableRow>
-                    </TableFooter>
-                </Table>
+            {/* filtro */}
+            <div className="bg-white rounded-xl shadow-md p-6 lg:p-8 space-y-6 mb-8">
+                <label className="block text-sm font-medium text-gray-700">
+                    Selecione uma campanha
+                </label>
+                <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+                    <Select onValueChange={setSelectedCampaign}>
+                        <SelectTrigger className="w-full sm:w-80 h-12">
+                            <SelectValue placeholder="Todos" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectGroup>
+                                <SelectItem value="all">Todos</SelectItem>
+                                <SelectItem value="campanha-1">Campanha 1</SelectItem>
+                                <SelectItem value="campanha-2">Campanha 2</SelectItem>
+                                <SelectItem value="campanha-3">Campanha 3</SelectItem>
+                            </SelectGroup>
+                        </SelectContent>
+                    </Select>
+                    <Button
+                        variant="outline"
+                        className="flex items-center justify-center h-12 px-4 whitespace-nowrap"
+                    >
+                        <EyeOff className="h-5 w-5 mr-2 text-gray-500" />
+                        Dados
+                    </Button>
+                </div>
             </div>
 
+            {/* tabela */}
+            <div className="bg-white rounded-xl shadow-md p-6 lg:p-8 space-y-4">
+                <div className="overflow-x-auto">
+                    <Table className="min-w-[600px]">
+                        <TableHeader>
+                            <TableRow>
+                                <TableHead className="w-[80px]">
+                                    <button
+                                        className="flex items-center"
+                                        onClick={() => handleSort("position")}
+                                    >
+                                        Posição<SortIcon column="position" />
+                                    </button>
+                                </TableHead>
+                                <TableHead>
+                                    <button
+                                        className="flex items-center"
+                                        onClick={() => handleSort("sellerName")}
+                                    >
+                                        Vendedor<SortIcon column="sellerName" />
+                                    </button>
+                                </TableHead>
+                                <TableHead>
+                                    <button
+                                        className="flex items-center"
+                                        onClick={() => handleSort("amountCollected")}
+                                    >
+                                        Arrecadação<SortIcon column="amountCollected" />
+                                    </button>
+                                </TableHead>
+                                <TableHead className="text-right">
+                                    <button
+                                        className="flex items-center justify-end w-full"
+                                        onClick={() => handleSort("ticketsSold")}
+                                    >
+                                        Bilhetes<SortIcon column="ticketsSold" />
+                                    </button>
+                                </TableHead>
+                            </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                            {currentData.map((item) => (
+                                <TableRow key={item.position}>
+                                    <TableCell className="font-medium">
+                                        {item.position}
+                                    </TableCell>
+                                    <TableCell>{item.sellerName}</TableCell>
+                                    <TableCell>{item.amountCollected}</TableCell>
+                                    <TableCell className="text-right">
+                                        {item.ticketsSold}
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </div>
+
+                {/* paginação */}
+                <div className="flex justify-end items-center gap-4 pt-4">
+                    <button
+                        onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                        disabled={currentPage === 1}
+                        className="px-4 py-2 bg-gray-100 rounded disabled:opacity-50 hover:bg-gray-200"
+                    >
+                        Anterior
+                    </button>
+                    <span className="text-sm text-gray-600">
+                        Página {currentPage} de {totalPages}
+                    </span>
+                    <button
+                        onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                        disabled={currentPage === totalPages}
+                        className="px-4 py-2 bg-gray-100 rounded disabled:opacity-50 hover:bg-gray-200"
+                    >
+                        Próxima
+                    </button>
+                </div>
+            </div>
         </div>
     )
 }

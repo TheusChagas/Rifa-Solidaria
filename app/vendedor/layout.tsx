@@ -16,7 +16,7 @@ export default function RootLayout({ children }: { children: React.ReactNode; })
             <body className={`${inter.className} antialiased`}>
                 <div className="flex">
                     <Sidebar />
-                    <main className="flex-1 md:ml-64">
+                    <main className="flex-1 md:ml-[264px] md:mt-[20px]">
                         {children}
                     </main>
                 </div>

@@ -1,5 +1,5 @@
 // app/reserva/page.tsx
-import { ReservarRifaDialog } from "@/components/ReservaRifa";
+import { ReservarRifaDialog } from "@/components/ReservaRifaDialog";
 
 export default function ReservaPage() {
   return (

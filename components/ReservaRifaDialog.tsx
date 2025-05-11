@@ -1,3 +1,5 @@
+'use client'
+
 import {
   Dialog,
   DialogContent,
@@ -12,7 +14,7 @@ import { Button } from "@/components/ui/button";
 export function ReservarRifaDialog() {
   return (
     <Dialog>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[425px] z-50">
         <DialogHeader>
           <DialogTitle>Reservar Rifa</DialogTitle>
         </DialogHeader>

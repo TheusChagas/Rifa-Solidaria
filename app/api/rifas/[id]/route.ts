@@ -3,9 +3,10 @@ import { getRifaById, RifaRaw } from '@/lib/getRifaID'
 
 export async function GET(
     request: NextRequest,
-    { params }: { params: { id: string } }
+    context: { params: { id: string } }
 ) {
-    const { id } = params
+    const params = await context.params;
+    const id = params.id;
 
     // busca via sua função de dados
     const rifa: RifaRaw | null = await getRifaById(id)

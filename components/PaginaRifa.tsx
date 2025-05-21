@@ -19,6 +19,11 @@ import logo from "@/assets/Logo.png"
 
 export interface RifaConfig {
     id: string;
+    titulo: React.ReactNode;
+    descricao: React.ReactNode;
+    progresso: React.ReactNode;
+    metodoPagamento: React.ReactNode;
+    disponivel: any;
     totalNumbers: number;
     preco: number;
     premio: number;
@@ -34,7 +39,21 @@ export interface RifaConfig {
 }
 
 export default function PaginaRifa({ config }: { config: RifaConfig }) {
-    const { totalNumbers, preco, premio, saleMode, numerosVendidos, dataSorteio, canalTransmissao, contatos } = config;
+    const {
+        titulo,
+        descricao,
+        progresso,
+        metodoPagamento,
+        disponivel,
+        totalNumbers,
+        preco,
+        premio,
+        saleMode,
+        numerosVendidos,
+        dataSorteio,
+        canalTransmissao,
+        contatos
+    } = config;
 
     const [numeros, setNumeros] = useState<
         { numero: number; status: "disponivel" | "vendido" | "selecionado" }[]
@@ -90,7 +109,7 @@ export default function PaginaRifa({ config }: { config: RifaConfig }) {
                 p-6 rounded-lg shadow mb-6
                 text-center">
                 <div>
-                    <h1 className="text-3xl font-bold">Rifa Entre Amigos</h1>
+                    <h1 className="text-3xl font-bold">{titulo}</h1>
                     <Image
                         src={logo}
                         alt="Imagem da rifa"
@@ -100,6 +119,16 @@ export default function PaginaRifa({ config }: { config: RifaConfig }) {
                     />
                 </div>
                 <div>
+                    <p className="mt-2 text-gray-700">{descricao}</p>
+                    <div className="mt-2 text-gray-700">
+                        <strong>Progresso:</strong> {progresso}
+                    </div>
+                    <div className="mt-2 text-gray-700">
+                        <strong>Métodos de pagamento:</strong> {metodoPagamento}
+                    </div>
+                    <div className="mt-2 text-gray-700">
+                        <strong>Status:</strong> {disponivel ? "Disponível" : "Indisponível"}
+                    </div>
                     <p className="mt-2 text-gray-700">
                         Apenas R$ {preco.toFixed(2)} {saleMode}
                     </p>

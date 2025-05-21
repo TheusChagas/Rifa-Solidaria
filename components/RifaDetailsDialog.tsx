@@ -52,13 +52,19 @@ export function RifaDetailsDialog({
                 {error && <p className="text-red-500">Erro: {error}</p>}
                 {rifa && (
                     <div className="space-y-2">
-                        <p><strong>Título:</strong> {rifa.id} – {rifa.saleMode}</p>
+                        <p><strong>Título:</strong> {rifa.titulo}</p>
+                        <p><strong>ID:</strong> {rifa.id}</p>
+                        <p><strong>Modo de Venda:</strong> {rifa.saleMode}</p>
                         <p><strong>Total de Números:</strong> {rifa.totalNumbers}</p>
                         <p><strong>Preço:</strong> R$ {rifa.preco.toFixed(2)}</p>
                         <p><strong>Prêmio:</strong> {rifa.premio}</p>
                         <p><strong>Números Vendidos:</strong> {rifa.numerosVendidos.join(', ')}</p>
                         <p><strong>Data Sorteio:</strong> {new Date(rifa.dataSorteio).toLocaleString()}</p>
                         <p><strong>Canal:</strong> {rifa.canalTransmissao}</p>
+                        <p><strong>Descrição:</strong> {rifa.descricao}</p>
+                        <p><strong>Progresso:</strong> {rifa.progresso}%</p>
+                        <p><strong>Método de Pagamento:</strong> {rifa.metodoPagamento}</p>
+                        <p><strong>Disponível:</strong> {rifa.disponivel ? 'Sim' : 'Não'}</p>
                         <div>
                             <strong>Contatos:</strong>
                             {rifa.contatos.map((c) => (

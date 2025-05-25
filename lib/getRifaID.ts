@@ -19,8 +19,11 @@ export const rifasMockBase: Record<string, Rifa> = {
             { nome: "Sophie", telefone: "22999679484", avatarUrl: "/sophie.png" },
             { nome: "Xerifão", telefone: "22997018404", avatarUrl: "/xerifao.png" },
         ],
-        imagens: ["/rifa1-1.png", "/rifa1-2.png"],
-        prêmios: ["Pix R$250", "Brinde surpresa"],
+        imagensPremioPrincipal: ["/rifa1-1.png"],
+        premios: [
+            { nome: "Pix R$250", imagens: ["/rifa1-2.png"] },
+            { nome: "Brinde surpresa", imagens: [] }
+        ],
         fazendinha: true,
     },
     "2": {
@@ -41,8 +44,11 @@ export const rifasMockBase: Record<string, Rifa> = {
             { nome: "Lucas", telefone: "21955554444", avatarUrl: "/lucas.png" },
             { nome: "Paula", telefone: "21944443333", avatarUrl: "/paula.png" },
         ],
-        imagens: ["/rifa2-1.png"],
-        prêmios: ["Smartphone", "Acessório surpresa"],
+        imagensPremioPrincipal: ["/rifa2-1.png"],
+        premios: [
+            { nome: "Smartphone", imagens: [] },
+            { nome: "Acessório surpresa", imagens: [] }
+        ],
         fazendinha: true,
     },
     "3": {
@@ -63,8 +69,11 @@ export const rifasMockBase: Record<string, Rifa> = {
             { nome: "Carlos", telefone: "21999998888", avatarUrl: "/carlos.png" },
             { nome: "Ana", telefone: "21988887777", avatarUrl: "/ana.png" },
         ],
-        imagens: ["/rifa3-1.png"],
-        prêmios: ["Bicicleta Aro 29", "Vale-compras R$100"],
+        imagensPremioPrincipal: ["/rifa3-1.png"],
+        premios: [
+            { nome: "Bicicleta Aro 29", imagens: [] },
+            { nome: "Vale-compras R$100", imagens: [] }
+        ],
         fazendinha: false,
     },
     "4": {
@@ -85,8 +94,12 @@ export const rifasMockBase: Record<string, Rifa> = {
             { nome: "Fernanda", telefone: "21933332222", avatarUrl: "/fernanda.png" },
             { nome: "Rafael", telefone: "21922221111", avatarUrl: "/rafael.png" },
         ],
-        imagens: ["/rifa4-1.png"],
-        prêmios: ["Viagem", "Voucher R$500", "Premiação especial"],
+        imagensPremioPrincipal: ["/rifa4-1.png"],
+        premios: [
+            { nome: "Viagem", imagens: [] },
+            { nome: "Voucher R$500", imagens: [] },
+            { nome: "Premiação especial", imagens: [] }
+        ],
         fazendinha: false,
     },
     "5": {
@@ -107,8 +120,12 @@ export const rifasMockBase: Record<string, Rifa> = {
             { nome: "João", telefone: "21977776666", avatarUrl: "/joao.png" },
             { nome: "Maria", telefone: "21966665555", avatarUrl: "/maria.png" },
         ],
-        imagens: ["/rifa5-1.png"],
-        prêmios: ["Cesta de Natal", "Panetone", "Vale-presente"],
+        imagensPremioPrincipal: ["/rifa5-1.png"],
+        premios: [
+            { nome: "Cesta de Natal", imagens: [] },
+            { nome: "Panetone", imagens: [] },
+            { nome: "Vale-presente", imagens: [] }
+        ],
         fazendinha: false,
     }
 };

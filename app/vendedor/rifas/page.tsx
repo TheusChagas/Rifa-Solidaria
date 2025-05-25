@@ -42,8 +42,8 @@ export default function Rifas() {
                         dataSorteio: r.dataSorteio || "",
                         canalTransmissao: r.canalTransmissao || "",
                         contatos: Array.isArray(r.contatos) ? r.contatos : [],
-                        imagens: r.imagens || [],
-                        prêmios: r.prêmios || [],
+                        imagensPremioPrincipal: r.imagensPremioPrincipal || [],
+                        premios: r.premios || [],
                     }))
                 );
             });

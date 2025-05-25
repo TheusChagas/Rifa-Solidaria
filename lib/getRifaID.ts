@@ -21,6 +21,7 @@ export const rifasMockBase: Record<string, Rifa> = {
         ],
         imagens: ["/rifa1-1.png", "/rifa1-2.png"],
         prêmios: ["Pix R$250", "Brinde surpresa"],
+        fazendinha: true,
     },
     "2": {
         id: "2",
@@ -42,6 +43,7 @@ export const rifasMockBase: Record<string, Rifa> = {
         ],
         imagens: ["/rifa2-1.png"],
         prêmios: ["Smartphone", "Acessório surpresa"],
+        fazendinha: true,
     },
     "3": {
         id: "3",
@@ -63,6 +65,7 @@ export const rifasMockBase: Record<string, Rifa> = {
         ],
         imagens: ["/rifa3-1.png"],
         prêmios: ["Bicicleta Aro 29", "Vale-compras R$100"],
+        fazendinha: false,
     },
     "4": {
         id: "4",
@@ -84,6 +87,7 @@ export const rifasMockBase: Record<string, Rifa> = {
         ],
         imagens: ["/rifa4-1.png"],
         prêmios: ["Viagem", "Voucher R$500", "Premiação especial"],
+        fazendinha: false,
     },
     "5": {
         id: "5",
@@ -105,6 +109,7 @@ export const rifasMockBase: Record<string, Rifa> = {
         ],
         imagens: ["/rifa5-1.png"],
         prêmios: ["Cesta de Natal", "Panetone", "Vale-presente"],
+        fazendinha: false,
     }
 };
 

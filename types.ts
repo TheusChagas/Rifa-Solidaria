@@ -25,4 +25,5 @@ export interface Rifa {
     contatos: Contato[];
     imagens?: string[];
     prêmios?: string[];
+    fazendinha?: boolean; // novo campo
 }

@@ -1,36 +1,15 @@
-import { ReactNode } from "react";
+import { Rifa } from "@/types";
 
-export interface RifaRaw {
-    titulo: ReactNode;
-    descricao: ReactNode;
-    progresso: ReactNode;
-    metodoPagamento: ReactNode;
-    disponivel: any;
-    id: string;
-    totalNumbers: number;
-    preco: number;
-    premio: number;
-    saleMode: string;
-    numerosVendidos: number[];
-    dataSorteio: string;
-    canalTransmissao: string;
-    contatos: {
-        nome: string;
-        telefone: string;
-        avatarUrl?: string;
-    }[];
-}
-
-const rifasMock: Record<string, RifaRaw> = {
+export const rifasMockBase: Record<string, Rifa> = {
     "1": {
         id: "1",
         titulo: "Rifa Solidária",
         descricao: "Ajude uma causa e concorra a prêmios incríveis!",
-        progresso: "40%",
+        progresso: "100%",
         metodoPagamento: "Pix, Cartão",
         disponivel: true,
-        totalNumbers: 100,
         preco: 3.99,
+        totalNumbers: 100,
         premio: 250,
         saleMode: "a dezena",
         numerosVendidos: [1, 5, 17, 42],
@@ -40,17 +19,40 @@ const rifasMock: Record<string, RifaRaw> = {
             { nome: "Sophie", telefone: "22999679484", avatarUrl: "/sophie.png" },
             { nome: "Xerifão", telefone: "22997018404", avatarUrl: "/xerifao.png" },
         ],
+        imagens: ["/rifa1-1.png", "/rifa1-2.png"],
+        prêmios: ["Pix R$250", "Brinde surpresa"],
+    },
+    "2": {
+        id: "2",
+        titulo: "Rifa Esperança",
+        descricao: "Ajude a comunidade local e concorra a um smartphone novo.",
+        progresso: "0%",
+        metodoPagamento: "Pix, Dinheiro",
+        disponivel: false, // não paga
+        preco: 8.00,
+        totalNumbers: 150,
+        premio: "Smartphone",
+        saleMode: "por número",
+        numerosVendidos: [],
+        dataSorteio: "2025-07-15T19:00:00Z",
+        canalTransmissao: "YouTube – Esperança",
+        contatos: [
+            { nome: "Lucas", telefone: "21955554444", avatarUrl: "/lucas.png" },
+            { nome: "Paula", telefone: "21944443333", avatarUrl: "/paula.png" },
+        ],
+        imagens: ["/rifa2-1.png"],
+        prêmios: ["Smartphone", "Acessório surpresa"],
     },
     "3": {
         id: "3",
         titulo: "Rifa do Bem",
         descricao: "Participe e ajude a ONG Amigos dos Animais. Prêmio: Bicicleta Aro 29.",
-        progresso: "70%",
+        progresso: `${Math.floor(Math.random() * 99) + 1}%`,
         metodoPagamento: "Pix, Boleto",
         disponivel: true,
-        totalNumbers: 200,
         preco: 5.00,
-        premio: 1200,
+        totalNumbers: 200,
+        premio: "Bicicleta Aro 29",
         saleMode: "por número",
         numerosVendidos: [10, 23, 45, 67, 89, 101, 150],
         dataSorteio: "2025-06-10T20:00:00Z",
@@ -59,6 +61,29 @@ const rifasMock: Record<string, RifaRaw> = {
             { nome: "Carlos", telefone: "21999998888", avatarUrl: "/carlos.png" },
             { nome: "Ana", telefone: "21988887777", avatarUrl: "/ana.png" },
         ],
+        imagens: ["/rifa3-1.png"],
+        prêmios: ["Bicicleta Aro 29", "Vale-compras R$100"],
+    },
+    "4": {
+        id: "4",
+        titulo: "Rifa dos Sonhos",
+        descricao: "Concorra a uma viagem e ajude projetos sociais.",
+        progresso: `${Math.floor(Math.random() * 99) + 1}%`,
+        metodoPagamento: "Cartão, Pix",
+        disponivel: true,
+        preco: 15.00,
+        totalNumbers: 300,
+        premio: "Viagem",
+        saleMode: "por cota",
+        numerosVendidos: [5, 12, 25, 33, 99, 120, 250],
+        dataSorteio: "2025-08-01T21:00:00Z",
+        canalTransmissao: "Facebook – Rifa dos Sonhos",
+        contatos: [
+            { nome: "Fernanda", telefone: "21933332222", avatarUrl: "/fernanda.png" },
+            { nome: "Rafael", telefone: "21922221111", avatarUrl: "/rafael.png" },
+        ],
+        imagens: ["/rifa4-1.png"],
+        prêmios: ["Viagem", "Voucher R$500", "Premiação especial"],
     },
     "5": {
         id: "5",
@@ -66,10 +91,10 @@ const rifasMock: Record<string, RifaRaw> = {
         descricao: "Concorra a uma cesta de Natal e ajude famílias carentes.",
         progresso: "55%",
         metodoPagamento: "Cartão, Dinheiro",
-        disponivel: false,
-        totalNumbers: 150,
+        disponivel: true,
         preco: 2.50,
-        premio: 500,
+        totalNumbers: 150,
+        premio: "Cesta de Natal",
         saleMode: "por cota",
         numerosVendidos: [2, 4, 6, 8, 10, 12, 14, 16, 18, 20],
         dataSorteio: "2024-12-20T19:30:00Z",
@@ -78,11 +103,13 @@ const rifasMock: Record<string, RifaRaw> = {
             { nome: "João", telefone: "21977776666", avatarUrl: "/joao.png" },
             { nome: "Maria", telefone: "21966665555", avatarUrl: "/maria.png" },
         ],
+        imagens: ["/rifa5-1.png"],
+        prêmios: ["Cesta de Natal", "Panetone", "Vale-presente"],
     }
 };
 
-export async function getRifaById(id: string): Promise<RifaRaw | null> {
+const rifasMock = rifasMockBase;
+
+export async function getRifaById(id: string): Promise<Rifa | null> {
     return rifasMock[id] || null;
 }
-
-// ...comentários e código antigo mantidos...

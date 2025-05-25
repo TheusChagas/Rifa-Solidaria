@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getRifaById, RifaRaw } from '@/lib/getRifaID'
+import { getRifaById } from '@/lib/getRifaID'
+import { Rifa } from '@/types'
 
 export async function GET(
     request: NextRequest,
@@ -9,7 +10,7 @@ export async function GET(
     const id = params.id;
 
     // busca via sua função de dados
-    const rifa: RifaRaw | null = await getRifaById(id)
+    const rifa: Rifa | null = await getRifaById(id)
     if (!rifa) {
         return NextResponse.json(
             { message: 'Rifa não encontrada.' },
@@ -17,5 +18,8 @@ export async function GET(
         )
     }
 
-    return NextResponse.json(rifa)
+    // Garante que id seja string para consistência na API
+    const rifaResponse: Rifa = { ...rifa, id: String(rifa.id) }
+
+    return NextResponse.json(rifaResponse)
 }

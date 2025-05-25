@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Plus, Ticket } from "lucide-react";
@@ -12,17 +12,49 @@ export default function Rifas() {
     const [selectedStatus, setSelectedStatus] = useState(0);
     const [dialogOpen, setDialogOpen] = useState(false);
     const [selectedRifa, setSelectedRifa] = useState<Rifa | null>(null);
+    const [rifas, setRifas] = useState<Rifa[]>([]);
 
-    const rifas: Rifa[] = [
-        //A função para puxar do backend vem aqui
-        { id: 1, titulo: "Rifa 1", descricao: "Descrição da Rifa 1", progresso: 20, preco: 10, metodoPagamento: "Pix", disponivel: true },
-        { id: 2, titulo: "Rifa 2", descricao: "Descrição da Rifa 2", progresso: 0, preco: 20, metodoPagamento: "Cartão", disponivel: false },
-        { id: 3, titulo: "Rifa 3", descricao: "Descrição da Rifa 3", progresso: 100, preco: 30, metodoPagamento: "Boleto", disponivel: true },
-        { id: 4, titulo: "Rifa 4", descricao: "Descrição da Rifa 4", progresso: 0, preco: 40, metodoPagamento: "Pix", disponivel: false },
-        { id: 5, titulo: "Rifa 5", descricao: "Descrição da Rifa 5", progresso: 100, preco: 50, metodoPagamento: "Cartão", disponivel: true },
-    ];
+    useEffect(() => {
+        fetch("/api/rifas")
+            .then(res => res.ok ? res.json() : [])
+            .then((data: any[]) => {
+                setRifas(
+                    (Array.isArray(data) ? data : []).filter(Boolean).map((r: any) => ({
+                        ...r,
+                        progresso: typeof r.progresso === "string"
+                            ? parseInt(r.progresso.replace("%", ""), 10)
+                            : Number(r.progresso),
+                        titulo: typeof r.titulo === "string"
+                            ? r.titulo
+                            : String(r.titulo),
+                        descricao: typeof r.descricao === "string"
+                            ? r.descricao
+                            : String(r.descricao),
+                        metodoPagamento: typeof r.metodoPagamento === "string"
+                            ? r.metodoPagamento
+                            : String(r.metodoPagamento),
+                        disponivel: !!r.disponivel,
+                        preco: Number(r.preco),
+                        totalNumbers: Number(r.totalNumbers),
+                        premio: typeof r.premio === "number" ? r.premio : Number(r.premio),
+                        saleMode: r.saleMode || "",
+                        numerosVendidos: Array.isArray(r.numerosVendidos) ? r.numerosVendidos : [],
+                        dataSorteio: r.dataSorteio || "",
+                        canalTransmissao: r.canalTransmissao || "",
+                        contatos: Array.isArray(r.contatos) ? r.contatos : [],
+                        imagens: r.imagens || [],
+                        prêmios: r.prêmios || [],
+                    }))
+                );
+            });
+    }, []);
 
-    const filteredRifas = rifas.filter((rifa) => (rifa.progresso === 100 ? 1 : 0) === selectedStatus);
+    // 0 = Em andamento, 1 = Concluídas
+    const filteredRifas = rifas.filter((rifa) =>
+        selectedStatus === 0
+            ? Number(rifa.progresso) < 100
+            : Number(rifa.progresso) >= 100
+    );
 
     return (
         <div className="absolute top-20 left-8 md:top-16 md:left-72 w-[70%] overflow-x-hidden">
@@ -88,12 +120,12 @@ export default function Rifas() {
                         {filteredRifas.map((rifa) => (
                             <div key={rifa.id}>
                                 <Card
-                                    id={rifa.id}
-                                    title={rifa.titulo}
-                                    progress={rifa.progresso}
+                                    id={parseInt(String(rifa.id))}
+                                    title={typeof rifa.titulo === "string" ? rifa.titulo : ""}
+                                    progress={Number(rifa.progresso)}
                                     variant={
                                         rifa.disponivel
-                                            ? (rifa.progresso === 100 ? "finalizado" : "progresso")
+                                            ? (Number(rifa.progresso) === 100 ? "finalizado" : "progresso")
                                             : "pagamento"
                                     }
                                     onVisualizar={() => {

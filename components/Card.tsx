@@ -8,17 +8,18 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import { Progress } from "./ui/progress";
 import { RifaDetailsDialog } from "./RifaDetailsDialog";
 
-interface CardProps {
+export interface CardProps {
   id: number;
   title: string;
+  progress: number;
+  variant: "finalizado" | "progresso" | "pagamento";
+  onVisualizar?: () => void;
   total?: number;
-  progress?: number;
-  variant?: "progresso" | "finalizado" | "pagamento";
   paymentDays?: number;
   paymentTime?: string;
 }
 
-export default function Card({
+const Card = ({
   id,
   title,
   progress = 0,
@@ -26,7 +27,8 @@ export default function Card({
   variant = "progresso",
   paymentDays = 3,
   paymentTime = "2 horas e 30 minutos",
-}: CardProps) {
+  onVisualizar,
+}: CardProps) => {
   const [isDialogOpen, setDialogOpen] = useState(false);
 
   const cardVariantStyles = {
@@ -65,7 +67,7 @@ export default function Card({
   const styles = cardVariantStyles[variant];
 
   return (
-    <>
+    <div>
       <UiCard className={cn(styles.card)}>
         <CardHeader>
           <CardTitle className="text-xl ml-1 font-bold">{title}</CardTitle>
@@ -105,6 +107,8 @@ export default function Card({
         open={isDialogOpen}
         onOpenChange={setDialogOpen}
       />
-    </>
+    </div>
   );
-}
+};
+
+export default Card;

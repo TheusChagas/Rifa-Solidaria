@@ -1,6 +1,7 @@
 // app/compra/[id]/page.tsx
 import PaginaRifa, { RifaConfig } from "@/components/PaginaRifa";
 import { getRifaById } from "@/lib/getRifaID";
+import { Rifa } from "@/types";
 
 interface Props {
     params: { id: string };
@@ -21,7 +22,7 @@ export default async function CompraRifaPage(props: Props) {
 
     // mapeia retorno bruto ao formato esperado pelo client
     const config: RifaConfig = {
-        id: raw.id,
+        id: String(raw.id),
         titulo: raw.titulo,
         descricao: raw.descricao,
         progresso: raw.progresso,
@@ -29,7 +30,7 @@ export default async function CompraRifaPage(props: Props) {
         disponivel: raw.disponivel,
         totalNumbers: raw.totalNumbers,
         preco: raw.preco,
-        premio: raw.premio,
+        premio: typeof raw.premio === "number" ? raw.premio : Number(raw.premio),
         saleMode: raw.saleMode,
         numerosVendidos: raw.numerosVendidos,
         dataSorteio: raw.dataSorteio,

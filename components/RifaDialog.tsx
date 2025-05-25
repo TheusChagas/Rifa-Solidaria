@@ -8,15 +8,54 @@ interface RifaDialogProps {
 }
 
 export function RifaDialog({ open, onOpenChange, rifa }: RifaDialogProps) {
+    // Função utilitária para exibir ReactNode como texto
+    function renderNode(node: React.ReactNode) {
+        if (typeof node === "string" || typeof node === "number") return node;
+        if (Array.isArray(node)) return node.join(" ");
+        // Para outros casos, pode-se customizar conforme necessário
+        return null;
+    }
+
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent>
-                <h2 className="text-xl font-bold">{rifa.titulo}</h2>
-                <p className="text-gray-600">{rifa.descricao}</p>
-                <p className="mt-2">Progresso: {rifa.progresso}%</p>
-                <p className="mt-1">Preço da rifa: R$ {rifa.preco.toFixed(2)}</p>
-                <p className="mt-1">Método de Pagamento: {rifa.metodoPagamento}</p>
+                <h2 className="text-xl font-bold">{renderNode(rifa.titulo)}</h2>
+                <p className="text-gray-600">{renderNode(rifa.descricao)}</p>
+                <p className="mt-2">Progresso: {renderNode(rifa.progresso)}</p>
+                <p className="mt-1">Preço da rifa: R$ {Number(rifa.preco).toFixed(2)}</p>
+                <p className="mt-1">Método de Pagamento: {renderNode(rifa.metodoPagamento)}</p>
                 <p className="mt-1">{rifa.disponivel ? "Disponível" : "Indisponível"}</p>
+                <p className="mt-1">Total de Números: {rifa.totalNumbers}</p>
+                <p className="mt-1">Prêmio: R$ {Number(rifa.premio).toFixed(2)}</p>
+                <p className="mt-1">Modo de venda: {rifa.saleMode}</p>
+                <p className="mt-1">Números vendidos: {rifa.numerosVendidos && rifa.numerosVendidos.length > 0 ? rifa.numerosVendidos.join(", ") : "Nenhum"}</p>
+                <p className="mt-1">Data do sorteio: {new Date(rifa.dataSorteio).toLocaleString("pt-BR")}</p>
+                <p className="mt-1">Transmissão: {rifa.canalTransmissao}</p>
+                <div className="mt-2">
+                    <strong>Contatos:</strong>
+                    <ul className="mt-1 space-y-1">
+                        {rifa.contatos.map((c) => (
+                            <li key={c.telefone} className="flex items-center">
+                                {c.avatarUrl && (
+                                    <img
+                                        src={c.avatarUrl}
+                                        alt={c.nome}
+                                        className="inline-block h-6 w-6 rounded-full mr-2"
+                                    />
+                                )}
+                                <span>{c.nome}</span> –{" "}
+                                <a
+                                    href={`https://wa.me/${c.telefone.replace(/\D/g, "")}`}
+                                    className="text-green-600 hover:underline"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                >
+                                    {c.telefone}
+                                </a>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
             </DialogContent>
         </Dialog>
     );

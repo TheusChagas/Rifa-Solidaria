@@ -4,7 +4,6 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-
 import {
   Select,
   SelectContent,
@@ -13,6 +12,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { Rifa } from "@/types";
 
 export default function CreateCampaignPage() {
   const [numPrizes, setNumPrizes] = useState(1);
@@ -23,6 +23,21 @@ export default function CreateCampaignPage() {
   const [images, setImages] = useState<File[]>([]);
   const [dragActive, setDragActive] = useState(false);
   const [description, setDescription] = useState('');
+  const [title, setTitle] = useState('');
+  const [totalNumbers, setTotalNumbers] = useState<number>(100);
+  const [preco, setPreco] = useState<number>(0);
+  const [metodoPagamento, setMetodoPagamento] = useState('');
+  const [disponivel, setDisponivel] = useState(true);
+  const [saleMode, setSaleMode] = useState('');
+  const [contatoNome, setContatoNome] = useState('');
+  const [contatoTelefone, setContatoTelefone] = useState('');
+  const [contatoAvatarUrl, setContatoAvatarUrl] = useState('');
+  const [contatos, setContatos] = useState<{ nome: string; telefone: string; avatarUrl?: string }[]>([]);
+  const [numerosVendidos, setNumerosVendidos] = useState<number[]>([]);
+  const [progresso, setProgresso] = useState<string>("0%");
+  const [canalTransmissao, setCanalTransmissao] = useState('');
+  const [premio, setPremio] = useState<string | number>('');
+  const [id, setId] = useState<string>("");
 
   const drawOptions = [
     { value: 'CANTA GALO', label: 'CANTA GALO', time: '09:20' },
@@ -36,7 +51,6 @@ export default function CreateCampaignPage() {
     { value: 'instagram', label: 'Instagram', time: null },
     { value: 'youtube', label: 'YouTube', time: null },
     { value: 'outros', label: 'Outros', time: null },
-
   ];
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -71,6 +85,42 @@ export default function CreateCampaignPage() {
     setImages(prev => prev.filter((_, i) => i !== index));
   };
 
+  function handleAddContato() {
+    if (contatoNome && contatoTelefone) {
+      setContatos(prev => [
+        ...prev,
+        { nome: contatoNome, telefone: contatoTelefone, avatarUrl: contatoAvatarUrl || undefined }
+      ]);
+      setContatoNome('');
+      setContatoTelefone('');
+      setContatoAvatarUrl('');
+    }
+  }
+
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    // Monta objeto Rifa
+    const rifa: Rifa = {
+      id: id || Date.now().toString(),
+      titulo: title,
+      descricao: description,
+      progresso,
+      metodoPagamento,
+      disponivel,
+      preco,
+      totalNumbers,
+      premio: premio || prizes[0] || 0,
+      saleMode,
+      numerosVendidos,
+      dataSorteio: drawDate ? new Date(`${drawDate}T${drawTime || "00:00"}`).toISOString() : "",
+      canalTransmissao,
+      contatos,
+      imagens: images.map(img => URL.createObjectURL(img)),
+      prêmios: prizes,
+    };
+    alert("Rifa criada!\n" + JSON.stringify(rifa, null, 2));
+  }
+
   return (
     <div className="container max-w-2xl py-8">
       <Card className="p-6">
@@ -78,17 +128,28 @@ export default function CreateCampaignPage() {
         <p className="text-muted-foreground mb-8">
           Insira os dados de como deseja a sua rifa abaixo
         </p>
-
-        <div className="space-y-8">
-          {/* Seção Título */}
+        <form className="space-y-8" onSubmit={handleSubmit}>
+          {/* ID */}
+          <div>
+            <Label className="block mb-2">ID (opcional)</Label>
+            <Input
+              placeholder="ID único (deixe em branco para gerar automaticamente)"
+              value={id}
+              onChange={e => setId(e.target.value)}
+            />
+          </div>
+          {/* Título */}
           <div>
             <Label className="font-bold block mb-4">Título</Label>
             <Input
               placeholder="Digite o título da sua campanha"
               className="text-lg py-6"
+              value={title}
+              onChange={e => setTitle(e.target.value)}
+              required
             />
           </div>
-          {/* Seção Descricao */}
+          {/* Descrição */}
           <div>
             <Label className="font-bold block mb-4">Descrição</Label>
             <Textarea
@@ -96,91 +157,60 @@ export default function CreateCampaignPage() {
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               className="min-h-[100px]"
+              required
             />
           </div>
-
-          {/* Tabela de Cotas */}
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <Label className="block mb-2">Quantidade de números</Label>
-              <Select defaultValue="option">
-                <SelectTrigger className="w-full pl-8 py-6">
-                  <SelectValue placeholder="Escolha uma opção" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="fazendinha">Fazendinha</SelectItem>
-                  <SelectItem value="option100">100 números</SelectItem>
-                  <SelectItem value="option1000">1.000 números</SelectItem>
-                  <SelectItem value="option10000">10.000 números</SelectItem>
-                  <SelectItem value="option100000">100.000 números</SelectItem>
-                  <SelectItem value="option500000">Personalizados</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div>
-              <Label className="block mb-2">Valor da cota</Label>
-              <div className="relative">
-                <span className="absolute left-3 top-3.5 text-muted-foreground">R$</span>
-                <Input placeholder="0,00" className="pl-8 py-6 text-lg" />
-              </div>
+          {/* Progresso */}
+          <div>
+            <Label className="block mb-2">Progresso (%)</Label>
+            <Input
+              type="text"
+              placeholder="Ex: 0%, 50%, 100%"
+              value={progresso}
+              onChange={e => setProgresso(e.target.value)}
+              required
+            />
+          </div>
+          {/* Total de Números */}
+          <div>
+            <Label className="block mb-2">Quantidade de números</Label>
+            <Input
+              type="number"
+              min={1}
+              value={totalNumbers}
+              onChange={e => setTotalNumbers(Number(e.target.value))}
+              required
+            />
+          </div>
+          {/* Valor da cota */}
+          <div>
+            <Label className="block mb-2">Valor da cota</Label>
+            <div className="relative">
+              <span className="absolute left-3 top-3.5 text-muted-foreground">R$</span>
+              <Input
+                placeholder="0,00"
+                className="pl-8 py-6 text-lg"
+                type="number"
+                min={0}
+                value={preco}
+                onChange={e => setPreco(Number(e.target.value))}
+                required
+              />
             </div>
           </div>
-
-          {/* Sorteio */}
+          {/* Prêmio principal */}
           <div>
-            <Label className="font-bold block mb-4">
-              Por onde será feito o sorteio?
-            </Label>
-
-            <Select
-              value={drawLocation}
-              onValueChange={(value) => {
-                const selectedOption = drawOptions.find(opt => opt.value === value);
-                setDrawLocation(value);
-                setDrawTime(selectedOption?.time || '');
-              }}
-            >
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="Escolha uma opção" />
-              </SelectTrigger>
-              <SelectContent>
-                {drawOptions.map((option) => (
-                  <SelectItem key={option.value} value={option.value}>
-                    {option.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-
-            {drawLocation && (
-              <div className="grid grid-cols-2 gap-4 mt-4">
-                <div>
-                  <Label className="block mb-2">Horário do Sorteio</Label>
-                  <Input
-                    placeholder="Hora:Minuto"
-                    value={drawTime}
-                    onChange={(e) => setDrawTime(e.target.value)}
-                    disabled={!!drawOptions.find(opt => opt.value === drawLocation)?.time}
-                  />
-                </div>
-
-                <div>
-                  <Label className="block mb-2">Data do Sorteio</Label>
-                  <Input
-                    type="date"
-                    value={drawDate}
-                    onChange={(e) => setDrawDate(e.target.value)}
-                    min={new Date().toISOString().split('T')[0]}
-                    required
-                  />
-                </div>
-              </div>
-            )}
+            <Label className="block mb-2">Prêmio principal</Label>
+            <Input
+              placeholder="Ex: Bicicleta, 1000 reais"
+              value={premio}
+              onChange={e => setPremio(e.target.value)}
+              required
+            />
           </div>
-
-          {/* Prêmios */}
+          {/* Prêmios adicionais */}
           <div>
-            <Label className="font-bold block mb-4">Prêmios</Label>
+            <Label className="font-bold block mb-4">Prêmios adicionais</Label>
             <div className="mb-4">
               <Label className="block mb-2">Quantidade de Prêmios</Label>
               <Input
@@ -203,7 +233,6 @@ export default function CreateCampaignPage() {
                 placeholder="Digite a quantidade de prêmios"
               />
             </div>
-
             <div className="space-y-2">
               {prizes.map((prize, index) => (
                 <Input
@@ -219,8 +248,140 @@ export default function CreateCampaignPage() {
               ))}
             </div>
           </div>
-
-          {/* Seção de Imagens */}
+          {/* Método de Pagamento */}
+          <div>
+            <Label className="block mb-2">Método de Pagamento</Label>
+            <Input
+              placeholder="Ex: Pix, Cartão"
+              value={metodoPagamento}
+              onChange={e => setMetodoPagamento(e.target.value)}
+              required
+            />
+          </div>
+          {/* Disponível */}
+          <div>
+            <Label className="block mb-2">Disponível?</Label>
+            <select
+              value={disponivel ? "sim" : "nao"}
+              onChange={e => setDisponivel(e.target.value === "sim")}
+              className="border rounded px-2 py-1"
+            >
+              <option value="sim">Sim</option>
+              <option value="nao">Não</option>
+            </select>
+          </div>
+          {/* Sale Mode */}
+          <div>
+            <Label className="block mb-2">Modo de venda</Label>
+            <Input
+              placeholder="Ex: por número, por cota, a dezena"
+              value={saleMode}
+              onChange={e => setSaleMode(e.target.value)}
+              required
+            />
+          </div>
+          {/* Sorteio */}
+          <div>
+            <Label className="font-bold block mb-4">
+              Por onde será feito o sorteio?
+            </Label>
+            <Select
+              value={drawLocation}
+              onValueChange={(value) => {
+                const selectedOption = drawOptions.find(opt => opt.value === value);
+                setDrawLocation(value);
+                setDrawTime(selectedOption?.time || '');
+              }}
+            >
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Escolha uma opção" />
+              </SelectTrigger>
+              <SelectContent>
+                {drawOptions.map((option) => (
+                  <SelectItem key={option.value} value={option.value}>
+                    {option.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            {drawLocation && (
+              <div className="grid grid-cols-2 gap-4 mt-4">
+                <div>
+                  <Label className="block mb-2">Horário do Sorteio</Label>
+                  <Input
+                    placeholder="Hora:Minuto"
+                    value={drawTime}
+                    onChange={(e) => setDrawTime(e.target.value)}
+                    disabled={!!drawOptions.find(opt => opt.value === drawLocation)?.time}
+                  />
+                </div>
+                <div>
+                  <Label className="block mb-2">Data do Sorteio</Label>
+                  <Input
+                    type="date"
+                    value={drawDate}
+                    onChange={(e) => setDrawDate(e.target.value)}
+                    min={new Date().toISOString().split('T')[0]}
+                    required
+                  />
+                </div>
+              </div>
+            )}
+          </div>
+          {/* Canal de Transmissão */}
+          <div>
+            <Label className="block mb-2">Canal de Transmissão</Label>
+            <Input
+              placeholder="Ex: YouTube, Instagram, Facebook"
+              value={canalTransmissao}
+              onChange={e => setCanalTransmissao(e.target.value)}
+              required
+            />
+          </div>
+          {/* Números vendidos */}
+          <div>
+            <Label className="block mb-2">Números vendidos (separados por vírgula)</Label>
+            <Input
+              placeholder="Ex: 1,2,3"
+              value={numerosVendidos.join(",")}
+              onChange={e => setNumerosVendidos(
+                e.target.value
+                  .split(",")
+                  .map(s => s.trim())
+                  .filter(Boolean)
+                  .map(Number)
+                  .filter(n => !isNaN(n))
+              )}
+            />
+          </div>
+          {/* Contatos */}
+          <div>
+            <Label className="block mb-2">Contatos</Label>
+            <div className="flex gap-2 mb-2">
+              <Input
+                placeholder="Nome"
+                value={contatoNome}
+                onChange={e => setContatoNome(e.target.value)}
+              />
+              <Input
+                placeholder="Telefone"
+                value={contatoTelefone}
+                onChange={e => setContatoTelefone(e.target.value)}
+              />
+              <Input
+                placeholder="Avatar URL (opcional)"
+                value={contatoAvatarUrl}
+                onChange={e => setContatoAvatarUrl(e.target.value)}
+              />
+              <Button type="button" onClick={handleAddContato}>Adicionar</Button>
+            </div>
+            <ul>
+              {contatos.map((c, i) => (
+                <li key={i}>{c.nome} - {c.telefone} {c.avatarUrl && `(${c.avatarUrl})`}</li>
+              ))}
+            </ul>
+          </div>
+          {/* Imagens */}
           <div>
             <Label className="font-bold block mb-4">Imagens</Label>
             <div className="space-y-4">
@@ -250,7 +411,6 @@ export default function CreateCampaignPage() {
                   <span className="text-muted-foreground">ou arraste e solte aqui</span>
                 </div>
               </div>
-
               <div className="grid grid-cols-3 gap-4">
                 {images.map((image, index) => (
                   <div key={index} className="relative group">
@@ -283,15 +443,8 @@ export default function CreateCampaignPage() {
               </div>
             </div>
           </div>
-
-          {/* Número de celular */}
-          <div>
-            <Label className="block mb-2">Número de celular</Label>
-            <Input placeholder="(00) 00000-0000" />
-          </div>
-
-          <Button className="w-full py-6 text-lg">Criar Campanha</Button>
-        </div>
+          <Button className="w-full py-6 text-lg" type="submit">Criar Campanha</Button>
+        </form>
       </Card>
     </div>
   );

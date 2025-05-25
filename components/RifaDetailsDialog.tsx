@@ -73,22 +73,38 @@ export function RifaDetailsDialog({
                                 </div>
                             ))}
                         </div>
-                        {rifa.prêmios && (
+                        {/* Prêmios adicionais */}
+                        {rifa.premios && (
                             <div>
-                                <strong>Prêmios:</strong>
+                                <strong>Prêmios adicionais:</strong>
                                 <ul>
-                                    {rifa.prêmios.map((p, i) => (
-                                        <li key={i}>{p}</li>
+                                    {rifa.premios.map((p, i) => (
+                                        <li key={i} className="flex items-center gap-2">
+                                            {p.imagens && p.imagens.length > 0 && (
+                                                <div className="flex gap-1">
+                                                    {p.imagens.map((img, imgIdx) => (
+                                                        <img
+                                                            key={imgIdx}
+                                                            src={img}
+                                                            alt={`Imagem prêmio adicional ${i + 1} - ${imgIdx + 1}`}
+                                                            className="h-8 w-8 object-cover rounded"
+                                                        />
+                                                    ))}
+                                                </div>
+                                            )}
+                                            <span>{p.nome}</span>
+                                        </li>
                                     ))}
                                 </ul>
                             </div>
                         )}
-                        {rifa.imagens && (
+                        {/* Imagens do prêmio principal */}
+                        {rifa.imagensPremioPrincipal && (
                             <div>
-                                <strong>Imagens:</strong>
+                                <strong>Imagens do prêmio principal:</strong>
                                 <div className="flex gap-2 mt-1">
-                                    {rifa.imagens.map((img, i) => (
-                                        <img key={i} src={img} alt={`Imagem ${i + 1}`} className="h-12 w-12 object-cover rounded" />
+                                    {rifa.imagensPremioPrincipal.map((img, i) => (
+                                        <img key={i} src={img} alt={`Imagem principal ${i + 1}`} className="h-12 w-12 object-cover rounded" />
                                     ))}
                                 </div>
                             </div>

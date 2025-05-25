@@ -1,5 +1,6 @@
 // app/compra/[id]/page.tsx
-import PaginaRifa, { RifaConfig } from "@/components/PaginaRifa";
+import PaginaRifa from "@/components/PaginaRifa";
+import PaginaFazendinha from "@/components/PaginaFazendinha";
 import { getRifaById } from "@/lib/getRifaID";
 import { Rifa } from "@/types";
 
@@ -10,9 +11,9 @@ interface Props {
 export default async function CompraRifaPage(props: Props) {
     const params = await props.params;
     const id = params.id;
-    const raw = await getRifaById(id);
+    const rifa = await getRifaById(id);
 
-    if (!raw) {
+    if (!rifa) {
         return (
             <div className="p-8 text-center">
                 ❌ Rifa com id “{id}” não encontrada.
@@ -20,23 +21,9 @@ export default async function CompraRifaPage(props: Props) {
         );
     }
 
-    // mapeia retorno bruto ao formato esperado pelo client
-    const config: RifaConfig = {
-        id: String(raw.id),
-        titulo: raw.titulo,
-        descricao: raw.descricao,
-        progresso: raw.progresso,
-        metodoPagamento: raw.metodoPagamento,
-        disponivel: raw.disponivel,
-        totalNumbers: raw.totalNumbers,
-        preco: raw.preco,
-        premio: typeof raw.premio === "number" ? raw.premio : Number(raw.premio),
-        saleMode: raw.saleMode,
-        numerosVendidos: raw.numerosVendidos,
-        dataSorteio: raw.dataSorteio,
-        canalTransmissao: raw.canalTransmissao,
-        contatos: raw.contatos,
-    };
+    if (rifa.fazendinha) {
+        return <PaginaFazendinha config={rifa} />;
+    }
 
-    return <PaginaRifa config={config} />;
+    return <PaginaRifa config={{ ...rifa, id: String(rifa.id), premio: Number(rifa.premio) }} />;
 }

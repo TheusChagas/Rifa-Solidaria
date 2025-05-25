@@ -23,6 +23,12 @@ export interface Rifa {
     dataSorteio: string;
     canalTransmissao: string;
     contatos: Contato[];
-    imagens?: string[];
-    prêmios?: string[];
+    // imagens do prêmio principal
+    imagensPremioPrincipal?: string[];
+    // até 6 prêmios adicionais, cada um com seu vetor de imagens
+    premios?: {
+        nome: string;
+        imagens?: string[];
+    }[];
+    fazendinha?: boolean; // novo campo
 }

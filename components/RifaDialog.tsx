@@ -21,6 +21,48 @@ export function RifaDialog({ open, onOpenChange, rifa }: RifaDialogProps) {
             <DialogContent>
                 <h2 className="text-xl font-bold">{renderNode(rifa.titulo)}</h2>
                 <p className="text-gray-600">{renderNode(rifa.descricao)}</p>
+                {/* Imagens do prêmio principal */}
+                {rifa.imagensPremioPrincipal && rifa.imagensPremioPrincipal.length > 0 && (
+                    <div className="flex flex-wrap gap-2 justify-center my-2">
+                        {rifa.imagensPremioPrincipal.map((img, idx) => (
+                            <img
+                                key={idx}
+                                src={img}
+                                alt={`Imagem prêmio principal ${idx + 1}`}
+                                width={80}
+                                height={80}
+                                className="object-contain rounded"
+                            />
+                        ))}
+                    </div>
+                )}
+                {/* Prêmios adicionais */}
+                {rifa.premios && rifa.premios.length > 0 && (
+                    <div className="my-2">
+                        <strong>Prêmios adicionais:</strong>
+                        <ul>
+                            {rifa.premios.map((premio, idx) => (
+                                <li key={idx} className="flex items-center gap-2">
+                                    {premio.imagens && premio.imagens.length > 0 && (
+                                        <div className="flex gap-1">
+                                            {premio.imagens.map((img, imgIdx) => (
+                                                <img
+                                                    key={imgIdx}
+                                                    src={img}
+                                                    alt={`Imagem prêmio adicional ${idx + 1} - ${imgIdx + 1}`}
+                                                    width={40}
+                                                    height={40}
+                                                    className="object-contain rounded"
+                                                />
+                                            ))}
+                                        </div>
+                                    )}
+                                    <span>{premio.nome}</span>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                )}
                 <p className="mt-2">Progresso: {renderNode(rifa.progresso)}</p>
                 <p className="mt-1">Preço da rifa: R$ {Number(rifa.preco).toFixed(2)}</p>
                 <p className="mt-1">Método de Pagamento: {renderNode(rifa.metodoPagamento)}</p>

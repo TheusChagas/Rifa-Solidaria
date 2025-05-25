@@ -38,7 +38,7 @@ export interface RifaConfig {
     }[];
 }
 
-export default function PaginaRifa({ config }: { config: RifaConfig }) {
+export default function PaginaRifa({ config }: { config: RifaConfig & { imagensPremioPrincipal?: string[], premios?: { nome: string, imagens?: string[] }[] } }) {
     const {
         titulo,
         descricao,
@@ -52,8 +52,10 @@ export default function PaginaRifa({ config }: { config: RifaConfig }) {
         numerosVendidos,
         dataSorteio,
         canalTransmissao,
-        contatos
-    } = config;
+        contatos,
+        imagensPremioPrincipal,
+        premios
+    } = config as any;
 
     const [numeros, setNumeros] = useState<
         { numero: number; status: "disponivel" | "vendido" | "selecionado" }[]
@@ -102,21 +104,37 @@ export default function PaginaRifa({ config }: { config: RifaConfig }) {
             {/* Cabeçalho */}
             <div className="
                 bg-white
-                flex flex-col md:flex-row     /* coluna até md, row a partir de md */
-                justify-center items-center   /* centraliza nos eixos X e Y */
-                space-y-6 md:space-y-0        /* gap vertical em coluna, zero em row */
-                md:space-x-40                 /* gap horizontal em row */
+                flex flex-col md:flex-row
+                justify-center items-center
+                space-y-6 md:space-y-0
+                md:space-x-40
                 p-6 rounded-lg shadow mb-6
                 text-center">
                 <div>
                     <h1 className="text-3xl font-bold">{titulo}</h1>
-                    <Image
-                        src={logo}
-                        alt="Imagem da rifa"
-                        width={300}
-                        height={300}
-                        className="mx-auto mt-4 object-contain"
-                    />
+                    {/* Imagens do prêmio principal */}
+                    {imagensPremioPrincipal && imagensPremioPrincipal.length > 0 ? (
+                        <div className="flex flex-wrap justify-center gap-4 mt-4">
+                            {imagensPremioPrincipal.map((img: string, idx: number) => (
+                                <img
+                                    key={idx}
+                                    src={img}
+                                    alt={`Imagem prêmio principal ${idx + 1}`}
+                                    width={180}
+                                    height={180}
+                                    className="object-contain rounded"
+                                />
+                            ))}
+                        </div>
+                    ) : (
+                        <Image
+                            src={logo}
+                            alt="Imagem da rifa"
+                            width={300}
+                            height={300}
+                            className="mx-auto mt-4 object-contain"
+                        />
+                    )}
                 </div>
                 <div>
                     <p className="mt-2 text-gray-700">{descricao}</p>
@@ -140,6 +158,34 @@ export default function PaginaRifa({ config }: { config: RifaConfig }) {
                             Prêmio<br />R$ {premio.toFixed(2)}
                         </div>
                     </div>
+
+                    {/* Prêmios adicionais com imagens */}
+                    {premios && premios.length > 0 && (
+                        <div className="mt-4">
+                            <strong>Prêmios adicionais:</strong>
+                            <ul className="mt-2 flex flex-col items-center gap-4">
+                                {premios.map((premio: { nome: string; imagens?: string[] }, idx: number) => (
+                                    <li key={idx} className="flex items-center gap-2">
+                                        {premio.imagens && premio.imagens.length > 0 && (
+                                            <div className="flex gap-2">
+                                                {premio.imagens.map((img, imgIdx) => (
+                                                    <img
+                                                        key={imgIdx}
+                                                        src={img}
+                                                        alt={`Imagem prêmio adicional ${idx + 1} - ${imgIdx + 1}`}
+                                                        width={60}
+                                                        height={60}
+                                                        className="object-contain rounded"
+                                                    />
+                                                ))}
+                                            </div>
+                                        )}
+                                        <span>{premio.nome}</span>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    )}
                 </div>
 
             </div>
@@ -271,7 +317,7 @@ export default function PaginaRifa({ config }: { config: RifaConfig }) {
                 <div>
                     <strong>Suporte / Contatos:</strong>
                     <ul className="mt-1 space-y-1">
-                        {contatos.map((c) => (
+                        {contatos.map((c: { nome: string; telefone: string; avatarUrl?: string }) => (
                             <li key={c.telefone} className="flex items-center">
                                 {c.avatarUrl && (
                                     <img

@@ -15,8 +15,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Rifa } from "@/types";
 
 export default function CreateCampaignPage() {
-  const [numPrizes, setNumPrizes] = useState(1);
-  const [prizes, setPrizes] = useState<string[]>(['']);
+  const [prizes, setPrizes] = useState<string[]>(['', '', '', '', '', '']);
   const [drawLocation, setDrawLocation] = useState('');
   const [drawTime, setDrawTime] = useState('');
   const [drawDate, setDrawDate] = useState('');
@@ -34,10 +33,13 @@ export default function CreateCampaignPage() {
   const [contatoAvatarUrl, setContatoAvatarUrl] = useState('');
   const [contatos, setContatos] = useState<{ nome: string; telefone: string; avatarUrl?: string }[]>([]);
   const [numerosVendidos, setNumerosVendidos] = useState<number[]>([]);
-  const [progresso, setProgresso] = useState<string>("0%");
   const [canalTransmissao, setCanalTransmissao] = useState('');
   const [premio, setPremio] = useState<string | number>('');
-  const [id, setId] = useState<string>("");
+  const [fazendinha, setFazendinha] = useState<boolean>(false); // novo estado
+  const [imagesPremioPrincipal, setImagesPremioPrincipal] = useState<File[]>([]);
+  const [imagesPremiosAdicionais, setImagesPremiosAdicionais] = useState<File[][]>(
+    [[], [], [], [], [], []]
+  );
 
   const drawOptions = [
     { value: 'CANTA GALO', label: 'CANTA GALO', time: '09:20' },
@@ -97,26 +99,59 @@ export default function CreateCampaignPage() {
     }
   }
 
+  function generateRandomId() {
+    return Math.floor(10000 + Math.random() * 90000).toString();
+  }
+
+  // Atualize o handler para imagens do prêmio principal
+  const handleImageUploadPremioPrincipal = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files) {
+      const newImages = Array.from(files);
+      setImagesPremioPrincipal(prev => [...prev, ...newImages]);
+    }
+  };
+
+  // Handler para imagens de cada prêmio adicional
+  const handleImageUploadPremioAdicional = (index: number, e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files) {
+      setImagesPremiosAdicionais(prev => {
+        const newArr = [...prev];
+        newArr[index] = [...(newArr[index] || []), ...Array.from(files)];
+        return newArr;
+      });
+    }
+  };
+
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    // Filtra apenas prêmios preenchidos
+    const premiosAdicionais = prizes
+      .map((nome, idx) => ({
+        nome,
+        imagens: imagesPremiosAdicionais[idx]?.map(img => URL.createObjectURL(img)) || [],
+      }))
+      .filter(p => p.nome.trim() !== "");
     // Monta objeto Rifa
     const rifa: Rifa = {
-      id: id || Date.now().toString(),
+      id: generateRandomId(),
       titulo: title,
       descricao: description,
-      progresso,
       metodoPagamento,
       disponivel,
       preco,
       totalNumbers,
-      premio: premio || prizes[0] || 0,
+      premio: premio || (premiosAdicionais[0]?.nome ?? 0),
       saleMode,
       numerosVendidos,
       dataSorteio: drawDate ? new Date(`${drawDate}T${drawTime || "00:00"}`).toISOString() : "",
       canalTransmissao,
       contatos,
-      imagens: images.map(img => URL.createObjectURL(img)),
-      prêmios: prizes,
+      imagensPremioPrincipal: imagesPremioPrincipal.map(img => URL.createObjectURL(img)),
+      premios: premiosAdicionais,
+      fazendinha,
+      progresso: undefined
     };
     alert("Rifa criada!\n" + JSON.stringify(rifa, null, 2));
   }
@@ -129,15 +164,6 @@ export default function CreateCampaignPage() {
           Insira os dados de como deseja a sua rifa abaixo
         </p>
         <form className="space-y-8" onSubmit={handleSubmit}>
-          {/* ID */}
-          <div>
-            <Label className="block mb-2">ID (opcional)</Label>
-            <Input
-              placeholder="ID único (deixe em branco para gerar automaticamente)"
-              value={id}
-              onChange={e => setId(e.target.value)}
-            />
-          </div>
           {/* Título */}
           <div>
             <Label className="font-bold block mb-4">Título</Label>
@@ -160,27 +186,24 @@ export default function CreateCampaignPage() {
               required
             />
           </div>
-          {/* Progresso */}
-          <div>
-            <Label className="block mb-2">Progresso (%)</Label>
-            <Input
-              type="text"
-              placeholder="Ex: 0%, 50%, 100%"
-              value={progresso}
-              onChange={e => setProgresso(e.target.value)}
-              required
-            />
-          </div>
           {/* Total de Números */}
           <div>
             <Label className="block mb-2">Quantidade de números</Label>
-            <Input
-              type="number"
-              min={1}
-              value={totalNumbers}
-              onChange={e => setTotalNumbers(Number(e.target.value))}
-              required
-            />
+            <Select
+              value={totalNumbers.toString()}
+              onValueChange={value => setTotalNumbers(Number(value))}
+            >
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Selecione a quantidade de números" />
+              </SelectTrigger>
+              <SelectContent>
+                {[10, 50, 100, 200, 500, 1000, 5000, 10000].map(num => (
+                  <SelectItem key={num} value={num.toString()}>
+                    {num}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
           {/* Valor da cota */}
           <div>
@@ -208,43 +231,136 @@ export default function CreateCampaignPage() {
               required
             />
           </div>
+          {/* Imagens do prêmio principal */}
+          <div>
+            <Label className="font-bold block mb-4">Imagens do prêmio principal</Label>
+            <div className="space-y-4">
+              <div
+                className={`relative border-2 border-dashed rounded-lg p-8 text-center transition-colors
+                  ${dragActive ? "border-primary bg-primary/10" : "border-muted"}`}
+                onDragEnter={handleDrag}
+                onDragLeave={handleDrag}
+                onDragOver={handleDrag}
+                onDrop={handleDrop}
+              >
+                <div className="flex flex-col items-center gap-4">
+                  <Input
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    onChange={handleImageUploadPremioPrincipal}
+                    className="hidden"
+                    id="file-upload-premio-principal"
+                  />
+                  <Label
+                    htmlFor="file-upload-premio-principal"
+                    className="cursor-pointer font-medium text-primary underline"
+                  >
+                    Clique para selecionar
+                  </Label>
+                  <span className="text-muted-foreground">ou arraste e solte aqui</span>
+                </div>
+              </div>
+              <div className="grid grid-cols-3 gap-4">
+                {imagesPremioPrincipal.map((image, index) => (
+                  <div key={index} className="relative group">
+                    <img
+                      src={URL.createObjectURL(image)}
+                      alt={`Preview principal ${index + 1}`}
+                      className="w-full h-32 object-cover rounded-md"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setImagesPremioPrincipal(prev => prev.filter((_, i) => i !== index))}
+                      className="absolute -top-2 -right-2 bg-destructive text-white rounded-full p-1
+                        opacity-0 group-hover:opacity-100 transition-opacity"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-4 w-4"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
           {/* Prêmios adicionais */}
           <div>
             <Label className="font-bold block mb-4">Prêmios adicionais</Label>
-            <div className="mb-4">
-              <Label className="block mb-2">Quantidade de Prêmios</Label>
-              <Input
-                type="number"
-                min="1"
-                value={numPrizes}
-                onChange={(e) => {
-                  const value = parseInt(e.target.value);
-                  if (!isNaN(value) && value >= 1) {
-                    setNumPrizes(value);
-                    setPrizes(prev => {
-                      const newPrizes = [...prev];
-                      while (newPrizes.length < value) {
-                        newPrizes.push('');
-                      }
-                      return newPrizes.slice(0, value);
-                    });
-                  }
-                }}
-                placeholder="Digite a quantidade de prêmios"
-              />
-            </div>
-            <div className="space-y-2">
-              {prizes.map((prize, index) => (
-                <Input
-                  key={index}
-                  value={prize}
-                  onChange={(e) => {
-                    const newPrizes = [...prizes];
-                    newPrizes[index] = e.target.value;
-                    setPrizes(newPrizes);
-                  }}
-                  placeholder={`Descrição do prêmio ${index + 1}`}
-                />
+            <div className="grid grid-cols-2 gap-4">
+              {[0, 1, 2, 3, 4, 5].map((index) => (
+                <div key={index} className="flex flex-col gap-2">
+                  <Input
+                    value={prizes[index] || ""}
+                    onChange={e => {
+                      const newPrizes = [...prizes];
+                      newPrizes[index] = e.target.value;
+                      setPrizes(newPrizes);
+                    }}
+                    placeholder={`Nome do prêmio adicional ${index + 1}`}
+                    disabled={index > 0 && !prizes[index - 1].trim()}
+                  />
+                  {/* Imagens do prêmio adicional */}
+                  <Input
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    onChange={e => handleImageUploadPremioAdicional(index, e)}
+                    className="hidden"
+                    id={`file-upload-premio-adicional-${index}`}
+                  />
+                  <Label
+                    htmlFor={`file-upload-premio-adicional-${index}`}
+                    className="cursor-pointer font-medium text-primary underline"
+                  >
+                    Adicionar imagens
+                  </Label>
+                  <div className="grid grid-cols-2 gap-2">
+                    {imagesPremiosAdicionais[index]?.map((img, imgIdx) => (
+                      <div key={imgIdx} className="relative group">
+                        <img
+                          src={URL.createObjectURL(img)}
+                          alt={`Adicional ${index + 1} - Imagem ${imgIdx + 1}`}
+                          className="w-full h-20 object-cover rounded-md"
+                        />
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setImagesPremiosAdicionais(prev => {
+                              const arr = [...prev];
+                              arr[index] = arr[index].filter((_, i) => i !== imgIdx);
+                              return arr;
+                            })
+                          }
+                          className="absolute -top-2 -right-2 bg-destructive text-white rounded-full p-1
+                            opacity-0 group-hover:opacity-100 transition-opacity"
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="h-4 w-4"
+                            viewBox="0 0 20 20"
+                            fill="currentColor"
+                          >
+                            <path
+                              fillRule="evenodd"
+                              d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                              clipRule="evenodd"
+                            />
+                          </svg>
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
               ))}
             </div>
           </div>
@@ -258,17 +374,30 @@ export default function CreateCampaignPage() {
               required
             />
           </div>
-          {/* Disponível */}
-          <div>
-            <Label className="block mb-2">Disponível?</Label>
-            <select
-              value={disponivel ? "sim" : "nao"}
-              onChange={e => setDisponivel(e.target.value === "sim")}
-              className="border rounded px-2 py-1"
-            >
-              <option value="sim">Sim</option>
-              <option value="nao">Não</option>
-            </select>
+          {/* Disponível e Fazendinha */}
+          <div className="flex gap-4">
+            <div>
+              <Label className="block mb-2">Disponível?</Label>
+              <select
+                value={disponivel ? "sim" : "nao"}
+                onChange={e => setDisponivel(e.target.value === "sim")}
+                className="border rounded px-2 py-1"
+              >
+                <option value="sim">Sim</option>
+                <option value="nao">Não</option>
+              </select>
+            </div>
+            <div>
+              <Label className="block mb-2">Rifa do tipo Fazendinha?</Label>
+              <select
+                value={fazendinha ? "sim" : "nao"}
+                onChange={e => setFazendinha(e.target.value === "sim")}
+                className="border rounded px-2 py-1"
+              >
+                <option value="sim">Sim</option>
+                <option value="nao">Não</option>
+              </select>
+            </div>
           </div>
           {/* Sale Mode */}
           <div>
@@ -380,68 +509,6 @@ export default function CreateCampaignPage() {
                 <li key={i}>{c.nome} - {c.telefone} {c.avatarUrl && `(${c.avatarUrl})`}</li>
               ))}
             </ul>
-          </div>
-          {/* Imagens */}
-          <div>
-            <Label className="font-bold block mb-4">Imagens</Label>
-            <div className="space-y-4">
-              <div
-                className={`relative border-2 border-dashed rounded-lg p-8 text-center transition-colors
-                  ${dragActive ? "border-primary bg-primary/10" : "border-muted"}`}
-                onDragEnter={handleDrag}
-                onDragLeave={handleDrag}
-                onDragOver={handleDrag}
-                onDrop={handleDrop}
-              >
-                <div className="flex flex-col items-center gap-4">
-                  <Input
-                    type="file"
-                    accept="image/*"
-                    multiple
-                    onChange={handleImageUpload}
-                    className="hidden"
-                    id="file-upload"
-                  />
-                  <Label
-                    htmlFor="file-upload"
-                    className="cursor-pointer font-medium text-primary underline"
-                  >
-                    Clique para selecionar
-                  </Label>
-                  <span className="text-muted-foreground">ou arraste e solte aqui</span>
-                </div>
-              </div>
-              <div className="grid grid-cols-3 gap-4">
-                {images.map((image, index) => (
-                  <div key={index} className="relative group">
-                    <img
-                      src={URL.createObjectURL(image)}
-                      alt={`Preview ${index + 1}`}
-                      className="w-full h-32 object-cover rounded-md"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => deleteImage(index)}
-                      className="absolute -top-2 -right-2 bg-destructive text-white rounded-full p-1
-                        opacity-0 group-hover:opacity-100 transition-opacity"
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-4 w-4"
-                        viewBox="0 0 20 20"
-                        fill="currentColor"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
-                    </button>
-                  </div>
-                ))}
-              </div>
-            </div>
           </div>
           <Button className="w-full py-6 text-lg" type="submit">Criar Campanha</Button>
         </form>

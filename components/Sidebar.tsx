@@ -19,11 +19,11 @@ export function Sidebar() {
 
     const navItems = [
         { name: "Rifas", href: "/vendedor/rifas" },
-        { name: "Ranking Vendedores", href: "/vendedor/ranking" },
+        { name: "Dados Compradores", href: "/vendedor/compradores" },
         { name: "Histórico de clientes", href: "/vendedor/historico" },
         { name: "Configurações", href: "/vendedor/configuracoes" },
         { name: "Suporte", href: "" },
-        { name: "Afiliações", href: ""},
+        { name: "Afiliados", href: "/vendedor/ranking" },
     ];
 
     return (

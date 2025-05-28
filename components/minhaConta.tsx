@@ -13,9 +13,9 @@ import { useState } from "react";
 
 export default function MinhaConta() {
     const [formData, setFormData] = useState({
-        nome: "vitória",
-        sobrenome: "silva",
-        email: "vitoriasenha18@gmail.com",
+        nome: "",
+        sobrenome: "",
+        email: "",
         telefone: "",
         usuario: "",
         codigoPais: "BR",

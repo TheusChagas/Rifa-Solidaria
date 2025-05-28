@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useMemo } from "react"
+import { useState } from "react"
 import {
     Select,
     SelectContent,
@@ -10,118 +10,10 @@ import {
     SelectValue,
 } from "@/components/ui/select"
 import { Button } from "@/components/ui/button"
-import { EyeOff, ChevronUp, ChevronDown } from "lucide-react"
-import {
-    Table,
-    TableHeader,
-    TableBody,
-    TableRow,
-    TableHead,
-    TableCell,
-} from "@/components/ui/table"
-
-type Row = {
-    position: number
-    sellerName: string
-    amountCollected: string
-    ticketsSold: number
-    campaign: string
-}
-
-// Dados de exemplo
-const rankingData: Row[] = [
-    { position: 1, sellerName: "João Silva", amountCollected: "R$ 2.500,00", ticketsSold: 45, campaign: "campanha-1" },
-    { position: 2, sellerName: "Maria Souza", amountCollected: "R$ 2.300,00", ticketsSold: 42, campaign: "campanha-2" },
-    { position: 3, sellerName: "Carlos Lima", amountCollected: "R$ 2.100,00", ticketsSold: 38, campaign: "campanha-3" },
-    // … mais itens
-    ...Array.from({ length: 27 }, (_, i) => ({
-        position: i + 4,
-        sellerName: `Vendedor ${i + 4}`,
-        amountCollected: `R$ ${(2000 - i * 50).toLocaleString("pt-BR")},00`,
-        ticketsSold: 35 - i,
-        campaign: i % 3 === 0 ? "campanha-1" : i % 3 === 1 ? "campanha-2" : "campanha-3",
-    })),
-]
+import { EyeOff } from "lucide-react"
 
 export default function Ranking() {
-    // filtro e paginação
     const [selectedCampaign, setSelectedCampaign] = useState("all")
-    const [currentPage, setCurrentPage] = useState(1)
-    const itemsPerPage = 10
-
-    // configuração de sort: { key, direction }
-    const [sortConfig, setSortConfig] = useState<{
-        key: keyof Row
-        direction: "asc" | "desc"
-    } | null>(null)
-
-    // sempre volta pra página 1 ao trocar o filtro
-    useEffect(() => {
-        setCurrentPage(1)
-    }, [selectedCampaign])
-
-    // 1) Filtra
-    const filteredData = useMemo(() => {
-        return selectedCampaign === "all"
-            ? rankingData
-            : rankingData.filter((r) => r.campaign === selectedCampaign)
-    }, [selectedCampaign])
-
-    // 2) Ordena
-    const sortedData = useMemo(() => {
-        if (!sortConfig) return filteredData
-
-        return [...filteredData].sort((a, b) => {
-            let aVal: string | number = a[sortConfig.key]
-            let bVal: string | number = b[sortConfig.key]
-
-            // special: converter "R$ 1.234,56" para number
-            if (sortConfig.key === "amountCollected") {
-                const parseAmt = (s: string) =>
-                    parseFloat(s.replace(/[^\d,.-]/g, "").replace(/\./g, "").replace(",", "."))
-                aVal = parseAmt(a.amountCollected)
-                bVal = parseAmt(b.amountCollected)
-            }
-
-            if (typeof aVal === "string" && typeof bVal === "string") {
-                return sortConfig.direction === "asc"
-                    ? aVal.localeCompare(bVal)
-                    : bVal.localeCompare(aVal)
-            }
-            if (typeof aVal === "number" && typeof bVal === "number") {
-                return sortConfig.direction === "asc"
-                    ? aVal - bVal
-                    : bVal - aVal
-            }
-            return 0
-        })
-    }, [filteredData, sortConfig])
-
-    // 3) Paginado sobre sortedData
-    const totalPages = Math.ceil(sortedData.length / itemsPerPage)
-    const start = (currentPage - 1) * itemsPerPage
-    const currentData = sortedData.slice(start, start + itemsPerPage)
-
-    // alterna direção ao clicar no header
-    function handleSort(key: keyof Row) {
-        const direction =
-            !sortConfig || sortConfig.key !== key
-                ? "asc"
-                : sortConfig.direction === "asc"
-                    ? "desc"
-                    : "asc"
-        setSortConfig({ key, direction })
-    }
-
-    // helper para mostrar ícone
-    function SortIcon({ column }: { column: keyof Row }) {
-        if (!sortConfig || sortConfig.key !== column) return null
-        return sortConfig.direction === "asc" ? (
-            <ChevronUp className="w-4 h-4 ml-1" />
-        ) : (
-            <ChevronDown className="w-4 h-4 ml-1" />
-        )
-    }
 
     return (
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -158,83 +50,8 @@ export default function Ranking() {
                 </div>
             </div>
 
-            {/* tabela */}
-            <div className="bg-white rounded-xl shadow-md p-6 lg:p-8 space-y-4">
-                <div className="overflow-x-auto">
-                    <Table className="min-w-[600px]">
-                        <TableHeader>
-                            <TableRow>
-                                <TableHead className="w-[80px]">
-                                    <button
-                                        className="flex items-center"
-                                        onClick={() => handleSort("position")}
-                                    >
-                                        Posição<SortIcon column="position" />
-                                    </button>
-                                </TableHead>
-                                <TableHead>
-                                    <button
-                                        className="flex items-center"
-                                        onClick={() => handleSort("sellerName")}
-                                    >
-                                        Vendedor<SortIcon column="sellerName" />
-                                    </button>
-                                </TableHead>
-                                <TableHead>
-                                    <button
-                                        className="flex items-center"
-                                        onClick={() => handleSort("amountCollected")}
-                                    >
-                                        Arrecadação<SortIcon column="amountCollected" />
-                                    </button>
-                                </TableHead>
-                                <TableHead className="text-right">
-                                    <button
-                                        className="flex items-center justify-end w-full"
-                                        onClick={() => handleSort("ticketsSold")}
-                                    >
-                                        Bilhetes<SortIcon column="ticketsSold" />
-                                    </button>
-                                </TableHead>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            {currentData.map((item) => (
-                                <TableRow key={item.position}>
-                                    <TableCell className="font-medium">
-                                        {item.position}
-                                    </TableCell>
-                                    <TableCell>{item.sellerName}</TableCell>
-                                    <TableCell>{item.amountCollected}</TableCell>
-                                    <TableCell className="text-right">
-                                        {item.ticketsSold}
-                                    </TableCell>
-                                </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
-                </div>
-
-                {/* paginação */}
-                <div className="flex justify-end items-center gap-4 pt-4">
-                    <button
-                        onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                        disabled={currentPage === 1}
-                        className="px-4 py-2 bg-gray-100 rounded disabled:opacity-50 hover:bg-gray-200"
-                    >
-                        Anterior
-                    </button>
-                    <span className="text-sm text-gray-600">
-                        Página {currentPage} de {totalPages}
-                    </span>
-                    <button
-                        onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-                        disabled={currentPage === totalPages}
-                        className="px-4 py-2 bg-gray-100 rounded disabled:opacity-50 hover:bg-gray-200"
-                    >
-                        Próxima
-                    </button>
-                </div>
+            <div className="bg-white rounded-xl shadow-md p-6 lg:p-8 space-y-4 text-gray-500 text-center">
+                Em breve você poderá acompanhar o ranking dos vendedores nesta página.
             </div>
         </div>
     )

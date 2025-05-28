@@ -45,8 +45,9 @@ export default function Page() {
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2 p-5">
           <div className='items-center justify-self-center'>
-          <Image src={Logo} alt='Logo' className='w-24 h-24 md:w-32 md:h-32' priority={true} ></Image>
-          <img src="assets/logo rifa sem fundo.png" alt="" />
+          <Image src={Logo} alt='Logo' className='w-24 h-24 md:w-32 md:h-32' priority={true} />
+          {/* Corrigir para usar Image do Next.js ou garantir caminho absoluto */}
+          <Image src="/assets/logo rifa sem fundo.png" alt="" width={128} height={128} />
 
           </div>
          

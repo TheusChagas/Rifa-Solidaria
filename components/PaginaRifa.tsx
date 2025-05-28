@@ -309,7 +309,7 @@ export default function PaginaRifa({ config }: { config: RifaConfig & { imagensP
             <div className="bg-white p-4 rounded-lg shadow space-y-2 text-gray-600">
                 <p>
                     <strong>Data do sorteio:</strong>{" "}
-                    {new Date(dataSorteio).toLocaleString("pt-BR")}
+                    {new Date(dataSorteio).toLocaleString("pt-BR", { timeZone: "America/Sao_Paulo" })}
                 </p>
                 <p>
                     <strong>Transmissão ao vivo:</strong> {canalTransmissao}

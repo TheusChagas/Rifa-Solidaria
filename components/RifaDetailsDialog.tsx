@@ -59,7 +59,7 @@ export function RifaDetailsDialog({
                         <p><strong>Preço:</strong> R$ {Number(rifa.preco).toFixed(2)}</p>
                         <p><strong>Prêmio:</strong> {rifa.premio}</p>
                         <p><strong>Números Vendidos:</strong> {rifa.numerosVendidos.join(', ')}</p>
-                        <p><strong>Data Sorteio:</strong> {new Date(rifa.dataSorteio).toLocaleString()}</p>
+                        <p><strong>Data Sorteio:</strong> {new Date(rifa.dataSorteio).toLocaleString("pt-BR", { timeZone: "America/Sao_Paulo" })}</p>
                         <p><strong>Canal:</strong> {rifa.canalTransmissao}</p>
                         <p><strong>Descrição:</strong> {typeof rifa.descricao === "string" ? rifa.descricao : ""}</p>
                         <p><strong>Progresso:</strong> {typeof rifa.progresso === "string" || typeof rifa.progresso === "number" ? rifa.progresso : ""}%</p>

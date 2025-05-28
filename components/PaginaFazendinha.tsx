@@ -107,7 +107,7 @@ export default function PaginaFazendinha({ config }: { config: Rifa }) {
                         <strong>Prêmio principal:</strong> R$ {premio !== undefined ? Number(premio).toFixed(2) : ""}
                     </div>
                     <div className="mt-2 text-gray-700">
-                        <strong>Data do sorteio:</strong> {new Date(dataSorteio).toLocaleString("pt-BR")}
+                        <strong>Data do sorteio:</strong> {new Date(dataSorteio).toLocaleString("pt-BR", { timeZone: "America/Sao_Paulo" })}
                     </div>
                     <div className="mt-2 text-gray-700">
                         <strong>Transmissão ao vivo:</strong> {canalTransmissao}

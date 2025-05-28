@@ -55,7 +55,7 @@ export const rifasMockBase: Record<string, Rifa> = {
         id: "3",
         titulo: "Rifa do Bem",
         descricao: "Participe e ajude a ONG Amigos dos Animais. Prêmio: Bicicleta Aro 29.",
-        progresso: `${Math.floor(Math.random() * 99) + 1}%`,
+        progresso: "45%", // valor fixo para evitar hydration error
         metodoPagamento: "Pix, Boleto",
         disponivel: true,
         preco: 5.00,
@@ -80,7 +80,7 @@ export const rifasMockBase: Record<string, Rifa> = {
         id: "4",
         titulo: "Rifa dos Sonhos",
         descricao: "Concorra a uma viagem e ajude projetos sociais.",
-        progresso: `${Math.floor(Math.random() * 99) + 1}%`,
+        progresso: "67%", // valor fixo para evitar hydration error
         metodoPagamento: "Cartão, Pix",
         disponivel: true,
         preco: 15.00,

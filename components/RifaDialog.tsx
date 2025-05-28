@@ -71,7 +71,7 @@ export function RifaDialog({ open, onOpenChange, rifa }: RifaDialogProps) {
                 <p className="mt-1">Prêmio: R$ {Number(rifa.premio).toFixed(2)}</p>
                 <p className="mt-1">Modo de venda: {rifa.saleMode}</p>
                 <p className="mt-1">Números vendidos: {rifa.numerosVendidos && rifa.numerosVendidos.length > 0 ? rifa.numerosVendidos.join(", ") : "Nenhum"}</p>
-                <p className="mt-1">Data do sorteio: {new Date(rifa.dataSorteio).toLocaleString("pt-BR")}</p>
+                <p className="mt-1">Data do sorteio: {new Date(rifa.dataSorteio).toLocaleString("pt-BR", { timeZone: "America/Sao_Paulo" })}</p>
                 <p className="mt-1">Transmissão: {rifa.canalTransmissao}</p>
                 <div className="mt-2">
                     <strong>Contatos:</strong>

@@ -63,7 +63,7 @@ export default function Home() {
             >
                 <div
                     ref={bgRef}
-                    className="fixed top-0 left-0 w-full h-full bg-[url(@/assets/test.png)] bg-no-repeat bg-cover bg-center transition-transform duration-200 ease-out"
+                    className="fixed top-0 left-0 w-full h-full bg-[url('/_next/static/media/test.png')] bg-no-repeat bg-cover bg-center transition-transform duration-200 ease-out"
                     style={{ zIndex: -20, transform: "scale(1.1) translate(0, 0)" }}
                 ></div>
                 <div

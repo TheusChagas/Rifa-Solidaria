@@ -21,7 +21,6 @@ export function Sidebar() {
         { name: "Rifas", href: "/vendedor/rifas" },
         { name: "Compradores", href: "/vendedor/compradores" },
         { name: "Configurações", href: "/vendedor/configuracoes" },
-        { name: "Ranking", href: "/vendedor/ranking" },
         { name: "Afiliados", href: "/vendedor/afiliados" },
         { name: "Suporte", href: "/vendedor/suporte" },
     ];

@@ -81,10 +81,11 @@ export default function MinhasRedesSociais() {
             <form onSubmit={handleSubmit} className="space-y-4">
                 {redes.map((rede, idx) => (
                     <div key={rede.nome}>
-                        <Label className="flex items-center">
+                        <Label className="flex items-center mb-2">
                             {icons[rede.nome] || null}
                             <span className="mr-[32px]">{rede.nome}</span>
                         </Label>
+                        <div className="mb-2" />
                         <Input
                             placeholder={`Link do ${rede.nome}`}
                             value={rede.url}

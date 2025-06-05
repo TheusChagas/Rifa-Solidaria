@@ -132,13 +132,14 @@ export default function Rifas() {
                                         setSelectedRifa(rifa);
                                         setDialogOpen(true);
                                     }}
+                                    imagensPremioPrincipal={rifa.imagensPremioPrincipal} // nova prop
                                 />
                             </div>
                         ))}
                         <div className="min-w-[50px]" />
                     </div>
                 </div>
-                <div className="pointer-events-none absolute top-0 right-0 h-[95%] w-24 bg-gradient-to-l from-branco-200 to-transparent" />
+                {/* Removido gradiente e adicionada borda no Card */}
             </div>
 
             {/* Dialog para visualizar os detalhes da rifa */}

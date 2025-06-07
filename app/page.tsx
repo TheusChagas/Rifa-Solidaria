@@ -71,15 +71,16 @@ export default function Home() {
                     style={{ zIndex: -10 }}
                 ></div>
                 <div className="relative max-w-4xl mx-auto">
-                    <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold px-4 text-white drop-shadow-lg">
+                    <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold px-4 text-white drop-shadow-lg leading-relaxed">
                         Desperte o{" "}
                         <span className="text-green-300 mt-16">
                             <CarrosselVertical
-                                words={["Teste", "Inovação", "Excelência"]}
+                                words={["sucesso", "potencial", "lucro"]}
                                 interval={2500} // opcional, pois o padrão é 3000ms
                             />
                         </span>{" "}
-                        em você e comece a vender rifas de sucesso!
+                        em você e<br />
+                        comece a vender rifas de sucesso!
                     </h2>
                     <p className="text-gray-100 text-base sm:text-lg mt-6 md:mt-12 mb-8 drop-shadow">
                         Uma solução abrangente para simplificar a criação e gestão das suas rifas.

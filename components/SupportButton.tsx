@@ -7,10 +7,12 @@ export function SupportButton() {
     return (
         <Button className={cn(
             buttonVariants({ variant: "outline", size: "lg" }),
-            "w-[75%] md:w-[300px] h-[55px] rounded-xl border-2 border-green-500",
-            "text-green-500 text-lg font-bold hover:bg-green-500 hover:text-white",
-            "hover:scale-[103%] md:hover:scale-[110%] transition-transform duration-300",
-            "shadow-lg hover:shadow-xl"
+            "w-[280px] md:w-[240px] h-[50px] rounded-full",
+            "border-2 border-slate-300 text-slate-700 font-semibold text-base",
+            "bg-white hover:bg-gray-50 hover:border-slate-400",
+            "shadow-lg hover:shadow-xl",
+            "hover:scale-105 transition-all duration-300",
+            "backdrop-blur-sm"
         )}>
             FALAR COM SUPORTE
         </Button>

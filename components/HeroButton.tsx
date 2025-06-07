@@ -16,20 +16,25 @@ export function HeroButtons({ onScrollToSection }: HeroButtonsProps) {
     };
 
     return (
-        <div className="mt-12 md:mt-24 flex flex-col md:flex-row gap-4 md:gap-0 items-center justify-center md:justify-between md:mx-16">
+        <div className="mt-12 md:mt-16 flex flex-col md:flex-row gap-4 md:gap-6 items-center justify-center">
             <Button onClick={handleStartClick} className={cn(
-                buttonVariants({ variant: "outline", size: "lg" }),
-                "w-[75%] md:w-[220px] h-[45px] rounded-xl border-2 border-green-500",
-                "text-green-500 font-semibold hover:bg-green-500 hover:text-white",
-                "hover:scale-[103%] md:hover:scale-[115%] transition-transform"
+                buttonVariants({ variant: "default", size: "lg" }),
+                "w-[280px] md:w-[240px] h-[50px] rounded-full",
+                "bg-green-500 hover:bg-green-600 text-white font-semibold text-base",
+                "shadow-lg hover:shadow-xl border-2 border-green-400",
+                "hover:scale-105 transition-all duration-300",
+                "backdrop-blur-sm"
             )}>
                 Quero começar!
             </Button>
             <Button className={cn(
                 buttonVariants({ variant: "outline", size: "lg" }),
-                "w-[75%] md:w-[220px] h-[45px] rounded-xl border-2 border-green-500",
-                "text-green-500 font-semibold hover:bg-green-500 hover:text-white",
-                "hover:scale-[103%] md:hover:scale-[115%] transition-transform"
+                "w-[280px] md:w-[240px] h-[50px] rounded-full",
+                "border-2 border-white/60 text-slate-700 font-semibold text-base",
+                "bg-white/80 hover:bg-white hover:border-white",
+                "shadow-lg hover:shadow-xl",
+                "hover:scale-105 transition-all duration-300",
+                "backdrop-blur-sm"
             )}>
                 Saber mais
             </Button>

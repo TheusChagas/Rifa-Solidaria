@@ -107,14 +107,6 @@ export function Navbar({ isHeroVisible, onScrollToSection, onScrollToSobre, onSc
                         </button>
                     </div>
                     <div className="flex gap-0">
-                        {!isLoading && isLoggedIn && (
-                            <Button
-                                variant="ghost"
-                                className="text-sm font-medium hover:text-green-500 transition-colors"
-                            >
-                                <Link href="/vendedor/rifas" className="font-bold">Vendedor</Link>
-                            </Button>
-                        )}
                         <Button
                             variant="outline"
                             className="bg-green-500 text-white hover:bg-green-600 hover:text-white ml-6"
@@ -170,19 +162,6 @@ export function Navbar({ isHeroVisible, onScrollToSection, onScrollToSobre, onSc
                                     Contato
                                 </button>
                             </DropdownMenuItem>
-
-                            {/* Botão Vendedor apenas no dropdown mobile - só aparece se logado */}
-                            {!isLoading && isLoggedIn && (
-                                <DropdownMenuItem className="w-full" asChild>
-                                    <Link
-                                        href="/vendedor/rifas"
-                                        className="flex justify-center px-4 py-2 bg-blue-500 text-white hover:bg-blue-600 rounded-md mx-2 my-1 font-bold"
-                                        onClick={() => setIsOpen(false)}
-                                    >
-                                        Vendedor
-                                    </Link>
-                                </DropdownMenuItem>
-                            )}
 
                             {/* Botão de Login/Logout apenas no dropdown mobile */}
                             <DropdownMenuItem className="w-full" asChild>

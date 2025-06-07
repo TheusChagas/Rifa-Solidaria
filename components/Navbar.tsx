@@ -18,9 +18,12 @@ interface NavbarProps {
     // A propriedade isHeroVisible permanece na interface para compatibilidade, 
     // mas não é mais utilizada para alterar o estilo da Navbar.
     isHeroVisible: boolean;
+    onScrollToSection?: () => void;
+    onScrollToSobre?: () => void;
+    onScrollToContato?: () => void;
 }
 
-export function Navbar({ isHeroVisible }: NavbarProps) {
+export function Navbar({ isHeroVisible, onScrollToSection, onScrollToSobre, onScrollToContato }: NavbarProps) {
     const [isOpen, setIsOpen] = useState(false);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
@@ -52,6 +55,27 @@ export function Navbar({ isHeroVisible }: NavbarProps) {
     // A Navbar agora tem sempre background branco, com borda inferior e sombra para destacá-la
     const navbarStyle = "fixed top-0 left-0 w-full z-50 bg-white border-b shadow-md transition-all duration-300";
 
+    const handleInicioClick = (e: React.MouseEvent) => {
+        e.preventDefault();
+        if (onScrollToSection) {
+            onScrollToSection();
+        }
+    };
+
+    const handleSobreClick = (e: React.MouseEvent) => {
+        e.preventDefault();
+        if (onScrollToSobre) {
+            onScrollToSobre();
+        }
+    };
+
+    const handleContatoClick = (e: React.MouseEvent) => {
+        e.preventDefault();
+        if (onScrollToContato) {
+            onScrollToContato();
+        }
+    };
+
     return (
         <nav className={navbarStyle}>
             <div className="container mx-auto flex h-[4rem] items-center justify-between px-4">
@@ -63,15 +87,24 @@ export function Navbar({ isHeroVisible }: NavbarProps) {
                 {/* Desktop Navigation */}
                 <div className="hidden md:flex items-center gap-1">
                     <div className="flex gap-6">
-                        {navItems.map((item) => (
-                            <Link
-                                key={item.name}
-                                href={item.href}
-                                className="text-sm font-medium hover:text-green-500 transition-colors"
-                            >
-                                {item.name}
-                            </Link>
-                        ))}
+                        <button
+                            onClick={handleInicioClick}
+                            className="text-sm font-medium hover:text-green-500 transition-colors cursor-pointer"
+                        >
+                            Início
+                        </button>
+                        <button
+                            onClick={handleSobreClick}
+                            className="text-sm font-medium hover:text-green-500 transition-colors cursor-pointer"
+                        >
+                            Sobre
+                        </button>
+                        <button
+                            onClick={handleContatoClick}
+                            className="text-sm font-medium hover:text-green-500 transition-colors cursor-pointer"
+                        >
+                            Contato
+                        </button>
                     </div>
                     <div className="flex gap-0">
                         {!isLoading && isLoggedIn && (
@@ -104,18 +137,39 @@ export function Navbar({ isHeroVisible }: NavbarProps) {
                             )}
                         </DropdownMenuTrigger>
                         <DropdownMenuContent className="w-48 mt-2 mr-4">
-                            {/* Itens do menu */}
-                            {navItems.map((item) => (
-                                <DropdownMenuItem key={item.name} asChild>
-                                    <Link
-                                        href={item.href}
-                                        className="cursor-pointer px-4 py-2 hover:bg-gray-100"
-                                        onClick={() => setIsOpen(false)}
-                                    >
-                                        {item.name}
-                                    </Link>
-                                </DropdownMenuItem>
-                            ))}
+                            <DropdownMenuItem asChild>
+                                <button
+                                    onClick={(e) => {
+                                        handleInicioClick(e);
+                                        setIsOpen(false);
+                                    }}
+                                    className="cursor-pointer px-4 py-2 hover:bg-gray-100 w-full text-left"
+                                >
+                                    Início
+                                </button>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem asChild>
+                                <button
+                                    onClick={(e) => {
+                                        handleSobreClick(e);
+                                        setIsOpen(false);
+                                    }}
+                                    className="cursor-pointer px-4 py-2 hover:bg-gray-100 w-full text-left"
+                                >
+                                    Sobre
+                                </button>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem asChild>
+                                <button
+                                    onClick={(e) => {
+                                        handleContatoClick(e);
+                                        setIsOpen(false);
+                                    }}
+                                    className="cursor-pointer px-4 py-2 hover:bg-gray-100 w-full text-left"
+                                >
+                                    Contato
+                                </button>
+                            </DropdownMenuItem>
 
                             {/* Botão Vendedor apenas no dropdown mobile - só aparece se logado */}
                             {!isLoading && isLoggedIn && (

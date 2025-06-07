@@ -55,8 +55,8 @@ export default function Page() {
             const data = await response.json();
 
             if (data.success) {
-                // Redirecionar para a página inicial ou dashboard
-                router.push('/');
+                // Redirecionar para a página do vendedor
+                router.push('/vendedor');
                 router.refresh(); // Refresh para atualizar o estado da navbar
             } else {
                 setError(data.message || 'Erro ao fazer login');

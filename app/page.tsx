@@ -12,7 +12,10 @@ import { CarrosselVertical } from "@/components/CarroselVertical";
 export default function Home() {
     const heroRef = useRef<HTMLElement>(null);
     const bgRef = useRef<HTMLDivElement>(null);
+    const simplesAssimRef = useRef<HTMLElement>(null);
+    const contatoRef = useRef<HTMLElement>(null);
     const [isHeroVisible, setIsHeroVisible] = useState(true);
+    const [isPinging, setIsPinging] = useState(false);
 
     useEffect(() => {
         const observer = new IntersectionObserver(
@@ -52,14 +55,62 @@ export default function Home() {
         }
     };
 
+    const scrollToHero = () => {
+        // Only trigger bounce animation if user is at the top of the page
+        if (window.scrollY <= 100) {
+            setIsPinging(true);
+            setTimeout(() => setIsPinging(false), 600);
+        }
+        
+        // Always scroll to hero section
+        heroRef.current?.scrollIntoView({ 
+            behavior: 'smooth',
+            block: 'start'
+        });
+    };
+
+    const scrollToSimplesAssim = () => {
+        simplesAssimRef.current?.scrollIntoView({ 
+            behavior: 'smooth',
+            block: 'center'
+        });
+    };
+
+    const scrollToContato = () => {
+        contatoRef.current?.scrollIntoView({ 
+            behavior: 'smooth',
+            block: 'center'
+        });
+    };
+
     return (
         <main className="flex flex-col items-center text-center overflow-x-hidden">
-            <Navbar isHeroVisible={isHeroVisible} />
+            <style jsx>{`
+                .smooth-bounce {
+                    animation: smoothBounce 0.6s ease-in-out;
+                }
+                
+                @keyframes smoothBounce {
+                    0%, 100% {
+                        transform: translateY(0);
+                    }
+                    30% {
+                        transform: translateY(-6px);
+                    }
+                }
+            `}</style>
+            
+            <Navbar 
+                isHeroVisible={isHeroVisible} 
+                onScrollToSection={scrollToHero}
+                onScrollToSobre={scrollToSimplesAssim}
+                onScrollToContato={scrollToContato}
+            />
             <section
                 ref={heroRef}
                 onMouseMove={handleMouseMove}
                 onMouseLeave={handleMouseLeave}
-                className="relative w-full text-center py-16 md:py-40"
+                className="relative w-full text-center min-h-screen flex items-center justify-center py-16 md:py-40"
             >
                 <div
                     ref={bgRef}
@@ -70,7 +121,7 @@ export default function Home() {
                     className="absolute inset-0 bg-gradient-to-b from-slate-100 to-zinc-900 opacity-80"
                     style={{ zIndex: -10 }}
                 ></div>
-                <div className="relative max-w-4xl mx-auto">
+                <div className={`relative max-w-4xl mx-auto ${isPinging ? 'smooth-bounce' : ''}`}>
                     <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold px-4 text-white drop-shadow-lg leading-relaxed">
                         Desperte o{" "}
                         <span className="text-green-300 mt-16">
@@ -88,36 +139,44 @@ export default function Home() {
                     <HeroButtons />
                 </div>
             </section>
-            <section className="relative z-20 w-full bg-green-500 text-white py-12 md:py-16 px-6 sm:px-12">
-                <h3 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6">Simples assim.</h3>
-                <p className="text-gray-200 text-sm sm:text-lg mb-8 sm:mb-12">
-                    Simplicidade e tranquilidade na criação das suas rifas.
-                </p>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-10 lg:gap-12 max-w-5xl mx-auto">
-                    {[Play, Lightbulb, Send, DollarSign].map((Icon, index) => (
-                        <div
-                            key={index}
-                            className="flex flex-col items-center p-6 space-y-4 group transition-all duration-300"
-                        >
-                            <div className="p-4 rounded-2xl bg-white/10 backdrop-blur-sm hover:bg-white/20 transition-all duration-300 shadow-xl hover:shadow-2xl">
-                                <Icon
-                                    className={cn(
-                                        "w-16 h-16 sm:w-14 sm:h-14 lg:w-16 lg:h-16",
-                                        "text-white drop-shadow-[0_5px_15px_rgba(0,0,0,0.3)]",
-                                        "transition-transform duration-300",
-                                        "md:group-hover:scale-[125%]",
-                                        "active:scale-105"
-                                    )}
-                                />
+            <section 
+                ref={simplesAssimRef}
+                className="relative z-20 w-full bg-green-500 text-white min-h-screen flex flex-col items-center justify-center py-12 md:py-16 px-6 sm:px-12"
+            >
+                <div className="w-full max-w-5xl mx-auto">
+                    <h3 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6">Simples assim.</h3>
+                    <p className="text-gray-200 text-sm sm:text-lg mb-8 sm:mb-12">
+                        Simplicidade e tranquilidade na criação das suas rifas.
+                    </p>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-10 lg:gap-12">
+                        {[Play, Lightbulb, Send, DollarSign].map((Icon, index) => (
+                            <div
+                                key={index}
+                                className="flex flex-col items-center p-6 space-y-4 group transition-all duration-300"
+                            >
+                                <div className="p-4 rounded-2xl bg-white/10 backdrop-blur-sm hover:bg-white/20 transition-all duration-300 shadow-xl hover:shadow-2xl">
+                                    <Icon
+                                        className={cn(
+                                            "w-16 h-16 sm:w-14 sm:h-14 lg:w-16 lg:h-16",
+                                            "text-white drop-shadow-[0_5px_15px_rgba(0,0,0,0.3)]",
+                                            "transition-transform duration-300",
+                                            "md:group-hover:scale-[125%]",
+                                            "active:scale-105"
+                                        )}
+                                    />
+                                </div>
+                                <p className="text-sm sm:text-base lg:text-lg font-medium">
+                                    {["Comece", "Crie", "Compartilhe", "Ganhe"][index]}
+                                </p>
                             </div>
-                            <p className="text-sm sm:text-base lg:text-lg font-medium">
-                                {["Comece", "Crie", "Compartilhe", "Ganhe"][index]}
-                            </p>
-                        </div>
-                    ))}
+                        ))}
+                    </div>
                 </div>
             </section>
-            <section className="w-full text-center py-12 md:py-24 px-4 space-y-8 bg-zinc-50">
+            <section 
+                ref={contatoRef}
+                className="w-full text-center py-20 md:py-32 px-4 space-y-8 bg-zinc-50"
+            >
                 <h3 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-6 md:mb-8">
                     PRECISA DE AJUDA?
                 </h3>

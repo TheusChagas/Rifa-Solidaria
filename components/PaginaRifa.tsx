@@ -10,6 +10,12 @@ import {
     DialogHeader,
     DialogTitle,
 } from "@/components/ui/dialog";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -139,6 +145,72 @@ export default function PaginaRifa({ config }: { config: RifaConfig & { imagensP
 
     return (
         <div className="min-h-screen bg-yellow-50 p-6">
+            {/* Novo Cabeçalho Simplificado */}
+            <div className="bg-white p-6 rounded-lg shadow mb-6 relative overflow-hidden">
+                <div className="relative z-10">
+                    <div className="text-center mb-6">
+                        <h1 className="text-4xl font-bold text-gray-800 mb-3">{titulo}</h1>
+                        <p className="text-lg text-gray-600 mb-4">{descricao}</p>
+                        <p className="text-sm text-gray-500 font-medium">{saleMode}</p>
+                    </div>
+
+                    {/* Lista de Prêmios */}
+                    {(premios && premios.length > 0) && (
+                        <div className="bg-transparent rounded-lg p-4">
+                            {/* Primeiro Prêmio Centralizado */}
+                            <div className="text-center mb-2">
+                                <div className="bg-white rounded-lg border border-gray-200 p-4 inline-block shadow-sm">
+                                    <h3 className="font-bold text-xl text-gray-800">🏆 1° {premios[0].nome}</h3>
+                                </div>
+                            </div>
+
+                            {/* Dropdown de Prêmios Adicionais */}
+                            {premios.length > 1 && (
+                                <div className="flex justify-center">
+                                    <DropdownMenu>
+                                        <DropdownMenuTrigger asChild>
+                                            <Button variant="outline" className="bg-white border border-gray-200 px-4 py-2 rounded-lg shadow-sm hover:bg-gray-50 flex items-center gap-2">
+                                                🎁 Prêmios Adicionais
+                                                <div className="relative">
+                                                    <svg 
+                                                        className="w-4 h-4 text-gray-600" 
+                                                        fill="none" 
+                                                        stroke="currentColor" 
+                                                        viewBox="0 0 24 24"
+                                                    >
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                                    </svg>
+                                                    <div className="absolute inset-0 animate-ping">
+                                                        <svg 
+                                                            className="w-4 h-4 text-gray-400 opacity-75" 
+                                                            fill="none" 
+                                                            stroke="currentColor" 
+                                                            viewBox="0 0 24 24"
+                                                        >
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                                        </svg>
+                                                    </div>
+                                                </div>
+                                            </Button>
+                                        </DropdownMenuTrigger>
+                                        <DropdownMenuContent className="w-56" align="center">
+                                            {premios.slice(1).map((premio: { nome: string; imagens?: string[] }, idx: number) => (
+                                                <DropdownMenuItem key={idx} className="flex items-center gap-2">
+                                                    <span className="bg-gray-600 text-white font-bold px-2 py-1 rounded-full text-xs">
+                                                        {idx + 2}°
+                                                    </span>
+                                                    <span>{premio.nome}</span>
+                                                </DropdownMenuItem>
+                                            ))}
+                                        </DropdownMenuContent>
+                                    </DropdownMenu>
+                                </div>
+                            )}
+                        </div>
+                    )}
+                </div>
+            </div>
+
             {/* Cabeçalho */}
             <div className="bg-white p-6 rounded-lg shadow mb-6">
                 {/* Layout Desktop */}
@@ -213,105 +285,6 @@ export default function PaginaRifa({ config }: { config: RifaConfig & { imagensP
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
-                    {/* Baixo Esquerda - Prêmio Principal */}
-                    <div>
-                        <h3 className="font-semibold text-lg text-gray-800 mb-4 flex items-center gap-2">
-                            🏆 Prêmio Principal
-                        </h3>
-                        
-                        {/* Prêmio principal - primeiro item do array de prêmios ou imagens principais */}
-                        {premios && premios.length > 0 ? (
-                            <div className="bg-green-50 p-4 rounded-lg border border-green-200 mb-4">
-                                <p className="font-bold text-xl text-green-800 mb-3 text-center">{premios[0].nome}</p>
-                                <div className="flex flex-wrap gap-4 mb-4">
-                                    <img
-                                        src={selectedMainImage || (premios[0].imagens && premios[0].imagens.length > 0 ? premios[0].imagens[0] : "")}
-                                        alt="Prêmio principal"
-                                        width={380}
-                                        height={380}
-                                        className="object-contain rounded border-2 border-green-300"
-                                        onError={(e) => {
-                                            e.currentTarget.src = "/placeholder.png";
-                                        }}
-                                    />
-                                </div>
-                                
-                                {/* Carousel de imagens */}
-                                {((premios[0].imagens && premios[0].imagens.length > 1) || (imagensPremioPrincipal && imagensPremioPrincipal.length > 1)) && (
-                                    <div className="overflow-x-auto">
-                                        <div className="flex gap-2 pb-2">
-                                            {(premios[0].imagens || imagensPremioPrincipal || []).map((img: string, idx: number) => (
-                                                <img
-                                                    key={idx}
-                                                    src={img}
-                                                    alt={`Prêmio principal ${idx + 1}`}
-                                                    width={70}
-                                                    height={70}
-                                                    className={`object-contain rounded border-2 cursor-pointer hover:opacity-80 transition-opacity flex-shrink-0 ${
-                                                        selectedMainImage === img ? 'border-green-600 border-4' : 'border-green-300'
-                                                    }`}
-                                                    onClick={() => setSelectedMainImage(img)}
-                                                    onError={(e) => {
-                                                        e.currentTarget.src = "/placeholder.png";
-                                                    }}
-                                                />
-                                            ))}
-                                        </div>
-                                    </div>
-                                )}
-                            </div>
-                        ) : imagensPremioPrincipal && imagensPremioPrincipal.length > 0 ? (
-                            <div className="bg-green-50 p-4 rounded-lg border border-green-200 mb-4">
-                                <div className="flex flex-wrap gap-4 mb-4">
-                                    <img
-                                        src={selectedMainImage || imagensPremioPrincipal[0]}
-                                        alt="Prêmio principal"
-                                        width={320}
-                                        height={320}
-                                        className="object-contain rounded border-2 border-green-300"
-                                        onError={(e) => {
-                                            e.currentTarget.src = "/placeholder.png";
-                                        }}
-                                    />
-                                </div>
-                                
-                                {/* Carousel de imagens */}
-                                {imagensPremioPrincipal.length > 1 && (
-                                    <div className="overflow-x-auto">
-                                        <div className="flex gap-2 pb-2">
-                                            {imagensPremioPrincipal.map((img: string, idx: number) => (
-                                                <img
-                                                    key={idx}
-                                                    src={img}
-                                                    alt={`Prêmio principal ${idx + 1}`}
-                                                    width={70}
-                                                    height={70}
-                                                    className={`object-contain rounded border-2 cursor-pointer hover:opacity-80 transition-opacity flex-shrink-0 ${
-                                                        selectedMainImage === img ? 'border-green-600 border-4' : 'border-green-300'
-                                                    }`}
-                                                    onClick={() => setSelectedMainImage(img)}
-                                                    onError={(e) => {
-                                                        e.currentTarget.src = "/placeholder.png";
-                                                    }}
-                                                />
-                                            ))}
-                                        </div>
-                                    </div>
-                                )}
-                            </div>
-                        ) : (
-                            <div className="bg-green-50 p-4 rounded-lg border border-green-200 mb-4">
-                                <Image
-                                    src={logo}
-                                    alt="Prêmio da rifa"
-                                    width={320}
-                                    height={320}
-                                    className="object-contain rounded"
-                                />
-                            </div>
-                        )}
-                    </div>
-
                     {/* Baixo Direita - Prêmios adicionais */}
                     <div>
                         {premios && premios.length > 1 && (
@@ -329,29 +302,9 @@ export default function PaginaRifa({ config }: { config: RifaConfig & { imagensP
                                                 >
                                                     <div className="flex items-center gap-2 mb-3">
                                                         <span className="text-lg font-bold text-green-700 bg-green-100 px-3 py-1 rounded-full">
-                                                            🎁 {premio.nome}
+                                                            {idx + 2}° 🎁 {premio.nome}
                                                         </span>
                                                     </div>
-                                                    {premio.imagens && premio.imagens.length > 0 && (
-                                                        <div className="flex gap-2 flex-wrap">
-                                                            {premio.imagens.map((img, imgIdx) => (
-                                                                <img
-                                                                    key={imgIdx}
-                                                                    src={img}
-                                                                    alt={`Prêmio adicional ${idx + 1} - ${imgIdx + 1}`}
-                                                                    width={70}
-                                                                    height={70}
-                                                                    className="object-contain rounded border cursor-pointer hover:opacity-80 transition-opacity"
-                                                                    onMouseEnter={(e) => handleImageHover(img, e)}
-                                                                    onMouseLeave={handleImageLeave}
-                                                                    onMouseMove={(e) => setMousePosition({ x: e.clientX, y: e.clientY })}
-                                                                    onError={(e) => {
-                                                                        e.currentTarget.src = "/placeholder.png";
-                                                                    }}
-                                                                />
-                                                            ))}
-                                                        </div>
-                                                    )}
                                                 </div>
                                             ))}
                                         </div>

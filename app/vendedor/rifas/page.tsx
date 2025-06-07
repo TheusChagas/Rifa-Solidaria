@@ -132,7 +132,8 @@ export default function Rifas() {
                                         setSelectedRifa(rifa);
                                         setDialogOpen(true);
                                     }}
-                                    imagensPremioPrincipal={rifa.imagensPremioPrincipal} // nova prop
+                                    imagensPremioPrincipal={rifa.imagensPremioPrincipal}
+                                    disponivel={rifa.disponivel} // adiciona a prop disponivel
                                 />
                             </div>
                         ))}

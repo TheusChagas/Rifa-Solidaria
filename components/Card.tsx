@@ -17,7 +17,8 @@ export interface CardProps {
   total?: number;
   paymentDays?: number;
   paymentTime?: string;
-  imagensPremioPrincipal?: string[]; // nova prop opcional
+  imagensPremioPrincipal?: string[];
+  disponivel?: boolean; // nova prop
 }
 
 const Card = ({
@@ -29,7 +30,8 @@ const Card = ({
   paymentDays = 3,
   paymentTime = "2 horas e 30 minutos",
   onVisualizar,
-  imagensPremioPrincipal, // nova prop
+  imagensPremioPrincipal,
+  disponivel = true, // padrão true
 }: CardProps) => {
   const [isDialogOpen, setDialogOpen] = useState(false);
 
@@ -122,9 +124,21 @@ const Card = ({
             >
               Detalhes
             </Button>
-            <Link href={`/compra/${id}`} passHref>
-              <Button className={styles.button}>Visualizar</Button>
-            </Link>
+            {disponivel ? (
+              <Link href={`/compra/${id}`} passHref>
+                <Button className={styles.button}>Visualizar</Button>
+              </Link>
+            ) : (
+              <Button 
+                className={cn(
+                  styles.button,
+                  "opacity-50 cursor-not-allowed hover:scale-100"
+                )}
+                disabled
+              >
+                Indisponível
+              </Button>
+            )}
           </div>
         </CardContent>
         {variant === "pagamento" && (

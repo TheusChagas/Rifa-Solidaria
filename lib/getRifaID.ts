@@ -32,7 +32,7 @@ export const rifasMockBase: Record<string, Rifa> = {
         descricao: "Ajude a comunidade local e concorra a um smartphone novo.",
         progresso: "0%",
         metodoPagamento: "Pix, Dinheiro",
-        disponivel: false, // não paga
+        disponivel: false, // já está correto
         preco: 8.00,
         totalNumbers: 150,
         premio: "Smartphone",

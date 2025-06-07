@@ -1,24 +1,18 @@
+import React, { useState } from 'react';
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select";
-import { useState } from "react";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export default function MinhaConta() {
     const [formData, setFormData] = useState({
         nome: "",
         sobrenome: "",
-        email: "",
+        email: "usuario@teste.com",
         telefone: "",
         usuario: "",
-        codigoPais: "BR",
+        codigoPais: "+55",
         avatar: undefined as File | undefined,
     });
     const [avatarPreview, setAvatarPreview] = useState<string | undefined>(undefined);
@@ -129,13 +123,13 @@ export default function MinhaConta() {
                                 value={formData.codigoPais}
                                 onValueChange={(value) => setFormData({ ...formData, codigoPais: value })}
                             >
-                                <SelectTrigger className="w-[100px]">
-                                    <SelectValue placeholder="País" />
+                                <SelectTrigger className="w-20">
+                                    <SelectValue />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="BR">BR</SelectItem>
-                                    <SelectItem value="US">US</SelectItem>
-                                    <SelectItem value="PT">PT</SelectItem>
+                                    <SelectItem value="+55">+55</SelectItem>
+                                    <SelectItem value="+1">+1</SelectItem>
+                                    <SelectItem value="+44">+44</SelectItem>
                                 </SelectContent>
                             </Select>
                             <Input

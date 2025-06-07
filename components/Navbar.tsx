@@ -1,7 +1,7 @@
 // components/Navbar.tsx
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -22,12 +22,31 @@ interface NavbarProps {
 
 export function Navbar({ isHeroVisible }: NavbarProps) {
     const [isOpen, setIsOpen] = useState(false);
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
+
+    // Verificar sessão do usuário
+    useEffect(() => {
+        const checkSession = async () => {
+            try {
+                const response = await fetch('/api/auth/session');
+                const data = await response.json();
+                setIsLoggedIn(data.isLoggedIn || false);
+            } catch (error) {
+                console.error('Erro ao verificar sessão:', error);
+                setIsLoggedIn(false);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        checkSession();
+    }, []);
 
     const navItems = [
         { name: "Início", href: "/" },
         { name: "Sobre", href: "/sobre" },
         { name: "Contato", href: "/contato" },
-        { name: "Preços", href: "/precos" },
     ];
 
     // A Navbar agora tem sempre background branco, com borda inferior e sombra para destacá-la
@@ -42,7 +61,7 @@ export function Navbar({ isHeroVisible }: NavbarProps) {
                 </Link>
 
                 {/* Desktop Navigation */}
-                <div className="hidden md:flex items-center gap-6">
+                <div className="hidden md:flex items-center gap-1">
                     <div className="flex gap-6">
                         {navItems.map((item) => (
                             <Link
@@ -54,12 +73,24 @@ export function Navbar({ isHeroVisible }: NavbarProps) {
                             </Link>
                         ))}
                     </div>
-                    <Button
-                        variant="outline"
-                        className="ml-4 bg-green-500 text-white hover:bg-green-600 hover:text-white"
-                    >
-                        <Link href="/login">Login</Link>
-                    </Button>
+                    <div className="flex gap-0">
+                        {!isLoading && isLoggedIn && (
+                            <Button
+                                variant="ghost"
+                                className="text-sm font-medium hover:text-green-500 transition-colors"
+                            >
+                                <Link href="/vendedor/rifas" className="font-bold">Vendedor</Link>
+                            </Button>
+                        )}
+                        <Button
+                            variant="outline"
+                            className="bg-green-500 text-white hover:bg-green-600 hover:text-white ml-6"
+                        >
+                            <Link href={isLoggedIn ? "/logout" : "/login"}>
+                                {isLoggedIn ? "Sair" : "Login"}
+                            </Link>
+                        </Button>
+                    </div>
                 </div>
 
                 {/* Mobile Dropdown */}
@@ -86,14 +117,27 @@ export function Navbar({ isHeroVisible }: NavbarProps) {
                                 </DropdownMenuItem>
                             ))}
 
-                            {/* Botão de Login apenas no dropdown mobile */}
+                            {/* Botão Vendedor apenas no dropdown mobile - só aparece se logado */}
+                            {!isLoading && isLoggedIn && (
+                                <DropdownMenuItem className="w-full" asChild>
+                                    <Link
+                                        href="/vendedor/rifas"
+                                        className="flex justify-center px-4 py-2 bg-blue-500 text-white hover:bg-blue-600 rounded-md mx-2 my-1 font-bold"
+                                        onClick={() => setIsOpen(false)}
+                                    >
+                                        Vendedor
+                                    </Link>
+                                </DropdownMenuItem>
+                            )}
+
+                            {/* Botão de Login/Logout apenas no dropdown mobile */}
                             <DropdownMenuItem className="w-full" asChild>
                                 <Link
-                                    href="/login"
+                                    href={isLoggedIn ? "/logout" : "/login"}
                                     className="flex justify-center px-4 py-2 bg-green-500 text-white hover:bg-green-600 rounded-md mx-2 my-1"
                                     onClick={() => setIsOpen(false)}
                                 >
-                                    Login
+                                    {isLoggedIn ? "Sair" : "Login"}
                                 </Link>
                             </DropdownMenuItem>
                         </DropdownMenuContent>

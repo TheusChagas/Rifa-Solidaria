@@ -42,8 +42,6 @@ export const rifasMockBase: Record<string, Rifa> = {
             }
         ],
         fazendinha: true,
-        horarioSorteio: "18:55",
-        localSorteio: "Transmissão online",
         tempoReserva: 24,
         status: "ativo",
         vendedorId: "vendor1",
@@ -52,7 +50,6 @@ export const rifasMockBase: Record<string, Rifa> = {
         tags: ["solidária", "ajuda", "comunidade"],
         numerosReservados: [74, 75, 76],
         valorTotal: 399,
-        percentualVendido: 73,
         dataInicio: "2025-04-01T00:00:00Z",
         dataFim: "2025-05-03T18:55:00Z",
         regulamento: "Regulamento completo disponível no site",
@@ -148,8 +145,6 @@ export const rifasMockBase: Record<string, Rifa> = {
             }
         ],
         fazendinha: true,
-        horarioSorteio: "19:00",
-        localSorteio: "YouTube",
         tempoReserva: 12,
         status: "pausado",
         vendedorId: "vendor2",
@@ -158,7 +153,6 @@ export const rifasMockBase: Record<string, Rifa> = {
         tags: ["smartphone", "tecnologia", "esperança"],
         numerosReservados: [],
         valorTotal: 1200,
-        percentualVendido: 0,
         dataInicio: "2025-06-01T00:00:00Z",
         dataFim: "2025-07-15T19:00:00Z",
         regulamento: "Conforme regulamento geral",
@@ -231,7 +225,6 @@ export const rifasMockBase: Record<string, Rifa> = {
         totalNumbers: 200,
         premio: "Bicicleta Aro 29",
         saleMode: "por número",
-        numerosVendidos: Array.from({length: 118}, (_, i) => i + 1),
         numerosVendidos: Array.from({length: 118}, (_, i) => i + 1),
         dataSorteio: "2025-06-10T20:00:00Z",
         horarioSorteio: "20:00",
@@ -307,8 +300,6 @@ export const rifasMockBase: Record<string, Rifa> = {
             }
         ],
         fazendinha: false,
-        horarioSorteio: "20:00",
-        localSorteio: "Instagram Live",
         tempoReserva: 48,
         status: "ativo",
         vendedorId: "vendor3",
@@ -317,7 +308,6 @@ export const rifasMockBase: Record<string, Rifa> = {
         tags: ["bicicleta", "esportes", "ong", "animais"],
         numerosReservados: [119, 120],
         valorTotal: 1000,
-        percentualVendido: 59,
         dataInicio: "2025-05-01T00:00:00Z",
         dataFim: "2025-06-10T20:00:00Z",
         regulamento: "Regulamento da ONG disponível no site",
@@ -391,7 +381,6 @@ export const rifasMockBase: Record<string, Rifa> = {
         premio: "Viagem",
         saleMode: "por cota",
         numerosVendidos: Array.from({length: 87}, (_, i) => i + 1),
-        numerosVendidos: Array.from({length: 87}, (_, i) => i + 1),
         dataSorteio: "2025-08-01T21:00:00Z",
         horarioSorteio: "21:00",
         localSorteio: "instagram",
@@ -456,8 +445,6 @@ export const rifasMockBase: Record<string, Rifa> = {
             }
         ],
         fazendinha: false,
-        horarioSorteio: "21:00",
-        localSorteio: "Facebook Live",
         tempoReserva: 72,
         status: "ativo",
         vendedorId: "vendor4",
@@ -466,7 +453,6 @@ export const rifasMockBase: Record<string, Rifa> = {
         tags: ["viagem", "sonhos", "férias", "turismo"],
         numerosReservados: [88, 89, 90],
         valorTotal: 4500,
-        percentualVendido: 29,
         dataInicio: "2025-06-15T00:00:00Z",
         dataFim: "2025-08-01T21:00:00Z",
         regulamento: "Regulamento detalhado sobre a viagem",
@@ -540,7 +526,6 @@ export const rifasMockBase: Record<string, Rifa> = {
         premio: "Cesta de Natal",
         saleMode: "por cota",
         numerosVendidos: Array.from({length: 150}, (_, i) => i + 1),
-        numerosVendidos: Array.from({length: 150}, (_, i) => i + 1),
         dataSorteio: "2024-12-20T19:30:00Z",
         horarioSorteio: "19:30",
         localSorteio: "CORUJINHA",
@@ -596,8 +581,6 @@ export const rifasMockBase: Record<string, Rifa> = {
             }
         ],
         fazendinha: false,
-        horarioSorteio: "19:30",
-        localSorteio: "Facebook Live",
         tempoReserva: 6,
         status: "finalizado",
         vendedorId: "vendor5",
@@ -606,7 +589,6 @@ export const rifasMockBase: Record<string, Rifa> = {
         tags: ["natal", "cesta", "família", "caridade"],
         numerosReservados: [],
         valorTotal: 375,
-        percentualVendido: 100,
         dataInicio: "2024-11-01T00:00:00Z",
         dataFim: "2024-12-20T19:30:00Z",
         regulamento: "Regulamento específico para época natalina",
@@ -686,13 +668,14 @@ export async function getRifaById(id: string): Promise<Rifa | null> {
     // Se a rifa não está disponível, não pode ter números vendidos
     const numerosVendidos = rifa.disponivel ? rifa.numerosVendidos : [];
     
-    // Calculate progress based on sold numbers percentage
+    // Calculate progress and percentage based on sold numbers
     const progressPercentage = Math.round((numerosVendidos.length / rifa.totalNumbers) * 100);
     
     return {
         ...rifa,
         numerosVendidos,
-        progresso: `${progressPercentage}%`
+        progresso: `${progressPercentage}%`,
+        percentualVendido: progressPercentage
     };
 }
 
@@ -705,7 +688,8 @@ export async function getAllRifas(): Promise<Rifa[]> {
         return {
             ...rifa,
             numerosVendidos,
-            progresso: `${progressPercentage}%`
+            progresso: `${progressPercentage}%`,
+            percentualVendido: progressPercentage
         };
     });
 }

@@ -41,8 +41,6 @@ export interface Rifa {
     fazendinha: boolean;
     progresso?: string;
     // Novos atributos identificados no código
-    horarioSorteio?: string;
-    localSorteio?: string;
     tempoReserva?: number; // em horas
     status?: 'ativo' | 'finalizado' | 'cancelado' | 'pausado';
     vendedorId?: string;

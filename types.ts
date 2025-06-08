@@ -20,47 +20,25 @@ export interface Rifa {
     saleMode: string;
     numerosVendidos: number[];
     dataSorteio: string;
+    horarioSorteio: string;
+    localSorteio: string;
     canalTransmissao: string;
+    quantidadeNumeros: string;
+    valorCota: number;
+    quantidadePremios: number;
+    celularContato: string;
     contatos: Array<{
         nome: string;
         telefone: string;
         avatarUrl?: string;
     }>;
-    imagensPremioPrincipal?: string[];
-    premios?: Array<{
+    imagensPremioPrincipal: string[];
+    premios: Array<{
         nome: string;
-        imagens?: string[];
+        imagens: string[];
     }>;
-    fazendinha?: boolean;
+    fazendinha: boolean;
     progresso?: string;
-}
-
-export interface RifaConfig extends Rifa {}
-
-export interface RifaBase {
-    id: string;
-    titulo: string;
-    descricao: string;
-    metodoPagamento: string;
-    disponivel: boolean;
-    preco: number;
-    totalNumbers: number;
-    premio: string | number;
-    saleMode: string;
-    numerosVendidos: number[];
-    dataSorteio: string;
-    canalTransmissao: string;
-    contatos: Array<{
-        nome: string;
-        telefone: string;
-        avatarUrl?: string;
-    }>;
-    imagensPremioPrincipal?: string[];
-    premios?: Array<{
-        nome: string;
-        imagens?: string[];
-    }>;
-    fazendinha?: boolean;
 }
 
 export interface Animal {
@@ -69,6 +47,26 @@ export interface Animal {
     numeros: number[];
     icone: string;
 }
+
+export interface DrawOption {
+    value: string;
+    label: string;
+    time: string | null;
+}
+
+export const drawOptions: DrawOption[] = [
+    { value: 'CANTA GALO', label: 'CANTA GALO', time: '09:20' },
+    { value: 'PTM', label: 'PTM', time: '11:20' },
+    { value: 'PT', label: 'PT', time: '14:20' },
+    { value: 'PTV', label: 'PTV', time: '16:20' },
+    { value: 'PTN', label: 'PTN', time: '18:20' },
+    { value: 'FEDERAL', label: 'FEDERAL', time: '19:00' },
+    { value: 'CORUJINHA', label: 'CORUJINHA', time: '21:30' },
+    { value: 'tiktok', label: 'TikTok', time: null },
+    { value: 'instagram', label: 'Instagram', time: null },
+    { value: 'youtube', label: 'YouTube', time: null },
+    { value: 'outros', label: 'Outros', time: null },
+];
 
 export const jogoDoBicho: Animal[] = [
     { id: 1, nome: "Avestruz", numeros: [1, 2, 3, 4], icone: require("@/assets/test.png").default },

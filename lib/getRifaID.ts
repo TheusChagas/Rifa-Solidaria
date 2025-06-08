@@ -1,4 +1,5 @@
 import { Rifa } from "@/types";
+// Make sure 'horarioSorteio' exists in the Rifa type in '@/types'
 
 export const rifasMockBase: Record<string, Rifa> = {
     "1": {
@@ -13,7 +14,13 @@ export const rifasMockBase: Record<string, Rifa> = {
         saleMode: "a dezena",
         numerosVendidos: Array.from({length: 73}, (_, i) => i + 1),
         dataSorteio: "2025-05-03T18:55:00Z",
+        horarioSorteio: "18:55",
+        localSorteio: "PTN",
         canalTransmissao: "YouTube – Xerifão JB",
+        quantidadeNumeros: "fazendinha",
+        valorCota: 3.99,
+        quantidadePremios: 2,
+        celularContato: "22999679484",
         contatos: [
             { nome: "Sophie", telefone: "22999679484", avatarUrl: "/sophie.png" },
             { nome: "Xerifão", telefone: "22997018404", avatarUrl: "/xerifao.png" },
@@ -46,7 +53,13 @@ export const rifasMockBase: Record<string, Rifa> = {
         saleMode: "por número",
         numerosVendidos: [],
         dataSorteio: "2025-07-15T19:00:00Z",
+        horarioSorteio: "19:00",
+        localSorteio: "FEDERAL",
         canalTransmissao: "YouTube – Esperança",
+        quantidadeNumeros: "150",
+        valorCota: 8.00,
+        quantidadePremios: 1,
+        celularContato: "21955554444",
         contatos: [
             { nome: "Lucas", telefone: "21955554444" },
         ],
@@ -59,7 +72,7 @@ export const rifasMockBase: Record<string, Rifa> = {
                 imagens: ["https://picsum.photos/200/200?random=5"]
             }
         ],
-        fazendinha: true,
+        fazendinha: false,
     },
     "3": {
         id: "3",
@@ -71,9 +84,15 @@ export const rifasMockBase: Record<string, Rifa> = {
         totalNumbers: 200,
         premio: "Bicicleta Aro 29",
         saleMode: "por número",
-        numerosVendidos: Array.from({length: 118}, (_, i) => i + 1), // 59% vendidos
+        numerosVendidos: Array.from({length: 118}, (_, i) => i + 1),
         dataSorteio: "2025-06-10T20:00:00Z",
+        horarioSorteio: "20:00",
+        localSorteio: "CANTA GALO",
         canalTransmissao: "Instagram – @amigosanimais",
+        quantidadeNumeros: "200",
+        valorCota: 5.00,
+        quantidadePremios: 6,
+        celularContato: "21999998888",
         contatos: [
             { nome: "Carlos", telefone: "21999998888", avatarUrl: "/carlos.png" },
             { nome: "Ana", telefone: "21988887777", avatarUrl: "/ana.png" },
@@ -145,9 +164,15 @@ export const rifasMockBase: Record<string, Rifa> = {
         totalNumbers: 300,
         premio: "Viagem",
         saleMode: "por cota",
-        numerosVendidos: Array.from({length: 87}, (_, i) => i + 1), // 29% vendidos
+        numerosVendidos: Array.from({length: 87}, (_, i) => i + 1),
         dataSorteio: "2025-08-01T21:00:00Z",
+        horarioSorteio: "21:00",
+        localSorteio: "instagram",
         canalTransmissao: "Facebook – Rifa dos Sonhos",
+        quantidadeNumeros: "300",
+        valorCota: 15.00,
+        quantidadePremios: 5,
+        celularContato: "21933332222",
         contatos: [
             { nome: "Fernanda", telefone: "21933332222", avatarUrl: "/fernanda.png" },
             { nome: "Rafael", telefone: "21922221111", avatarUrl: "/rafael.png" },
@@ -210,9 +235,15 @@ export const rifasMockBase: Record<string, Rifa> = {
         totalNumbers: 150,
         premio: "Cesta de Natal",
         saleMode: "por cota",
-        numerosVendidos: Array.from({length: 150}, (_, i) => i + 1), // 100% vendidos
+        numerosVendidos: Array.from({length: 150}, (_, i) => i + 1),
         dataSorteio: "2024-12-20T19:30:00Z",
+        horarioSorteio: "19:30",
+        localSorteio: "CORUJINHA",
         canalTransmissao: "Facebook – Rifa Natalina",
+        quantidadeNumeros: "150",
+        valorCota: 2.50,
+        quantidadePremios: 4,
+        celularContato: "21977776666",
         contatos: [
             { nome: "João", telefone: "21977776666", avatarUrl: "/joao.png" },
             { nome: "Maria", telefone: "21966665555", avatarUrl: "/maria.png" },

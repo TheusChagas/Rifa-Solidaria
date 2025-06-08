@@ -30,9 +30,81 @@ export interface Rifa {
     premios?: Array<{
         nome: string;
         imagens?: string[];
+        descricao?: string;
     }>;
     fazendinha?: boolean;
     progresso?: string;
+    // Novos atributos identificados no código
+    horarioSorteio?: string;
+    localSorteio?: string;
+    tempoReserva?: number; // em horas
+    status?: 'ativo' | 'finalizado' | 'cancelado' | 'pausado';
+    vendedorId?: string;
+    vendedorNome?: string;
+    categoria?: string;
+    tags?: string[];
+    numerosReservados?: number[];
+    valorTotal?: number; // preco * totalNumbers
+    percentualVendido?: number;
+    dataInicio?: string;
+    dataFim?: string;
+    regulamento?: string;
+    tipoSorteio?: 'loteria-federal' | 'loteria-estadual' | 'manual' | 'online';
+    transmissaoAoVivo?: boolean;
+    urlTransmissao?: string;
+    whatsappGrupo?: string;
+    emailContato?: string;
+    pixChave?: string;
+    dadosBancarios?: {
+        banco?: string;
+        agencia?: string;
+        conta?: string;
+        titular?: string;
+    };
+    configPagamento?: {
+        pix?: boolean;
+        cartao?: boolean;
+        dinheiro?: boolean;
+        boleto?: boolean;
+    };
+    limitePorPessoa?: number;
+    permitirReserva?: boolean;
+    exibirNumerosVendidos?: boolean;
+    exibirCompradores?: boolean;
+    notificacoes?: {
+        email?: boolean;
+        whatsapp?: boolean;
+        sms?: boolean;
+    };
+    configuracaoAvancada?: {
+        permitirMultiplasCompras?: boolean;
+        desconto?: {
+            ativo: boolean;
+            quantidade: number;
+            percentual: number;
+        };
+        bonificacao?: {
+            ativo: boolean;
+            compre: number;
+            ganhe: number;
+        };
+    };
+    historico?: Array<{
+        data: string;
+        acao: string;
+        usuario?: string;
+        detalhes?: string;
+    }>;
+    estatisticas?: {
+        visualizacoes?: number;
+        compartilhamentos?: number;
+        tentativasCompra?: number;
+    };
+    seo?: {
+        metaTitle?: string;
+        metaDescription?: string;
+        slug?: string;
+    };
 }
 
 export interface RifaConfig extends Rifa {}

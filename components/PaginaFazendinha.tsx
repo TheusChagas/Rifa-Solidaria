@@ -9,7 +9,6 @@ export default function PaginaFazendinha({ config }: { config: Rifa }) {
     const {
         titulo,
         descricao,
-        progresso,
         metodoPagamento,
         disponivel,
         preco,
@@ -66,7 +65,7 @@ export default function PaginaFazendinha({ config }: { config: Rifa }) {
                     </div>
                     <p className="mt-2 text-gray-700">{descricao}</p>
                     <div className="mt-2 text-gray-700">
-                        <strong>Progresso:</strong> {progresso}
+                        <strong>Progresso:</strong> {Math.round((config.numerosVendidos.length / config.totalNumbers) * 100)}%
                     </div>
                     <div className="mt-2 text-gray-700">
                         <strong>Métodos de pagamento:</strong> {metodoPagamento}

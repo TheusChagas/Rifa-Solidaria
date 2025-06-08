@@ -133,6 +133,10 @@ export default function CreateCampaignPage() {
         imagens: imagesPremiosAdicionais[idx]?.map(img => URL.createObjectURL(img)) || [],
       }))
       .filter(p => p.nome.trim() !== "");
+    
+    // Se a rifa não está disponível, não pode ter números vendidos
+    const numerosVendidosValidos = disponivel ? numerosVendidos : [];
+    
     // Monta objeto Rifa
     const rifa: Rifa = {
       id: generateRandomId(),
@@ -144,14 +148,13 @@ export default function CreateCampaignPage() {
       totalNumbers,
       premio: premio || (premiosAdicionais[0]?.nome ?? 0),
       saleMode,
-      numerosVendidos,
+      numerosVendidos: numerosVendidosValidos,
       dataSorteio: drawDate ? new Date(`${drawDate}T${drawTime || "00:00"}`).toISOString() : "",
       canalTransmissao,
       contatos,
       imagensPremioPrincipal: imagesPremioPrincipal.map(img => URL.createObjectURL(img)),
       premios: premiosAdicionais,
       fazendinha,
-      progresso: undefined
     };
     alert("Rifa criada!\n" + JSON.stringify(rifa, null, 2));
   }
@@ -481,7 +484,13 @@ export default function CreateCampaignPage() {
                   .map(Number)
                   .filter(n => !isNaN(n))
               )}
+              disabled={!disponivel}
             />
+            {!disponivel && (
+              <p className="text-sm text-yellow-600 mt-1">
+                ⚠️ Rifas indisponíveis não podem ter números vendidos
+              </p>
+            )}
           </div>
           {/* Contatos */}
           <div>

@@ -9,28 +9,58 @@ export interface Contato {
 
 // Interface principal da Rifa, unificando todos os campos usados no projeto
 export interface Rifa {
-    id: string | number;
-    titulo: string | ReactNode;
-    descricao: string | ReactNode;
-    progresso: string | number | ReactNode;
-    metodoPagamento: string | ReactNode;
-    disponivel: boolean | any;
+    id: string;
+    titulo: string;
+    descricao: string;
+    metodoPagamento: string;
+    disponivel: boolean;
     preco: number;
     totalNumbers: number;
-    premio: number | string;
+    premio: string | number;
     saleMode: string;
     numerosVendidos: number[];
     dataSorteio: string;
     canalTransmissao: string;
-    contatos: Contato[];
-    // imagens do prêmio principal
+    contatos: Array<{
+        nome: string;
+        telefone: string;
+        avatarUrl?: string;
+    }>;
     imagensPremioPrincipal?: string[];
-    // até 6 prêmios adicionais, cada um com seu vetor de imagens
-    premios?: {
+    premios?: Array<{
         nome: string;
         imagens?: string[];
-    }[];
-    fazendinha?: boolean; // novo campo
+    }>;
+    fazendinha?: boolean;
+    progresso?: string;
+}
+
+export interface RifaConfig extends Rifa {}
+
+export interface RifaBase {
+    id: string;
+    titulo: string;
+    descricao: string;
+    metodoPagamento: string;
+    disponivel: boolean;
+    preco: number;
+    totalNumbers: number;
+    premio: string | number;
+    saleMode: string;
+    numerosVendidos: number[];
+    dataSorteio: string;
+    canalTransmissao: string;
+    contatos: Array<{
+        nome: string;
+        telefone: string;
+        avatarUrl?: string;
+    }>;
+    imagensPremioPrincipal?: string[];
+    premios?: Array<{
+        nome: string;
+        imagens?: string[];
+    }>;
+    fazendinha?: boolean;
 }
 
 export interface Animal {

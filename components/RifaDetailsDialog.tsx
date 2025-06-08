@@ -14,20 +14,24 @@ import { Rifa } from '@/types';
 interface RifaDetailsDialogProps {
     open: boolean;
     onOpenChange: (open: boolean) => void;
-    id: number;
+    id?: number;
+    rifa?: Rifa; // Add rifa prop to avoid fetching
 }
 
 export function RifaDetailsDialog({
     open,
     onOpenChange,
     id,
+    rifa: rifaProp,
 }: RifaDetailsDialogProps) {
-    const [rifa, setRifa] = React.useState<Rifa | null>(null);
+    const [rifa, setRifa] = React.useState<Rifa | null>(rifaProp || null);
     const [loading, setLoading] = React.useState(false);
     const [error, setError] = React.useState<string | null>(null);
 
     React.useEffect(() => {
-        if (!open) return;
+        // Only fetch if no rifa prop is provided and dialog is open
+        if (!open || rifaProp || !id) return;
+        
         setLoading(true);
         setError(null);
 
@@ -39,13 +43,20 @@ export function RifaDetailsDialog({
             .then(setRifa)
             .catch((err) => setError(err.message))
             .finally(() => setLoading(false));
-    }, [open, id]);
+    }, [open, id, rifaProp]);
+
+    // Update rifa when rifaProp changes
+    React.useEffect(() => {
+        if (rifaProp) {
+            setRifa(rifaProp);
+        }
+    }, [rifaProp]);
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="max-h-[80vh] overflow-y-auto">
                 <DialogHeader>
-                    <DialogTitle>Detalhes da Rifa #{id}</DialogTitle>
+                    <DialogTitle>Detalhes da Rifa #{rifa?.id || id}</DialogTitle>
                 </DialogHeader>
 
                 {loading && <p>Carregando...</p>}
@@ -127,7 +138,12 @@ export function RifaDetailsDialog({
                                 </div>
                                 <div>
                                     <p className="text-sm text-gray-600">Progresso</p>
-                                    <p className="font-medium text-blue-700">{typeof rifa.progresso === "string" || typeof rifa.progresso === "number" ? rifa.progresso : ""}%</p>
+                                    <p className="font-medium text-blue-700">
+                                        {rifa.disponivel 
+                                            ? `${Math.round((rifa.numerosVendidos.length / rifa.totalNumbers) * 100)}%`
+                                            : "Indisponível"
+                                        }
+                                    </p>
                                 </div>
                                 <div className="col-span-2">
                                     <p className="text-sm text-gray-600">Métodos de pagamento</p>
@@ -139,11 +155,11 @@ export function RifaDetailsDialog({
                         {/* Números Vendidos */}
                         <div>
                             <h4 className="font-semibold text-lg text-gray-800 mb-3 flex items-center gap-2">
-                                🎫 Números Vendidos ({rifa.numerosVendidos.length})
+                                🎫 Números Vendidos ({rifa.disponivel ? rifa.numerosVendidos.length : 0})
                             </h4>
                             <div className="bg-gray-50 p-4 rounded-lg">
                                 <div className="max-h-24 overflow-y-auto">
-                                    {rifa.numerosVendidos.length > 0 ? (
+                                    {rifa.disponivel && rifa.numerosVendidos.length > 0 ? (
                                         <div className="flex flex-wrap gap-1">
                                             {rifa.numerosVendidos.map((num, i) => (
                                                 <span key={i} className="bg-gray-700 text-white px-2 py-1 rounded text-xs font-medium">
@@ -152,7 +168,9 @@ export function RifaDetailsDialog({
                                             ))}
                                         </div>
                                     ) : (
-                                        <p className="text-gray-500 italic">Nenhum número vendido ainda</p>
+                                        <p className="text-gray-500 italic">
+                                            {rifa.disponivel ? "Nenhum número vendido ainda" : "Rifa indisponível - nenhum número pode ser vendido"}
+                                        </p>
                                     )}
                                 </div>
                             </div>

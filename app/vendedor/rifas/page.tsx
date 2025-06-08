@@ -6,7 +6,9 @@ import { Button } from "@/components/ui/button";
 import { Plus, Ticket } from "lucide-react";
 import Card from "@/components/Card";
 import { RifaDialog } from "@/components/RifaDialog";
-import { Rifa } from "@/types";
+import { Rifa as RifaBase } from "@/types";
+
+type Rifa = RifaBase & { progresso: number };
 
 export default function Rifas() {
     const [selectedStatus, setSelectedStatus] = useState(0);
@@ -19,32 +21,33 @@ export default function Rifas() {
             .then(res => res.ok ? res.json() : [])
             .then((data: any[]) => {
                 setRifas(
-                    (Array.isArray(data) ? data : []).filter(Boolean).map((r: any) => ({
-                        ...r,
-                        progresso: typeof r.progresso === "string"
-                            ? parseInt(r.progresso.replace("%", ""), 10)
-                            : Number(r.progresso),
-                        titulo: typeof r.titulo === "string"
-                            ? r.titulo
-                            : String(r.titulo),
-                        descricao: typeof r.descricao === "string"
-                            ? r.descricao
-                            : String(r.descricao),
-                        metodoPagamento: typeof r.metodoPagamento === "string"
-                            ? r.metodoPagamento
-                            : String(r.metodoPagamento),
-                        disponivel: !!r.disponivel,
-                        preco: Number(r.preco),
-                        totalNumbers: Number(r.totalNumbers),
-                        premio: typeof r.premio === "number" ? r.premio : Number(r.premio),
-                        saleMode: r.saleMode || "",
-                        numerosVendidos: Array.isArray(r.numerosVendidos) ? r.numerosVendidos : [],
-                        dataSorteio: r.dataSorteio || "",
-                        canalTransmissao: r.canalTransmissao || "",
-                        contatos: Array.isArray(r.contatos) ? r.contatos : [],
-                        imagensPremioPrincipal: r.imagensPremioPrincipal || [],
-                        premios: r.premios || [],
-                    }))
+                    (Array.isArray(data) ? data : []).filter(Boolean).map((r: any) => {
+                        const calculatedProgress = Math.round((r.numerosVendidos.length / r.totalNumbers) * 100);
+                        return {
+                            ...r,
+                            progresso: calculatedProgress,
+                            titulo: typeof r.titulo === "string"
+                                ? r.titulo
+                                : String(r.titulo),
+                            descricao: typeof r.descricao === "string"
+                                ? r.descricao
+                                : String(r.descricao),
+                            metodoPagamento: typeof r.metodoPagamento === "string"
+                                ? r.metodoPagamento
+                                : String(r.metodoPagamento),
+                            disponivel: !!r.disponivel,
+                            preco: Number(r.preco),
+                            totalNumbers: Number(r.totalNumbers),
+                            premio: typeof r.premio === "number" ? r.premio : Number(r.premio),
+                            saleMode: r.saleMode || "",
+                            numerosVendidos: Array.isArray(r.numerosVendidos) ? r.numerosVendidos : [],
+                            dataSorteio: r.dataSorteio || "",
+                            canalTransmissao: r.canalTransmissao || "",
+                            contatos: Array.isArray(r.contatos) ? r.contatos : [],
+                            imagensPremioPrincipal: r.imagensPremioPrincipal || [],
+                            premios: r.premios || [],
+                        };
+                    })
                 );
             });
     }, []);
@@ -52,8 +55,8 @@ export default function Rifas() {
     // 0 = Em andamento, 1 = Concluídas
     const filteredRifas = rifas.filter((rifa) =>
         selectedStatus === 0
-            ? Number(rifa.progresso) < 100
-            : Number(rifa.progresso) >= 100
+            ? rifa.progresso < 100
+            : rifa.progresso >= 100
     );
 
     return (
@@ -120,27 +123,26 @@ export default function Rifas() {
                         {filteredRifas.map((rifa) => (
                             <div key={rifa.id}>
                                 <Card
-                                    id={parseInt(String(rifa.id))}
-                                    title={typeof rifa.titulo === "string" ? rifa.titulo : ""}
-                                    progress={Number(rifa.progresso)}
+                                    id={String(rifa.id)}
+                                    name={typeof rifa.titulo === "string" ? rifa.titulo : ""}
+                                    progress={rifa.progresso}
                                     variant={
                                         rifa.disponivel
-                                            ? (Number(rifa.progresso) === 100 ? "finalizado" : "progresso")
+                                            ? (rifa.progresso === 100 ? "finalizado" : "progresso")
                                             : "pagamento"
                                     }
-                                    onVisualizar={() => {
-                                        setSelectedRifa(rifa);
-                                        setDialogOpen(true);
-                                    }}
                                     imagensPremioPrincipal={rifa.imagensPremioPrincipal}
-                                    disponivel={rifa.disponivel} // adiciona a prop disponivel
+                                    disponivel={rifa.disponivel}
+                                    preco={rifa.preco}
+                                    numerosVendidos={rifa.numerosVendidos}
+                                    totalNumbers={rifa.totalNumbers}
+                                    rifaData={rifa} // Pass complete rifa data
                                 />
                             </div>
                         ))}
                         <div className="min-w-[50px]" />
                     </div>
                 </div>
-                {/* Removido gradiente e adicionada borda no Card */}
             </div>
 
             {/* Dialog para visualizar os detalhes da rifa */}

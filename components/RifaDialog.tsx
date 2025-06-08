@@ -63,14 +63,14 @@ export function RifaDialog({ open, onOpenChange, rifa }: RifaDialogProps) {
                         </ul>
                     </div>
                 )}
-                <p className="mt-2">Progresso: {renderNode(rifa.progresso)}</p>
+                <p className="mt-2">Progresso: {Math.round((rifa.numerosVendidos.length / rifa.totalNumbers) * 100)}%</p>
                 <p className="mt-1">Preço da rifa: R$ {Number(rifa.preco).toFixed(2)}</p>
                 <p className="mt-1">Método de Pagamento: {renderNode(rifa.metodoPagamento)}</p>
                 <p className="mt-1">{rifa.disponivel ? "Disponível" : "Indisponível"}</p>
                 <p className="mt-1">Total de Números: {rifa.totalNumbers}</p>
                 <p className="mt-1">Prêmio: R$ {Number(rifa.premio).toFixed(2)}</p>
                 <p className="mt-1">Modo de venda: {rifa.saleMode}</p>
-                <p className="mt-1">Números vendidos: {rifa.numerosVendidos && rifa.numerosVendidos.length > 0 ? rifa.numerosVendidos.join(", ") : "Nenhum"}</p>
+                <p className="mt-1">Números vendidos: {rifa.numerosVendidos && rifa.numerosVendidos.length > 0 ? rifa.numerosVendidos.join(", ") : (rifa.disponivel ? "Nenhum" : "Rifa indisponível")}</p>
                 <p className="mt-1">Data do sorteio: {new Date(rifa.dataSorteio).toLocaleString("pt-BR", { timeZone: "America/Sao_Paulo" })}</p>
                 <p className="mt-1">Transmissão: {rifa.canalTransmissao}</p>
                 <div className="mt-2">

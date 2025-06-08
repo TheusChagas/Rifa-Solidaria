@@ -1,160 +1,195 @@
 'use client';
 
 import { useState } from "react";
-import Link from 'next/link';
+import Link from "next/link";
 import { cn } from "@/lib/utils";
-import { Card as UiCard, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card as UICard, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button, buttonVariants } from "@/components/ui/button";
-import { Progress } from "./ui/progress";
-import { RifaDetailsDialog } from "./RifaDetailsDialog";
+import { Progress } from "@/components/ui/progress";
+import { RifaDetailsDialog } from "@/components/RifaDetailsDialog";
 
 export interface CardProps {
-  id: number;
-  title: string;
+  id: string;
+  name: string;
   progress: number;
-  variant: "finalizado" | "progresso" | "pagamento";
-  onVisualizar?: () => void;
-  total?: number;
-  paymentDays?: number;
-  paymentTime?: string;
+  variant: string;
   imagensPremioPrincipal?: string[];
-  disponivel?: boolean; // nova prop
+  disponivel: boolean;
+  preco?: number;
+  numerosVendidos?: number[];
+  totalNumbers?: number;
+  rifaData?: any; // Add full rifa data
 }
 
-const Card = ({
-  id,
-  title,
-  progress = 0,
-  total = 0,
-  variant = "progresso",
-  paymentDays = 3,
-  paymentTime = "2 horas e 30 minutos",
-  onVisualizar,
-  imagensPremioPrincipal,
-  disponivel = true, // padrão true
-}: CardProps) => {
-  const [isDialogOpen, setDialogOpen] = useState(false);
+const Card = ({ id, name, progress, variant, imagensPremioPrincipal, disponivel, preco, numerosVendidos, totalNumbers, rifaData }: CardProps) => {
+    const [isDialogOpen, setDialogOpen] = useState(false);
 
-  const cardVariantStyles = {
-    progresso: {
-      card: "border border-green-400 rounded-lg shadow-sm lg:w-[400px] h-auto", // borda verde
-      progressIndicator: "bg-verde-400",
-      button: cn(
-        buttonVariants({ variant: "outline" }),
-        "w-[100px] md:w-[120px] h-[35px] rounded-xl border-2 border-green-500",
-        "text-green-500 font-semibold hover:bg-green-500 hover:text-white",
-        "hover:scale-[103%] md:hover:scale-[115%] transition-transform"
-      ),
-    },
-    finalizado: {
-      card: "border border-green-400 rounded-lg shadow-lg lg:w-[400px] h-auto bg-green-50", // borda verde
-      progressIndicator: "bg-green-500",
-      button: cn(
-        buttonVariants({ variant: "outline" }),
-        "w-[100px] md:w-[120px] h-[35px] rounded-xl border-2 border-green-500",
-        "text-green-500 font-semibold hover:bg-green-500 hover:text-white",
-        "hover:scale-[103%] md:hover:scale-[115%] transition-transform"
-      ),
-    },
-    pagamento: {
-      card: "border border-red-500 rounded-lg shadow-sm lg:w-[400px] h-auto",
-      progressIndicator: "bg-red-500",
-      button: cn(
-        buttonVariants({ variant: "outline" }),
-        "w-[100px] md:w-[120px] h-[35px] rounded-xl border-2 border-red-500",
-        "text-red-500 font-semibold hover:bg-red-500 hover:text-white",
-        "hover:scale-[103%] md:hover:scale-[115%] transition-transform"
-      ),
-    },
-  };
+    // Calculate total raised if data is available
+    const totalArrecadado = (preco && numerosVendidos) ? preco * numerosVendidos.length : 0;
 
-  const styles = cardVariantStyles[variant];
+    const cardVariantStyles = {
+        progresso: {
+            card: "border border-green-400 rounded-lg shadow-sm lg:w-[400px] h-auto",
+            progressIndicator: "bg-green-400",
+            button: cn(
+                buttonVariants({ variant: "outline" }),
+                "w-[100px] md:w-[120px] h-[35px] rounded-xl border-2 border-green-500",
+                "text-green-500 font-semibold hover:bg-green-500 hover:text-white",
+                "hover:scale-[103%] md:hover:scale-[115%] transition-transform"
+            )
+        },
+        finalizado: {
+            card: "border border-green-400 rounded-lg shadow-lg lg:w-[400px] h-auto bg-green-50",
+            progressIndicator: "bg-green-500",
+            button: cn(
+                buttonVariants({ variant: "outline" }),
+                "w-[100px] md:w-[120px] h-[35px] rounded-xl border-2 border-green-500",
+                "text-green-500 font-semibold hover:bg-green-500 hover:text-white",
+                "hover:scale-[103%] md:hover:scale-[115%] transition-transform"
+            )
+        },
+        pagamento: {
+            card: "border border-red-500 rounded-lg shadow-sm lg:w-[400px] h-auto",
+            progressIndicator: "bg-red-500",
+            button: cn(
+                buttonVariants({ variant: "outline" }),
+                "w-[100px] md:w-[120px] h-[35px] rounded-xl border-2 border-red-500",
+                "text-red-500 font-semibold hover:bg-red-500 hover:text-white",
+                "hover:scale-[103%] md:hover:scale-[115%] transition-transform"
+            )
+        }
+    };
 
-  return (
-    <div>
-      <UiCard
-        className={cn(
-          styles.card,
-          "relative overflow-hidden",
-          "!border-t-2 !border-r-2 !border-l-2",
-          variant === "progresso" || variant === "finalizado"
-            ? "!border-green-400 !border-t-green-400 !border-r-green-400 !border-l-green-400"
-            : "",
-          "!rounded-tl-xl !rounded-tr-xl" // borda igual nos dois lados
-        )}
-        style={{
-          borderTopRightRadius: "1rem",
-          borderTopLeftRadius: "1rem",
-          borderTopWidth: "2px",
-          borderRightWidth: "2px",
-          borderLeftWidth: "2px",
-          maxWidth: "320px", // reduz o tamanho do card
-          ...(variant === "progresso" || variant === "finalizado"
-            ? { borderColor: "#4ade80" } // verde-400
-            : {}),
-        }}
-      >
-        {/* Imagem de capa da rifa */}
-        {imagensPremioPrincipal && imagensPremioPrincipal.length > 0 && (
-          <div className="w-full h-28 flex items-center justify-center overflow-hidden rounded-t-xl bg-gray-100">
-            <img
-              src={imagensPremioPrincipal[0]}
-              alt="Imagem da rifa"
-              className="object-cover w-full h-full"
-              style={{ maxHeight: 112 }}
+    const styles = cardVariantStyles[variant as keyof typeof cardVariantStyles] || cardVariantStyles.progresso;
+
+    return (
+        <>
+            <UICard className={styles.card}>
+                <CardHeader className="pb-2">
+                    <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                            <CardTitle className="text-lg font-bold line-clamp-2">
+                                {name}
+                            </CardTitle>
+                            {!disponivel && (
+                                <div className="mt-2">
+                                    <span className="inline-block px-2 py-1 bg-red-100 text-red-700 text-xs rounded-full font-medium">
+                                        Rifa Indisponível
+                                    </span>
+                                </div>
+                            )}
+                        </div>
+                        {imagensPremioPrincipal && imagensPremioPrincipal[0] && (
+                            <div className="relative">
+                                <img
+                                    src={imagensPremioPrincipal[0]}
+                                    alt="Premio"
+                                    className={`w-16 h-16 object-cover rounded-md ml-2 ${!disponivel ? 'opacity-50 grayscale' : ''}`}
+                                />
+                                {!disponivel && (
+                                    <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30 rounded-md ml-2">
+                                        <span className="text-white text-xs font-bold">Bloqueado</span>
+                                    </div>
+                                )}
+                            </div>
+                        )}
+                    </div>
+                </CardHeader>
+
+                <CardContent className="pt-0">
+                    <div className="space-y-3">
+                        {disponivel ? (
+                            <>
+                                <div>
+                                    <div className="flex justify-between items-center mb-1">
+                                        <span className="text-sm font-medium">Progresso</span>
+                                        <span className="text-sm font-bold">{progress}%</span>
+                                    </div>
+                                    <Progress value={progress} className="h-2" indicatorColor={styles.progressIndicator} />
+                                </div>
+
+                                <div className="grid grid-cols-2 gap-2 text-sm">
+                                    <div className="bg-gray-50 p-2 rounded">
+                                        <span className="text-gray-600">Preço</span>
+                                        <p className="font-semibold text-green-600">
+                                            R$ {preco ? preco.toFixed(2) : '0,00'}
+                                        </p>
+                                    </div>
+                                    <div className="bg-gray-50 p-2 rounded">
+                                        <span className="text-gray-600">Vendidos</span>
+                                        <p className="font-semibold">
+                                            {numerosVendidos ? numerosVendidos.length : 0}/{totalNumbers || 0}
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div className="bg-blue-50 border border-blue-200 p-2 rounded">
+                                    <span className="text-sm text-blue-600">Total Arrecadado</span>
+                                    <p className="font-bold text-blue-700 text-lg">
+                                        R$ {totalArrecadado.toFixed(2)}
+                                    </p>
+                                </div>
+                            </>
+                        ) : (
+                            <div>
+                                <div className="flex justify-between items-center mb-1">
+                                    <span className="text-sm font-medium text-gray-400">Progresso</span>
+                                    <span className="text-sm font-bold text-gray-400">--</span>
+                                </div>
+                                <Progress value={0} className="h-2 opacity-50" indicatorColor="bg-gray-300" />
+                            </div>
+                        )}
+
+                        {!disponivel && (
+                            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mt-3">
+                                <div className="flex items-center gap-2 mb-1">
+                                    <div className="w-2 h-2 bg-yellow-500 rounded-full animate-pulse"></div>
+                                    <span className="text-sm font-semibold text-yellow-800">Aguardando Pagamento</span>
+                                </div>
+                                <p className="text-xs text-yellow-700">
+                                    Tempo restante: <span className="font-bold">23h 45m</span>
+                                </p>
+                                <p className="text-xs text-yellow-600 mt-1">
+                                    Complete o pagamento para ativar sua rifa
+                                </p>
+                            </div>
+                        )}
+
+                        <div className="flex gap-2 pt-2">
+                            <Button
+                                className={styles.button}
+                                onClick={() => {
+                                    setDialogOpen(true);
+                                }}
+                                disabled={!disponivel}
+                            >
+                                Visualizar
+                            </Button>
+                            
+                            <Link href={`/compra/${id}`} className="flex-1">
+                                <Button 
+                                    className={cn(
+                                        styles.button,
+                                        "w-full"
+                                    )}
+                                    disabled={!disponivel}
+                                >
+                                    {disponivel ? 'Acessar' : 'Indisponível'}
+                                </Button>
+                            </Link>
+                        </div>
+                    </div>
+                </CardContent>
+            </UICard>
+
+            <RifaDetailsDialog
+                open={isDialogOpen}
+                onOpenChange={setDialogOpen}
+                id={Number(id)}
+                rifa={rifaData} // Pass the full rifa data
             />
-          </div>
-        )}
-        <CardHeader className="py-2 mb-0 mt-1">
-          <CardTitle className="text-xl ml-1 font-bold">{title}</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Progress
-            value={progress}
-            className=""
-            indicatorColor={styles.progressIndicator}
-          />
-          <p className="text-sm ml-1 text-gray-600">
-            {progress}% de {total} bilhetes vendidos
-          </p>
-          <div className="mt-5 flex gap-4">
-            <Button
-              className={styles.button}
-              onClick={() => setDialogOpen(true)}
-            >
-              Detalhes
-            </Button>
-            {disponivel ? (
-              <Link href={`/compra/${id}`} passHref>
-                <Button className={styles.button}>Visualizar</Button>
-              </Link>
-            ) : (
-              <Button 
-                className={cn(
-                  styles.button,
-                  "opacity-50 cursor-not-allowed hover:scale-100"
-                )}
-                disabled
-              >
-                Indisponível
-              </Button>
-            )}
-          </div>
-        </CardContent>
-        {variant === "pagamento" && (
-          <div className="bg-red-500 text-white px-4 py-2 rounded-b-lg">
-            Faça o pagamento em até {paymentDays} dias e {paymentTime}
-          </div>
-        )}
-      </UiCard>
-      {/* Dialog de detalhes */}
-      <RifaDetailsDialog
-        id={id}
-        open={isDialogOpen}
-        onOpenChange={setDialogOpen}
-      />
-    </div>
-  );
+        </>
+    );
 };
 
 export default Card;

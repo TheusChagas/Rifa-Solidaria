@@ -5,14 +5,13 @@ export const rifasMockBase: Record<string, Rifa> = {
         id: "1",
         titulo: "Rifa Solidária",
         descricao: "Ajude uma causa e concorra a prêmios incríveis!",
-        progresso: "100%",
         metodoPagamento: "Pix, Cartão",
         disponivel: true,
         preco: 3.99,
         totalNumbers: 100,
         premio: 250,
         saleMode: "a dezena",
-        numerosVendidos: [1, 5, 17, 42],
+        numerosVendidos: Array.from({length: 73}, (_, i) => i + 1),
         dataSorteio: "2025-05-03T18:55:00Z",
         canalTransmissao: "YouTube – Xerifão JB",
         contatos: [
@@ -22,42 +21,15 @@ export const rifasMockBase: Record<string, Rifa> = {
         imagensPremioPrincipal: [
             "https://picsum.photos/400/400?random=1",
             "https://picsum.photos/400/400?random=101",
-            "https://picsum.photos/400/400?random=201",
-            "https://picsum.photos/400/400?random=301"
         ],
         premios: [
             { 
                 nome: "Pix R$250", 
-                imagens: [
-                    "https://picsum.photos/200/200?random=2",
-                    "https://picsum.photos/200/200?random=102",
-                    "https://picsum.photos/200/200?random=202",
-                    "https://picsum.photos/200/200?random=302",
-                    "https://picsum.photos/200/200?random=402"
-                ]
+                imagens: ["https://picsum.photos/200/200?random=2"]
             },
             { 
                 nome: "Brinde surpresa", 
-                imagens: [
-                    "https://picsum.photos/200/200?random=3",
-                    "https://picsum.photos/200/200?random=103",
-                    "https://picsum.photos/200/200?random=203"
-                ]
-            },
-            { 
-                nome: "Vale-compras R$50", 
-                imagens: [
-                    "https://picsum.photos/200/200?random=18",
-                    "https://picsum.photos/200/200?random=118",
-                    "https://picsum.photos/200/200?random=218"
-                ]
-            },
-            { 
-                nome: "Kit produtos", 
-                imagens: [
-                    "https://picsum.photos/200/200?random=19",
-                    "https://picsum.photos/200/200?random=119"
-                ]
+                imagens: ["https://picsum.photos/200/200?random=3"]
             }
         ],
         fazendinha: true,
@@ -66,7 +38,6 @@ export const rifasMockBase: Record<string, Rifa> = {
         id: "2",
         titulo: "Rifa Esperança",
         descricao: "Ajude a comunidade local e concorra a um smartphone novo.",
-        progresso: "0%",
         metodoPagamento: "Pix, Dinheiro",
         disponivel: false,
         preco: 8.00,
@@ -77,52 +48,15 @@ export const rifasMockBase: Record<string, Rifa> = {
         dataSorteio: "2025-07-15T19:00:00Z",
         canalTransmissao: "YouTube – Esperança",
         contatos: [
-            { nome: "Lucas", telefone: "21955554444", avatarUrl: "/lucas.png" },
-            { nome: "Paula", telefone: "21944443333", avatarUrl: "/paula.png" },
+            { nome: "Lucas", telefone: "21955554444" },
         ],
         imagensPremioPrincipal: [
             "https://picsum.photos/400/400?random=4",
-            "https://picsum.photos/400/400?random=104",
-            "https://picsum.photos/400/400?random=204"
         ],
         premios: [
             { 
                 nome: "Smartphone", 
-                imagens: [
-                    "https://picsum.photos/200/200?random=5",
-                    "https://picsum.photos/200/200?random=105",
-                    "https://picsum.photos/200/200?random=205",
-                    "https://picsum.photos/200/200?random=305"
-                ]
-            },
-            { 
-                nome: "Acessório surpresa", 
-                imagens: [
-                    "https://picsum.photos/200/200?random=6",
-                    "https://picsum.photos/200/200?random=106"
-                ]
-            },
-            { 
-                nome: "Fone Bluetooth", 
-                imagens: [
-                    "https://picsum.photos/200/200?random=20",
-                    "https://picsum.photos/200/200?random=120",
-                    "https://picsum.photos/200/200?random=220"
-                ]
-            },
-            { 
-                nome: "Carregador portátil", 
-                imagens: [
-                    "https://picsum.photos/200/200?random=21",
-                    "https://picsum.photos/200/200?random=121"
-                ]
-            },
-            { 
-                nome: "Cabo USB premium", 
-                imagens: [
-                    "https://picsum.photos/200/200?random=22",
-                    "https://picsum.photos/200/200?random=122"
-                ]
+                imagens: ["https://picsum.photos/200/200?random=5"]
             }
         ],
         fazendinha: true,
@@ -131,14 +65,13 @@ export const rifasMockBase: Record<string, Rifa> = {
         id: "3",
         titulo: "Rifa do Bem",
         descricao: "Participe e ajude a ONG Amigos dos Animais. Prêmio: Bicicleta Aro 29.",
-        progresso: "45%",
         metodoPagamento: "Pix, Boleto",
         disponivel: true,
         preco: 5.00,
         totalNumbers: 200,
         premio: "Bicicleta Aro 29",
         saleMode: "por número",
-        numerosVendidos: [10, 23, 45, 67, 89, 101, 150],
+        numerosVendidos: Array.from({length: 118}, (_, i) => i + 1), // 59% vendidos
         dataSorteio: "2025-06-10T20:00:00Z",
         canalTransmissao: "Instagram – @amigosanimais",
         contatos: [
@@ -206,14 +139,13 @@ export const rifasMockBase: Record<string, Rifa> = {
         id: "4",
         titulo: "Rifa dos Sonhos",
         descricao: "Concorra a uma viagem e ajude projetos sociais.",
-        progresso: "67%",
         metodoPagamento: "Cartão, Pix",
         disponivel: true,
         preco: 15.00,
         totalNumbers: 300,
         premio: "Viagem",
         saleMode: "por cota",
-        numerosVendidos: [5, 12, 25, 33, 99, 120, 250],
+        numerosVendidos: Array.from({length: 87}, (_, i) => i + 1), // 29% vendidos
         dataSorteio: "2025-08-01T21:00:00Z",
         canalTransmissao: "Facebook – Rifa dos Sonhos",
         contatos: [
@@ -272,14 +204,13 @@ export const rifasMockBase: Record<string, Rifa> = {
         id: "5",
         titulo: "Rifa Natalina",
         descricao: "Concorra a uma cesta de Natal e ajude famílias carentes.",
-        progresso: "55%",
         metodoPagamento: "Cartão, Dinheiro",
         disponivel: true,
         preco: 2.50,
         totalNumbers: 150,
         premio: "Cesta de Natal",
         saleMode: "por cota",
-        numerosVendidos: [2, 4, 6, 8, 10, 12, 14, 16, 18, 20],
+        numerosVendidos: Array.from({length: 150}, (_, i) => i + 1), // 100% vendidos
         dataSorteio: "2024-12-20T19:30:00Z",
         canalTransmissao: "Facebook – Rifa Natalina",
         contatos: [
@@ -331,5 +262,32 @@ export const rifasMockBase: Record<string, Rifa> = {
 const rifasMock = rifasMockBase;
 
 export async function getRifaById(id: string): Promise<Rifa | null> {
-    return rifasMock[id] || null;
+    const rifa = rifasMock[id];
+    if (!rifa) return null;
+    
+    // Se a rifa não está disponível, não pode ter números vendidos
+    const numerosVendidos = rifa.disponivel ? rifa.numerosVendidos : [];
+    
+    // Calculate progress based on sold numbers percentage
+    const progressPercentage = Math.round((numerosVendidos.length / rifa.totalNumbers) * 100);
+    
+    return {
+        ...rifa,
+        numerosVendidos,
+        progresso: `${progressPercentage}%`
+    };
+}
+
+export async function getAllRifas(): Promise<Rifa[]> {
+    const rifas = Object.values(rifasMockBase);
+    return rifas.map(rifa => {
+        const numerosVendidos = rifa.disponivel ? rifa.numerosVendidos : [];
+        const progressPercentage = Math.round((numerosVendidos.length / rifa.totalNumbers) * 100);
+        
+        return {
+            ...rifa,
+            numerosVendidos,
+            progresso: `${progressPercentage}%`
+        };
+    });
 }

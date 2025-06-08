@@ -27,7 +27,6 @@ export interface RifaConfig {
     id: string;
     titulo: React.ReactNode;
     descricao: React.ReactNode;
-    progresso: React.ReactNode;
     metodoPagamento: React.ReactNode;
     disponivel: any;
     totalNumbers: number;
@@ -48,7 +47,6 @@ export default function PaginaRifa({ config }: { config: RifaConfig & { imagensP
     const {
         titulo,
         descricao,
-        progresso,
         metodoPagamento,
         disponivel,
         totalNumbers,

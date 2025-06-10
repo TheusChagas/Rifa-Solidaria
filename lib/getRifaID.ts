@@ -656,6 +656,422 @@ export const rifasMockBase: Record<string, Rifa> = {
             metaDescription: "Concorra a uma cesta natalina e ajude famílias carentes",
             slug: "rifa-natalina-cesta"
         }
+    },
+    "6": {
+        id: "6",
+        titulo: "Rifa Tecnológica Premium",
+        descricao: "Concorra a um setup gamer completo e ajude jovens carentes a ter acesso à tecnologia. Inclui PC Gamer, monitor 4K, teclado mecânico, mouse gamer e headset profissional.",
+        metodoPagamento: "Pix, Cartão, Boleto, Dinheiro",
+        disponivel: true,
+        preco: 25.00,
+        totalNumbers: 500,
+        premio: "Setup Gamer Completo",
+        saleMode: "por número",
+        numerosVendidos: Array.from({length: 287}, (_, i) => i + 1),
+        dataSorteio: "2025-09-15T20:30:00Z",
+        horarioSorteio: "20:30",
+        localSorteio: "MEGA SENA",
+        canalTransmissao: "Twitch – TechRifas",
+        quantidadeNumeros: "500",
+        valorCota: 25.00,
+        quantidadePremios: 8,
+        celularContato: "11987654321",
+        contatos: [
+            { nome: "Pedro Tech", telefone: "11987654321", avatarUrl: "/pedro.png" },
+            { nome: "Ana Gamer", telefone: "11976543210", avatarUrl: "/ana-gamer.png" },
+            { nome: "Suporte Tech", telefone: "11965432109", avatarUrl: "/suporte.png" },
+        ],
+        imagensPremioPrincipal: [
+            "https://picsum.photos/400/400?random=500",
+            "https://picsum.photos/400/400?random=501",
+            "https://picsum.photos/400/400?random=502",
+            "https://picsum.photos/400/400?random=503",
+            "https://picsum.photos/400/400?random=504",
+            "https://picsum.photos/400/400?random=505"
+        ],
+        premios: [
+            { 
+                nome: "PC Gamer Completo", 
+                imagens: [
+                    "https://picsum.photos/200/200?random=600",
+                    "https://picsum.photos/200/200?random=601",
+                    "https://picsum.photos/200/200?random=602",
+                    "https://picsum.photos/200/200?random=603",
+                    "https://picsum.photos/200/200?random=604"
+                ],
+                descricao: "PC Gamer com RTX 4080, i7-13700K, 32GB RAM, SSD 2TB NVMe, fonte 850W modular"
+            },
+            { 
+                nome: "Monitor 4K 32 polegadas", 
+                imagens: [
+                    "https://picsum.photos/200/200?random=605",
+                    "https://picsum.photos/200/200?random=606",
+                    "https://picsum.photos/200/200?random=607"
+                ],
+                descricao: "Monitor gamer 4K 144Hz com HDR e tecnologia G-Sync"
+            },
+            { 
+                nome: "Teclado Mecânico RGB", 
+                imagens: [
+                    "https://picsum.photos/200/200?random=608",
+                    "https://picsum.photos/200/200?random=609"
+                ],
+                descricao: "Teclado mecânico premium com switches Cherry MX e RGB customizável"
+            },
+            { 
+                nome: "Mouse Gamer Pro", 
+                imagens: [
+                    "https://picsum.photos/200/200?random=610",
+                    "https://picsum.photos/200/200?random=611"
+                ],
+                descricao: "Mouse gamer profissional com sensor óptico de alta precisão"
+            },
+            { 
+                nome: "Headset 7.1 Surround", 
+                imagens: [
+                    "https://picsum.photos/200/200?random=612",
+                    "https://picsum.photos/200/200?random=613"
+                ],
+                descricao: "Headset gamer com som surround 7.1 e microfone noise cancelling"
+            },
+            { 
+                nome: "Cadeira Gamer Premium", 
+                imagens: [
+                    "https://picsum.photos/200/200?random=614",
+                    "https://picsum.photos/200/200?random=615"
+                ],
+                descricao: "Cadeira gamer ergonômica com ajustes profissionais"
+            },
+            { 
+                nome: "Webcam 4K", 
+                imagens: [
+                    "https://picsum.photos/200/200?random=616",
+                    "https://picsum.photos/200/200?random=617"
+                ],
+                descricao: "Webcam 4K para streaming profissional"
+            },
+            { 
+                nome: "Kit RGB Iluminação", 
+                imagens: [
+                    "https://picsum.photos/200/200?random=618",
+                    "https://picsum.photos/200/200?random=619"
+                ],
+                descricao: "Kit completo de iluminação RGB para setup"
+            }
+        ],
+        fazendinha: false,
+        tempoReserva: 120,
+        status: "ativo",
+        vendedorId: "vendor6",
+        vendedorNome: "Tech4All Foundation",
+        categoria: "Tecnologia",
+        tags: ["tecnologia", "gamer", "pc", "setup", "inclusão digital", "jovens"],
+        numerosReservados: [288, 289, 290, 291, 292],
+        valorTotal: 12500,
+        dataInicio: "2025-07-01T00:00:00Z",
+        dataFim: "2025-09-15T20:30:00Z",
+        regulamento: "Regulamento completo disponível em nosso site. Rifa licenciada e registrada. Todos os prêmios com garantia de 2 anos.",
+        tipoSorteio: "online",
+        transmissaoAoVivo: true,
+        urlTransmissao: "https://twitch.tv/techrifas",
+        whatsappGrupo: "https://chat.whatsapp.com/techrifas2025",
+        emailContato: "contato@tech4all.org",
+        pixChave: "tech4all@pix.com.br",
+        dadosBancarios: {
+            banco: "Banco Inter",
+            agencia: "0001",
+            conta: "98765432-1",
+            titular: "Tech4All Foundation LTDA"
+        },
+        configPagamento: {
+            pix: true,
+            cartao: true,
+            dinheiro: true,
+            boleto: true
+        },
+        limitePorPessoa: 50,
+        permitirReserva: true,
+        exibirNumerosVendidos: true,
+        exibirCompradores: true,
+        notificacoes: {
+            email: true,
+            whatsapp: true,
+            sms: true
+        },
+        configuracaoAvancada: {
+            permitirMultiplasCompras: true,
+            desconto: {
+                ativo: true,
+                quantidade: 25,
+                percentual: 25
+            },
+            bonificacao: {
+                ativo: true,
+                compre: 20,
+                ganhe: 3
+            }
+        },
+        historico: [
+            {
+                data: "2025-07-01T00:00:00Z",
+                acao: "Rifa criada",
+                usuario: "Pedro Tech",
+                detalhes: "Rifa tecnológica para inclusão digital criada"
+            },
+            {
+                data: "2025-07-15T10:30:00Z",
+                acao: "Meta 50% atingida",
+                usuario: "Sistema",
+                detalhes: "250 números vendidos - meta intermediária alcançada"
+            }
+        ],
+        estatisticas: {
+            visualizacoes: 15840,
+            compartilhamentos: 892,
+            tentativasCompra: 1247
+        },
+        seo: {
+            metaTitle: "Rifa Tecnológica Premium - Setup Gamer Completo",
+            metaDescription: "Concorra a um setup gamer completo e ajude na inclusão digital de jovens carentes",
+            slug: "rifa-tecnologica-setup-gamer"
+        }
+    },
+    "7": {
+        id: "7",
+        titulo: "Rifa Casa dos Sonhos",
+        descricao: "A maior rifa do ano! Concorra a uma casa mobiliada no valor de R$ 850.000 e ajude na construção de um orfanato. Casa com 3 quartos, 2 banheiros, garagem para 2 carros, quintal amplo e toda mobiliada com eletrodomésticos de primeira linha.",
+        metodoPagamento: "Pix, Cartão, Boleto, Transferência",
+        disponivel: true,
+        preco: 100.00,
+        totalNumbers: 10000,
+        premio: "Casa Mobiliada R$ 850.000",
+        saleMode: "por cota",
+        numerosVendidos: Array.from({length: 1247}, (_, i) => i + 1),
+        dataSorteio: "2025-12-31T22:00:00Z",
+        horarioSorteio: "22:00",
+        localSorteio: "LOTERIA FEDERAL",
+        canalTransmissao: "Globo, YouTube, Instagram Live",
+        quantidadeNumeros: "10.000",
+        valorCota: 100.00,
+        quantidadePremios: 15,
+        celularContato: "21987654321",
+        contatos: [
+            { nome: "Roberto Construtor", telefone: "21987654321", avatarUrl: "/roberto.png" },
+            { nome: "Mariana Arquiteta", telefone: "21976543210", avatarUrl: "/mariana.png" },
+            { nome: "Carlos Vendas", telefone: "21965432109", avatarUrl: "/carlos-vendas.png" },
+            { nome: "Suporte Premium", telefone: "21954321098", avatarUrl: "/suporte-premium.png" },
+        ],
+        imagensPremioPrincipal: [
+            "https://picsum.photos/400/400?random=700",
+            "https://picsum.photos/400/400?random=701",
+            "https://picsum.photos/400/400?random=702",
+            "https://picsum.photos/400/400?random=703",
+            "https://picsum.photos/400/400?random=704",
+            "https://picsum.photos/400/400?random=705",
+            "https://picsum.photos/400/400?random=706",
+            "https://picsum.photos/400/400?random=707",
+            "https://picsum.photos/400/400?random=708",
+            "https://picsum.photos/400/400?random=709"
+        ],
+        premios: [
+            { 
+                nome: "Casa Mobiliada Completa", 
+                imagens: [
+                    "https://picsum.photos/200/200?random=800",
+                    "https://picsum.photos/200/200?random=801",
+                    "https://picsum.photos/200/200?random=802",
+                    "https://picsum.photos/200/200?random=803",
+                    "https://picsum.photos/200/200?random=804",
+                    "https://picsum.photos/200/200?random=805",
+                    "https://picsum.photos/200/200?random=806",
+                    "https://picsum.photos/200/200?random=807",
+                    "https://picsum.photos/200/200?random=808",
+                    "https://picsum.photos/200/200?random=809"
+                ],
+                descricao: "Casa de 120m² com 3 quartos, 2 banheiros, sala, cozinha, área de serviço, garagem para 2 carros, quintal de 200m², totalmente mobiliada e decorada"
+            },
+            { 
+                nome: "Carro 0KM", 
+                imagens: [
+                    "https://picsum.photos/200/200?random=810",
+                    "https://picsum.photos/200/200?random=811",
+                    "https://picsum.photos/200/200?random=812"
+                ],
+                descricao: "Veículo 0KM popular, emplacado e com seguro por 1 ano"
+            },
+            { 
+                nome: "Moto 0KM", 
+                imagens: [
+                    "https://picsum.photos/200/200?random=813",
+                    "https://picsum.photos/200/200?random=814"
+                ],
+                descricao: "Motocicleta 150cc 0KM com documentação completa"
+            },
+            { 
+                nome: "Pix R$ 50.000", 
+                imagens: [
+                    "https://picsum.photos/200/200?random=815"
+                ],
+                descricao: "Transferência via Pix do valor de R$ 50.000,00"
+            },
+            { 
+                nome: "Pix R$ 25.000", 
+                imagens: [
+                    "https://picsum.photos/200/200?random=816"
+                ],
+                descricao: "Transferência via Pix do valor de R$ 25.000,00"
+            },
+            { 
+                nome: "Pix R$ 15.000", 
+                imagens: [
+                    "https://picsum.photos/200/200?random=817"
+                ],
+                descricao: "Transferência via Pix do valor de R$ 15.000,00"
+            },
+            { 
+                nome: "Pix R$ 10.000", 
+                imagens: [
+                    "https://picsum.photos/200/200?random=818"
+                ],
+                descricao: "Transferência via Pix do valor de R$ 10.000,00"
+            },
+            { 
+                nome: "Smart TV 75 polegadas", 
+                imagens: [
+                    "https://picsum.photos/200/200?random=819",
+                    "https://picsum.photos/200/200?random=820"
+                ],
+                descricao: "Smart TV 75\" 4K com HDR e sistema Android"
+            },
+            { 
+                nome: "Geladeira Duplex Inox", 
+                imagens: [
+                    "https://picsum.photos/200/200?random=821",
+                    "https://picsum.photos/200/200?random=822"
+                ],
+                descricao: "Geladeira duplex inox 540L com dispenser"
+            },
+            { 
+                nome: "Fogão 6 Bocas Inox", 
+                imagens: [
+                    "https://picsum.photos/200/200?random=823"
+                ],
+                descricao: "Fogão 6 bocas inox com forno duplo"
+            },
+            { 
+                nome: "Micro-ondas Premium", 
+                imagens: [
+                    "https://picsum.photos/200/200?random=824"
+                ],
+                descricao: "Micro-ondas 45L com grill e painel digital"
+            },
+            { 
+                nome: "Máquina de Lavar 15kg", 
+                imagens: [
+                    "https://picsum.photos/200/200?random=825"
+                ],
+                descricao: "Máquina de lavar roupas 15kg com tecnologia inverter"
+            },
+            { 
+                nome: "Ar Condicionado Split", 
+                imagens: [
+                    "https://picsum.photos/200/200?random=826"
+                ],
+                descricao: "Ar condicionado split 18.000 BTUs inverter"
+            },
+            { 
+                nome: "Smartphone Premium", 
+                imagens: [
+                    "https://picsum.photos/200/200?random=827",
+                    "https://picsum.photos/200/200?random=828"
+                ],
+                descricao: "Smartphone top de linha 256GB com câmera profissional"
+            },
+            { 
+                nome: "Notebook Gamer", 
+                imagens: [
+                    "https://picsum.photos/200/200?random=829",
+                    "https://picsum.photos/200/200?random=830"
+                ],
+                descricao: "Notebook gamer com placa de vídeo dedicada e 16GB RAM"
+            }
+        ],
+        fazendinha: false,
+        tempoReserva: 240,
+        status: "ativo",
+        vendedorId: "vendor7",
+        vendedorNome: "Construindo Sonhos Imobiliária",
+        categoria: "Imóveis",
+        tags: ["casa", "imóvel", "mobiliada", "sonhos", "orfanato", "caridade", "mega rifa"],
+        numerosReservados: [1248, 1249, 1250, 1251, 1252],
+        valorTotal: 1000000,
+        dataInicio: "2025-09-01T00:00:00Z",
+        dataFim: "2025-12-31T22:00:00Z",
+        regulamento: "Regulamento registrado em cartório. Rifa autorizada pelos órgãos competentes. Casa localizada em condomínio fechado. Documentação quitada. IPTU e condomínio pagos por 1 ano. Todos os eletrodomésticos com garantia estendida.",
+        tipoSorteio: "loteria-federal",
+        transmissaoAoVivo: true,
+        urlTransmissao: "https://youtube.com/construindosonhos",
+        whatsappGrupo: "https://chat.whatsapp.com/casasonhos2025",
+        emailContato: "contato@construindosonhos.com.br",
+        pixChave: "construindosonhos@pix.com.br",
+        dadosBancarios: {
+            banco: "Banco do Brasil",
+            agencia: "1234-5",
+            conta: "87654321-0",
+            titular: "Construindo Sonhos Imobiliária LTDA"
+        },
+        configPagamento: {
+            pix: true,
+            cartao: true,
+            dinheiro: false,
+            boleto: true
+        },
+        limitePorPessoa: 100,
+        permitirReserva: true,
+        exibirNumerosVendidos: false,
+        exibirCompradores: false,
+        notificacoes: {
+            email: true,
+            whatsapp: true,
+            sms: true
+        },
+        configuracaoAvancada: {
+            permitirMultiplasCompras: true,
+            desconto: {
+                ativo: true,
+                quantidade: 50,
+                percentual: 30
+            },
+            bonificacao: {
+                ativo: true,
+                compre: 100,
+                ganhe: 10
+            }
+        },
+        historico: [
+            {
+                data: "2025-09-01T00:00:00Z",
+                acao: "Rifa criada",
+                usuario: "Roberto Construtor",
+                detalhes: "Mega rifa da casa dos sonhos criada"
+            },
+            {
+                data: "2025-09-15T14:20:00Z",
+                acao: "Rifa pausada",
+                usuario: "Roberto Construtor",
+                detalhes: "Rifa pausada para ajustes na documentação"
+            }
+        ],
+        estatisticas: {
+            visualizacoes: 89750,
+            compartilhamentos: 4567,
+            tentativasCompra: 12849
+        },
+        seo: {
+            metaTitle: "Mega Rifa Casa dos Sonhos - Casa R$ 850.000 Mobiliada",
+            metaDescription: "A maior rifa do ano! Concorra a uma casa mobiliada no valor de R$ 850.000 e ajude na construção de um orfanato",
+            slug: "mega-rifa-casa-dos-sonhos"
+        }
     }
 };
 

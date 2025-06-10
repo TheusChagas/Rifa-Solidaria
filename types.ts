@@ -193,3 +193,10 @@ export const jogoDoBicho: Animal[] = [
     { id: 24, nome: "Veado", numeros: [93, 94, 95, 96], icone: require("@/assets/test.png").default },
     { id: 25, nome: "Vaca", numeros: [97, 98, 99, 0], icone: require("@/assets/test.png").default },
 ];
+
+// Interface para apoiadores
+export interface ApoiadorProps {
+    id: string;
+    nome: string;
+    avatar: string;
+}

@@ -8,6 +8,7 @@ import { SupportButton } from "@/components/SupportButton";
 import { cn } from "@/lib/utils";
 import Logo from "@/assets/Logo.png";
 import { CarrosselVertical } from "@/components/CarroselVertical";
+import { CarrosselApoiadores } from "@/components/CarrosselApoiadores";
 
 export default function Home() {
     const heroRef = useRef<HTMLElement>(null);
@@ -146,11 +147,11 @@ export default function Home() {
             </section>
             <section 
                 ref={simplesAssimRef}
-                className="relative z-20 w-full bg-gradient-to-b from-green-500 via-green-500 via-70% to-zinc-50 text-white min-h-screen flex flex-col items-center justify-center py-12 md:pb-48 px-6 sm:px-12"
+                className="relative z-20 w-full bg-gradient-to-b from-green-500 via-green-500 sm:via-70% via-85% to-zinc-50 text-white min-h-[90vh] flex flex-col items-center justify-center py-20 md:py-32 md:pb-60 px-6 sm:px-12"
             >
-                <div className="w-full max-w-5xl mx-auto">
-                    <h3 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6">Simples assim.</h3>
-                    <p className="text-gray-200 text-sm sm:text-lg mb-8 sm:mb-12">
+                <div className="w-full max-w-5xl mx-auto mb-12 sm:mb-16 text-center">
+                    <h3 className="text-3xl sm:text-2xl lg:text-6xl font-bold mb-4 sm:mb-6">Simples assim.</h3>
+                    <p className="text-gray-200 text-md sm:text-lg mb-8 sm:mb-12">
                         Simplicidade e tranquilidade na criação das suas rifas.
                     </p>
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-10 lg:gap-12">
@@ -178,9 +179,22 @@ export default function Home() {
                     </div>
                 </div>
             </section>
+            <section className="w-full min-h-[90vh] bg-zinc-50 flex flex-col items-center justify-center py-32 md:py-40 px-6">
+                <div className="w-full max-w-6xl mx-auto text-center">
+                    <h3 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-6 text-slate-800">
+                        APOIADORES
+                    </h3>
+                    <p className="text-slate-600 text-lg sm:text-xl mb-16 max-w-3xl mx-auto">
+                        Juntos construímos histórias de sucesso. Conheça quem confia em nossa plataforma para transformar sonhos em realidade.
+                    </p>
+                    <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg p-8">
+                        <CarrosselApoiadores />
+                    </div>
+                </div>
+            </section>
             <section 
                 ref={contatoRef}
-                className="w-full text-center py-20 md:py-32 px-4 space-y-8 bg-zinc-50"
+                className="w-full text-center pt-20 pb-12 md:py-20 px-4 space-y-8 bg-zinc-50"
             >
                 <h3 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-6 md:mb-8">
                     PRECISA DE AJUDA?

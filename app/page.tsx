@@ -233,46 +233,40 @@ export default function Home() {
                         <div className="text-lg text-gray-600">Carregando apoiadores...</div>
                     </div>
                 ) : (
-                    <div className="w-[80%] mx-auto">
-                        <div className="relative">
-                            <div className="overflow-x-auto scrollbar-hide py-4">
-                                <div className="flex space-x-6 pb-4" style={{ width: 'max-content' }}>
-                                    {apoiadores.map((apoiador, index) => (
-                                        <div 
-                                            key={index}
-                                            className="flex-shrink-0 bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2 hover:scale-105 w-[220px] border-2 border-green-200"
-                                        >
-                                            <div className="flex flex-col items-center space-y-4">
-                                                <div className="w-16 h-16 rounded-full overflow-hidden bg-gray-200">
-                                                    <img 
-                                                        src={apoiador.imagem} 
-                                                        alt={apoiador.nome}
-                                                        className="w-full h-full object-cover"
-                                                        onError={(e) => {
-                                                            const target = e.target as HTMLImageElement;
-                                                            target.style.display = 'none';
-                                                            target.parentElement!.innerHTML = `<div class="w-full h-full bg-green-100 flex items-center justify-center text-green-600 font-bold text-xl">${apoiador.nome.charAt(0)}</div>`;
-                                                        }}
-                                                    />
-                                                </div>
-                                                <div className="text-center">
-                                                    <h4 className="font-bold text-gray-800 text-lg">{apoiador.nome}</h4>
-                                                    <p className="text-sm text-gray-500">Apoiador</p>
-                                                </div>
+                    <div className="w-full max-w-7xl mx-auto">
+                        <div className="overflow-x-auto scrollbar-hide py-4">
+                            <div className="flex space-x-4 md:space-x-6 pb-4 px-4" style={{ minWidth: 'max-content' }}>
+                                {apoiadores.map((apoiador, index) => (
+                                    <div 
+                                        key={index}
+                                        className="flex-shrink-0 bg-white p-4 md:p-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2 hover:scale-105 w-[180px] sm:w-[200px] md:w-[220px] border-2 border-green-200"
+                                    >
+                                        <div className="flex flex-col items-center space-y-3 md:space-y-4">
+                                            <div className="w-12 h-12 md:w-16 md:h-16 rounded-full overflow-hidden bg-gray-200">
+                                                <img 
+                                                    src={apoiador.imagem} 
+                                                    alt={apoiador.nome}
+                                                    className="w-full h-full object-cover"
+                                                    onError={(e) => {
+                                                        const target = e.target as HTMLImageElement;
+                                                        target.style.display = 'none';
+                                                        target.parentElement!.innerHTML = `<div class="w-full h-full bg-green-100 flex items-center justify-center text-green-600 font-bold text-lg">${apoiador.nome.charAt(0)}</div>`;
+                                                    }}
+                                                />
+                                            </div>
+                                            <div className="text-center">
+                                                <h4 className="font-bold text-gray-800 text-sm md:text-lg whitespace-nowrap overflow-hidden text-ellipsis">{apoiador.nome}</h4>
+                                                <p className="text-xs md:text-sm text-gray-500">Apoiador</p>
                                             </div>
                                         </div>
-                                    ))}
-                                </div>
+                                    </div>
+                                ))}
                             </div>
-                            
-                            {/* Scroll indicators */}
-                            <div className="flex justify-center mt-4 space-x-2">
-                                <div className="flex space-x-1">
-                                    {Array.from({ length: Math.ceil(apoiadores.length / 3) }).map((_, i) => (
-                                        <div key={i} className="w-2 h-2 rounded-full bg-gray-300"></div>
-                                    ))}
-                                </div>
-                            </div>
+                        </div>
+                        
+                        {/* Mobile scroll hint */}
+                        <div className="flex justify-center mt-2 md:hidden">
+                            <p className="text-xs text-gray-400">← Deslize para ver mais →</p>
                         </div>
                     </div>
                 )}

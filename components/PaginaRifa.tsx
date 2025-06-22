@@ -3,6 +3,8 @@
 
 import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
+import { validatePhoneNumber, formatPhoneNumber, getCompradorByPhone } from "@/lib/getCompradores";
+import { Comprador } from "@/types";
 import {
     Dialog,
     DialogTrigger,
@@ -69,6 +71,12 @@ export default function PaginaRifa({ config }: { config: RifaConfig & { imagensP
     const [hoverTimeout, setHoverTimeout] = useState<NodeJS.Timeout | null>(null);
     const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
     const [selectedMainImage, setSelectedMainImage] = useState<string>("");
+    const [phoneNumber, setPhoneNumber] = useState<string>("");
+    const [isNewBuyer, setIsNewBuyer] = useState<boolean>(false);
+    const [phoneValidated, setPhoneValidated] = useState<boolean>(false);
+    const [existingBuyer, setExistingBuyer] = useState<Comprador | null>(null);
+    const [isValidating, setIsValidating] = useState<boolean>(false);
+    const [showAdditionalFields, setShowAdditionalFields] = useState<boolean>(false);
 
     // 1º console.log: mostra os números iniciais após o setup
     useEffect(() => {
@@ -139,6 +147,85 @@ export default function PaginaRifa({ config }: { config: RifaConfig & { imagensP
             setHoverTimeout(null);
         }
         setHoveredImage(null);
+    };
+
+    const handleFormSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        
+        if (!phoneNumber.trim()) {
+            alert('Por favor, digite um número de telefone.');
+            return;
+        }
+
+        setIsValidating(true);
+        
+        try {
+            if (validatePhoneNumber(phoneNumber)) {
+                const formattedPhone = formatPhoneNumber(phoneNumber);
+                const buyer = await getCompradorByPhone(formattedPhone);
+                
+                if (buyer) {
+                    setExistingBuyer(buyer);
+                    setIsNewBuyer(false);
+                    setShowAdditionalFields(false);
+                    setPhoneValidated(true);
+                    
+                    // Auto-submit after 1 second for existing buyer
+                    setTimeout(() => {
+                        // Create and submit form programmatically
+                        const form = document.createElement('form');
+                        form.method = 'post';
+                        form.action = '/api/reservar';
+                        form.style.display = 'none';
+
+                        const fields = [
+                            { name: 'telefone', value: formattedPhone },
+                            { name: 'numeros', value: JSON.stringify(selecionados) },
+                            { name: 'total', value: total.toString() },
+                            { name: 'isNewBuyer', value: 'false' },
+                            { name: 'existingBuyerName', value: buyer.nome },
+                            { name: 'existingBuyerEmail', value: buyer.email },
+                            { name: 'existingBuyerCity', value: buyer.cidade },
+                            { name: 'existingBuyerState', value: buyer.estado }
+                        ];
+
+                        fields.forEach(field => {
+                            const input = document.createElement('input');
+                            input.type = 'hidden';
+                            input.name = field.name;
+                            input.value = field.value;
+                            form.appendChild(input);
+                        });
+
+                        document.body.appendChild(form);
+                        form.submit();
+                    }, 1000);
+                } else {
+                    setExistingBuyer(null);
+                    setIsNewBuyer(true);
+                    setShowAdditionalFields(true);
+                    setPhoneValidated(true);
+                }
+            } else {
+                alert('Número de telefone inválido. Use o formato (DD) XXXXX-XXXX');
+                setPhoneValidated(false);
+                setIsNewBuyer(false);
+                setShowAdditionalFields(false);
+            }
+        } catch (error) {
+            alert('Erro ao validar telefone. Tente novamente.');
+            setPhoneValidated(false);
+            setIsNewBuyer(false);
+            setShowAdditionalFields(false);
+        } finally {
+            setIsValidating(false);
+        }
+    };
+
+    const handleFinalSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        const form = e.target as HTMLFormElement;
+        form.submit();
     };
 
     return (
@@ -417,69 +504,152 @@ export default function PaginaRifa({ config }: { config: RifaConfig & { imagensP
                         Cancelar
                     </Button>
 
-                    {/* Dialog com formulário puro */}
+                    {/* Dialog com formulário */}
                     <Dialog>
                         <DialogTrigger asChild>
                             <Button disabled={selecionados.length === 0}>Confirmar</Button>
                         </DialogTrigger>
 
-                        <DialogContent className="sm:max-w-[425px] z-50">
+                        <DialogContent className="sm:max-w-[425px] z-50 max-h-[90vh] overflow-y-auto">
                             <DialogHeader>
                                 <DialogTitle>Reservar Rifa</DialogTitle>
                             </DialogHeader>
 
-                            <form
-                                method="post"
-                                action="/api/reservar"
-                                className="grid gap-4 py-4"
-                            >
-                                {/* Campos do usuário */}
-                                <div className="space-y-2">
-                                    <Label htmlFor="nome">Nome ou apelido</Label>
-                                    <Input id="nome" name="nome" required />
-                                </div>
-                                <div className="space-y-2">
-                                    <Label htmlFor="email">Email</Label>
-                                    <Input id="email" name="email" type="email" required />
-                                </div>
-                                <div className="space-y-2">
-                                    <Label htmlFor="telefone">Telefone (BR)</Label>
-                                    <Input id="telefone" name="telefone" placeholder="(DD) XXXXX-XXXX" required />
-                                </div>
-                                <div className="flex gap-4">
-                                    <div className="space-y-2 flex-1">
-                                        <Label htmlFor="uf">UF</Label>
-                                        <Input id="uf" name="uf" required />
+                            {!showAdditionalFields ? (
+                                // Primeira etapa: apenas telefone
+                                <form onSubmit={handleFormSubmit} className="grid gap-4 py-4">
+                                    <div className="space-y-2">
+                                        <Label htmlFor="telefone">Telefone (WhatsApp)</Label>
+                                        <Input 
+                                            id="telefone" 
+                                            name="telefone" 
+                                            placeholder="(DD) XXXXX-XXXX" 
+                                            required 
+                                            type="tel"
+                                            value={phoneNumber}
+                                            onChange={(e) => setPhoneNumber(e.target.value)}
+                                            disabled={isValidating}
+                                        />
+                                        {phoneValidated && existingBuyer && (
+                                            <p className="text-sm text-green-600">
+                                                🎉 Bem-vindo de volta {existingBuyer.nome}! Redirecionando em 1 segundo...
+                                            </p>
+                                        )}
                                     </div>
-                                    <div className="space-y-2 flex-1">
-                                        <Label htmlFor="cidade">Cidade</Label>
-                                        <Input id="cidade" name="cidade" required />
-                                    </div>
-                                </div>
-                                <div className="space-y-2">
-                                    <Label htmlFor="bairro">Bairro</Label>
-                                    <Input id="bairro" name="bairro" required />
-                                </div>
 
-                                {/* Campos ocultos */}
-                                <input type="hidden" name="numeros" value={JSON.stringify(selecionados)} />
-                                <input type="hidden" name="total" value={total.toString()} />
-
-                                {/* Checkbox de termos */}
-                                <div className="flex items-center space-x-2">
-                                    <Checkbox id="terms" name="terms" required />
-                                    <label
-                                        htmlFor="terms"
-                                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                    <Button 
+                                        type="submit" 
+                                        className="w-full"
+                                        disabled={isValidating || !phoneNumber.trim()}
                                     >
-                                        Aceito os Termos de Uso e a Política de Privacidade.
-                                    </label>
-                                </div>
+                                        {isValidating ? 'Validando...' : 'RESERVAR'}
+                                    </Button>
+                                </form>
+                            ) : (
+                                // Segunda etapa: dados completos para novo comprador
+                                <form
+                                    onSubmit={handleFinalSubmit}
+                                    method="post"
+                                    action="/api/reservar"
+                                    className="grid gap-4 py-4"
+                                >
+                                    <div className="space-y-2">
+                                        <Label htmlFor="telefone_final">Telefone (WhatsApp)</Label>
+                                        <Input 
+                                            id="telefone_final" 
+                                            name="telefone" 
+                                            value={phoneNumber}
+                                            readOnly
+                                            className="bg-gray-100"
+                                        />
+                                        <p className="text-sm text-green-600">
+                                            🎉 Bem-vindo à plataforma! Por favor, preencha os campos abaixo para concluir sua reserva
+                                        </p>
+                                    </div>
 
-                                <Button type="submit" className="w-full">
-                                    RESERVAR
-                                </Button>
-                            </form>
+                                    <div className="space-y-2">
+                                        <Label htmlFor="nome">Nome completo</Label>
+                                        <Input 
+                                            id="nome" 
+                                            name="nome" 
+                                            required 
+                                            placeholder="Digite seu nome completo"
+                                        />
+                                    </div>
+                                    
+                                    <div className="space-y-2">
+                                        <Label htmlFor="email">Email</Label>
+                                        <Input 
+                                            id="email" 
+                                            name="email" 
+                                            type="email" 
+                                            required 
+                                            placeholder="seuemail@exemplo.com"
+                                        />
+                                    </div>
+                                    
+                                    <div className="grid grid-cols-2 gap-2">
+                                        <div className="space-y-2">
+                                            <Label htmlFor="cidade">Cidade</Label>
+                                            <Input 
+                                                id="cidade" 
+                                                name="cidade" 
+                                                required 
+                                                placeholder="Digite sua cidade"
+                                            />
+                                        </div>
+                                        
+                                        <div className="space-y-2">
+                                            <Label htmlFor="estado">Estado</Label>
+                                            <Input 
+                                                id="estado" 
+                                                name="estado" 
+                                                required 
+                                                placeholder="UF"
+                                                maxLength={2}
+                                                style={{ textTransform: 'uppercase' }}
+                                                onChange={(e) => {
+                                                    e.target.value = e.target.value.toUpperCase();
+                                                }}
+                                            />
+                                        </div>
+                                    </div>
+
+                                    {/* Campos ocultos */}
+                                    <input type="hidden" name="numeros" value={JSON.stringify(selecionados)} />
+                                    <input type="hidden" name="total" value={total.toString()} />
+                                    <input type="hidden" name="isNewBuyer" value="true" />
+
+                                    {/* Checkbox de termos */}
+                                    <div className="flex items-center space-x-2">
+                                        <Checkbox id="terms" name="terms" required />
+                                        <label
+                                            htmlFor="terms"
+                                            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                        >
+                                            Aceito os Termos de Uso e a Política de Privacidade.
+                                        </label>
+                                    </div>
+
+                                    <div className="flex gap-2">
+                                        <Button 
+                                            type="button" 
+                                            variant="outline"
+                                            onClick={() => {
+                                                setShowAdditionalFields(false);
+                                                setPhoneValidated(false);
+                                                setIsNewBuyer(false);
+                                            }}
+                                            className="flex-1"
+                                        >
+                                            Voltar
+                                        </Button>
+                                        <Button type="submit" className="flex-1">
+                                            CONFIRMAR RESERVA
+                                        </Button>
+                                    </div>
+                                </form>
+                            )}
                         </DialogContent>
                     </Dialog>
                 </div>

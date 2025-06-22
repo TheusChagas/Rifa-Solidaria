@@ -1,7 +1,7 @@
 import { Afiliado } from "@/types";
 
+// Mock data for affiliates
 export const afiliadosMockBase: Afiliado[] = [
-    // Afiliados com nomes específicos
     {
         position: 1,
         sellerName: "João Silva",
@@ -37,7 +37,7 @@ export const afiliadosMockBase: Afiliado[] = [
         ticketsSold: 32,
         campaign: "campanha-2"
     },
-    // Afiliados genéricos
+    // Generic affiliates
     ...Array.from({ length: 5 }, (_, i) => ({
         position: i + 6,
         sellerName: `Afiliado ${i + 6}`,
@@ -48,7 +48,7 @@ export const afiliadosMockBase: Afiliado[] = [
 ];
 
 export async function getAllAfiliados(): Promise<Afiliado[]> {
-    // Simula uma chamada assíncrona para buscar dados
+    // Simulate an asynchronous call to fetch data
     return new Promise((resolve) => {
         setTimeout(() => {
             resolve(afiliadosMockBase);
@@ -74,4 +74,26 @@ export async function getTopAfiliados(limit: number = 5): Promise<Afiliado[]> {
 export async function getAfiliadoByPosition(position: number): Promise<Afiliado | null> {
     const allAfiliados = await getAllAfiliados();
     return allAfiliados.find(afiliado => afiliado.position === position) || null;
+}
+
+export async function getAfiliadoByName(name: string): Promise<Afiliado | null> {
+    const allAfiliados = await getAllAfiliados();
+    return allAfiliados.find(afiliado => 
+        afiliado.sellerName.toLowerCase().includes(name.toLowerCase())
+    ) || null;
+}
+
+export async function addAfiliado(afiliado: Omit<Afiliado, 'position'>): Promise<Afiliado> {
+    const allAfiliados = await getAllAfiliados();
+    const newPosition = Math.max(...allAfiliados.map(a => a.position)) + 1;
+    
+    const newAfiliado: Afiliado = {
+        ...afiliado,
+        position: newPosition
+    };
+    
+    // In a real application, this would save to a database
+    afiliadosMockBase.push(newAfiliado);
+    
+    return newAfiliado;
 }

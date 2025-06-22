@@ -1,6 +1,8 @@
 'use client'
 
 import { useState, useEffect, useMemo } from "react"
+import { Afiliado } from "@/types"
+import { getAllAfiliados } from "@/lib/getAfiliados"
 import {
     Select,
     SelectContent,
@@ -28,34 +30,37 @@ type Row = {
     campaign: string
 }
 
-// Dados de exemplo
-const rankingData: Row[] = [
-    { position: 1, sellerName: "João Silva", amountCollected: "R$ 2.500,00", ticketsSold: 45, campaign: "campanha-1" },
-    { position: 2, sellerName: "Maria Souza", amountCollected: "R$ 2.300,00", ticketsSold: 42, campaign: "campanha-2" },
-    { position: 3, sellerName: "Carlos Lima", amountCollected: "R$ 2.100,00", ticketsSold: 38, campaign: "campanha-3" },
-    // … mais itens
-    ...Array.from({ length: 27 }, (_, i) => ({
-        position: i + 4,
-        sellerName: `Afiliado ${i + 4}`,
-        amountCollected: `R$ ${(2000 - i * 50).toLocaleString("pt-BR")},00`,
-        ticketsSold: 35 - i,
-        campaign: i % 3 === 0 ? "campanha-1" : i % 3 === 1 ? "campanha-2" : "campanha-3",
-    })),
-]
-
 export default function AfiliadosPage() {
     // filtro e paginação
     const [selectedCampaign, setSelectedCampaign] = useState("all")
     const [currentPage, setCurrentPage] = useState(1)
+    const [rankingData, setRankingData] = useState<Afiliado[]>([])
+    const [loading, setLoading] = useState(true)
     const itemsPerPage = 10
 
     // configuração de sort: { key, direction }
     const [sortConfig, setSortConfig] = useState<{
-        key: keyof Row
+        key: keyof Afiliado
         direction: "asc" | "desc"
     } | null>(null)
 
     const [hideAmount, setHideAmount] = useState(false);
+
+    // Carrega os dados dos afiliados
+    useEffect(() => {
+        const loadAfiliados = async () => {
+            try {
+                const data = await getAllAfiliados();
+                setRankingData(data);
+            } catch (error) {
+                console.error("Erro ao carregar afiliados:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        loadAfiliados();
+    }, []);
 
     useEffect(() => {
         setCurrentPage(1)
@@ -66,7 +71,7 @@ export default function AfiliadosPage() {
         return selectedCampaign === "all"
             ? rankingData
             : rankingData.filter((r) => r.campaign === selectedCampaign)
-    }, [selectedCampaign])
+    }, [selectedCampaign, rankingData])
 
     // 2) Ordena
     const sortedData = useMemo(() => {
@@ -104,7 +109,7 @@ export default function AfiliadosPage() {
     const currentData = sortedData.slice(start, start + itemsPerPage)
 
     // alterna direção ao clicar no header
-    function handleSort(key: keyof Row) {
+    function handleSort(key: keyof Afiliado) {
         const direction =
             !sortConfig || sortConfig.key !== key
                 ? "asc"
@@ -115,13 +120,23 @@ export default function AfiliadosPage() {
     }
 
     // helper para mostrar ícone
-    function SortIcon({ column }: { column: keyof Row }) {
+    function SortIcon({ column }: { column: keyof Afiliado }) {
         if (!sortConfig || sortConfig.key !== column) return null
         return sortConfig.direction === "asc" ? (
             <ChevronUp className="w-4 h-4 ml-1" />
         ) : (
             <ChevronDown className="w-4 h-4 ml-1" />
         )
+    }
+
+    if (loading) {
+        return (
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                <div className="flex justify-center items-center h-64">
+                    <div className="text-lg text-gray-600">Carregando afiliados...</div>
+                </div>
+            </div>
+        );
     }
 
     return (

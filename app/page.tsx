@@ -288,7 +288,7 @@ export default function Home() {
             
             <section 
                 ref={contatoRef}
-                className="w-full text-center py-20 md:py-32 px-4 space-y-8 bg-zinc-50"
+                className="w-full text-center pt-20 pb-12 md:py-20 px-4 space-y-8 bg-zinc-50"
             >
                 <div className="relative mb-16">
                     <div className="relative bg-white/80 backdrop-blur-sm rounded-2xl py-6 px-8 mx-auto max-w-2xl shadow-lg border border-white/50 space-y-3">

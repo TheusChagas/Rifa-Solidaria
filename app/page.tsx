@@ -8,8 +8,8 @@ import { SupportButton } from "@/components/SupportButton";
 import { cn } from "@/lib/utils";
 import Logo from "@/assets/Logo.png";
 import { CarrosselVertical } from "@/components/CarroselVertical";
-import { Afiliado } from "@/types";
-import { getTopAfiliados } from "@/lib/getAfiliados";
+import { Apoiador } from "@/types";
+import { getApoiadores } from "@/lib/getApoiadores";
 
 export default function Home() {
     const heroRef = useRef<HTMLElement>(null);
@@ -20,7 +20,7 @@ export default function Home() {
     const [isHeroVisible, setIsHeroVisible] = useState(true);
     const [isPinging, setIsPinging] = useState(false);
     const [showArrow, setShowArrow] = useState(true);
-    const [afiliados, setAfiliados] = useState<Afiliado[]>([]);
+    const [apoiadores, setApoiadores] = useState<Apoiador[]>([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -50,18 +50,18 @@ export default function Home() {
     }, []);
 
     useEffect(() => {
-        const loadAfiliados = async () => {
+        const loadApoiadores = async () => {
             try {
-                const data = await getTopAfiliados(6);
-                setAfiliados(data);
+                const data = await getApoiadores(6);
+                setApoiadores(data);
             } catch (error) {
-                console.error("Erro ao carregar afiliados:", error);
+                console.error("Erro ao carregar apoiadores:", error);
             } finally {
                 setLoading(false);
             }
         };
 
-        loadAfiliados();
+        loadApoiadores();
     }, []);
 
     const handleMouseMove = (e: React.MouseEvent<HTMLElement>) => {
@@ -177,15 +177,13 @@ export default function Home() {
             >
                 <div className="w-full max-w-5xl mx-auto">
                     <div className="relative mb-12">
-                        <div className="relative bg-white/10 backdrop-blur-sm rounded-2xl py-6 px-8 mx-auto max-w-2xl shadow-lg border border-white/20 space-y-3">
-                            <h3 className="text-2xl sm:text-3xl font-bold text-white">
-                                Simples assim.
-                            </h3>
-                            
-                            <p className="text-gray-200 text-sm sm:text-lg font-medium">
-                                Simplicidade e tranquilidade na criação das suas rifas.
-                            </p>
-                        </div>
+                        <h3 className="text-2xl sm:text-3xl font-bold text-white mb-4">
+                            Simples assim.
+                        </h3>
+                        
+                        <p className="text-gray-200 text-sm sm:text-lg font-medium">
+                            Simplicidade e tranquilidade na criação das suas rifas.
+                        </p>
                     </div>
                     
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-10 lg:gap-12">
@@ -221,51 +219,45 @@ export default function Home() {
                 <div className="relative mb-16">
                     <div className="relative bg-white/80 backdrop-blur-sm rounded-2xl py-6 px-8 mx-auto max-w-2xl shadow-lg border border-white/50 space-y-3">
                         <h3 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-800">
-                            TOP AFILIADOS
+                            NOSSOS APOIADORES
                         </h3>
                         
                         <p className="text-gray-600 text-lg font-medium">
-                            Conheça nossos melhores afiliados e suas conquistas
+                            Conheça quem apoia nossa missão
                         </p>
                     </div>
                 </div>
                 
                 {loading ? (
                     <div className="flex justify-center items-center h-32">
-                        <div className="text-lg text-gray-600">Carregando afiliados...</div>
+                        <div className="text-lg text-gray-600">Carregando apoiadores...</div>
                     </div>
                 ) : (
                     <div className="w-[80%] mx-auto">
                         <div className="relative">
                             <div className="overflow-x-auto scrollbar-hide py-4">
                                 <div className="flex space-x-6 pb-4" style={{ width: 'max-content' }}>
-                                    {/* Top 6 affiliates */}
-                                    {afiliados.slice(0, 6).map((afiliado, index) => (
+                                    {apoiadores.map((apoiador, index) => (
                                         <div 
                                             key={index}
-                                            className={`flex-shrink-0 bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2 hover:scale-105 w-[220px] border-2 ${
-                                                index === 0 ? 'border-yellow-400 bg-gradient-to-br from-yellow-50 to-white' :
-                                                index === 1 ? 'border-gray-400 bg-gradient-to-br from-gray-50 to-white' :
-                                                index === 2 ? 'border-orange-400 bg-gradient-to-br from-orange-50 to-white' :
-                                                'border-green-200'
-                                            }`}
+                                            className="flex-shrink-0 bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2 hover:scale-105 w-[220px] border-2 border-green-200"
                                         >
-                                            <div className="flex flex-col items-center space-y-3">
-                                                <div className={`w-16 h-16 rounded-full flex items-center justify-center font-bold text-xl ${
-                                                    index === 0 ? 'bg-yellow-400 text-white' :
-                                                    index === 1 ? 'bg-gray-400 text-white' :
-                                                    index === 2 ? 'bg-orange-400 text-white' :
-                                                    'bg-green-100 text-green-600'
-                                                }`}>
-                                                    {index < 3 ? '🏆' : `#${afiliado.position}`}
+                                            <div className="flex flex-col items-center space-y-4">
+                                                <div className="w-16 h-16 rounded-full overflow-hidden bg-gray-200">
+                                                    <img 
+                                                        src={apoiador.imagem} 
+                                                        alt={apoiador.nome}
+                                                        className="w-full h-full object-cover"
+                                                        onError={(e) => {
+                                                            const target = e.target as HTMLImageElement;
+                                                            target.style.display = 'none';
+                                                            target.parentElement!.innerHTML = `<div class="w-full h-full bg-green-100 flex items-center justify-center text-green-600 font-bold text-xl">${apoiador.nome.charAt(0)}</div>`;
+                                                        }}
+                                                    />
                                                 </div>
                                                 <div className="text-center">
-                                                    <h4 className="font-bold text-gray-800 text-lg">{afiliado.sellerName}</h4>
-                                                    <p className="text-sm text-gray-500 mb-2">#{afiliado.position} Posição</p>
-                                                </div>
-                                                <div className="text-center space-y-1">
-                                                    <p className="text-sm text-gray-600">{afiliado.ticketsSold} bilhetes vendidos</p>
-                                                    <p className="text-lg font-bold text-green-600">{afiliado.amountCollected}</p>
+                                                    <h4 className="font-bold text-gray-800 text-lg">{apoiador.nome}</h4>
+                                                    <p className="text-sm text-gray-500">Apoiador</p>
                                                 </div>
                                             </div>
                                         </div>
@@ -276,7 +268,7 @@ export default function Home() {
                             {/* Scroll indicators */}
                             <div className="flex justify-center mt-4 space-x-2">
                                 <div className="flex space-x-1">
-                                    {Array.from({ length: Math.ceil(afiliados.length / 3) }).map((_, i) => (
+                                    {Array.from({ length: Math.ceil(apoiadores.length / 3) }).map((_, i) => (
                                         <div key={i} className="w-2 h-2 rounded-full bg-gray-300"></div>
                                     ))}
                                 </div>

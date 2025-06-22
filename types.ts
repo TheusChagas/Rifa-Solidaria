@@ -202,6 +202,11 @@ export interface Afiliado {
     campaign: string;
 }
 
+export interface Apoiador {
+    nome: string;
+    imagem: string;
+}
+
 export interface Comprador {
     telefone: string; 
     nome: string;

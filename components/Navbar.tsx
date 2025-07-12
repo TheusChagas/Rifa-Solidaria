@@ -78,9 +78,9 @@ export function Navbar({ isHeroVisible, onScrollToSection, onScrollToSobre, onSc
 
     return (
         <nav className={navbarStyle}>
-            <div className="container mx-auto flex h-[4rem] items-center justify-between px-4">
+            <div className="container mx-auto flex h-[4rem] items-center justify-between px-2 sm:px-4">
                 {/* Logo */}
-                <Link href="/" className="flex flex-row text-xl font-bold text-green-500">
+                <Link href="/" className="flex flex-row text-xl font-bold text-green-500 -ml-2">
                     <Image src={logo} alt="Logo do Site" width={75} height={75} />
                 </Link>
 
@@ -106,20 +106,20 @@ export function Navbar({ isHeroVisible, onScrollToSection, onScrollToSobre, onSc
                             Contato
                         </button>
                     </div>
-                    <div className="flex gap-0">
+                    <div className="flex gap-0 -mr-2">
                         <Button
                             variant="outline"
                             className="bg-green-500 text-white hover:bg-green-600 hover:text-white ml-6"
                         >
                             <Link href={isLoggedIn ? "/logout" : "/login"}>
-                                {isLoggedIn ? "Sair" : "Login"}
+                                {isLoggedIn ? "Sair" : "Portal do Vendedor"}
                             </Link>
                         </Button>
                     </div>
                 </div>
 
                 {/* Mobile Dropdown */}
-                <div className="md:hidden flex items-center">
+                <div className="md:hidden flex items-center -mr-2">
                     <DropdownMenu onOpenChange={setIsOpen}>
                         <DropdownMenuTrigger className="focus:outline-none">
                             {isOpen ? (
@@ -170,7 +170,7 @@ export function Navbar({ isHeroVisible, onScrollToSection, onScrollToSobre, onSc
                                     className="flex justify-center px-4 py-2 bg-green-500 text-white hover:bg-green-600 rounded-md mx-2 my-1"
                                     onClick={() => setIsOpen(false)}
                                 >
-                                    {isLoggedIn ? "Sair" : "Login"}
+                                    {isLoggedIn ? "Sair" : "Portal do Vendedor"}
                                 </Link>
                             </DropdownMenuItem>
                         </DropdownMenuContent>

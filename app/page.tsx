@@ -212,6 +212,65 @@ export default function Home() {
                 </div>
             </section>
             
+            <section className="w-full text-center py-20 md:py-32 px-4 space-y-8 bg-white">
+                <div className="relative mb-16">
+                    <div className="relative bg-white/80 backdrop-blur-sm rounded-2xl py-6 px-8 mx-auto max-w-2xl shadow-lg border border-white/50 space-y-3">
+                        <h3 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-800">
+                            SUAS OPÇÕES
+                        </h3>
+                        <p className="text-gray-600 text-lg font-medium">
+                            Escolha a melhor forma de usar nossa plataforma
+                        </p>
+                    </div>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8 max-w-4xl mx-auto">
+                    <div className="group p-6 rounded-2xl bg-gradient-to-br from-green-50 to-green-100 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2 hover:scale-105 border border-green-200">
+                        <div className="flex flex-col items-center space-y-4">
+                            <div className="p-4 rounded-full bg-green-500 group-hover:bg-green-600 transition-colors duration-300">
+                                <Play className="h-8 w-8 text-white group-hover:scale-110 transition-transform duration-300" />
+                            </div>
+                            <div className="text-center">
+                                <h4 className="font-bold text-xl text-slate-800 mb-2">Taxas Regressivas</h4>
+                                <p className="text-gray-600 text-sm mb-4">Pague apenas quando criar, com taxas que diminuem conforme sua ambição.</p>
+                                <div className="space-y-2">
+                                    <p className="text-xs text-gray-500">✓ Rifas ilimitadas</p>
+                                    <p className="text-xs text-gray-500">✓ Taxa de 2% (Até 1000 números)</p>
+                                    <p className="text-xs text-gray-500">✓ Taxa de 1.5% (até 10000 números)</p>
+                                    <p className="text-xs text-gray-500">✓ Taxa de 1% (acima de 10000)</p>
+                                </div>
+                                <div className="mt-4 pt-4 border-t border-green-200">
+                                    <p className="text-lg font-bold text-green-600">R$ 0,00 mensais</p>
+                                    <p className="text-xs text-gray-500">Somente taxas na criação</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div className="group p-6 rounded-2xl bg-gradient-to-br from-emerald-50 to-emerald-100 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2 hover:scale-105 border border-emerald-200">
+                        <div className="flex flex-col items-center space-y-4">
+                            <div className="p-4 rounded-full bg-emerald-500 group-hover:bg-emerald-600 transition-colors duration-300">
+                                <DollarSign className="h-8 w-8 text-white group-hover:scale-110 transition-transform duration-300" />
+                            </div>
+                            <div className="text-center">
+                                <h4 className="font-bold text-xl text-slate-800 mb-2">Pagamento Mensal</h4>
+                                <p className="text-gray-600 text-sm mb-4">Pague uma mensalidade fixa e fique isento de taxas.</p>
+                                <div className="space-y-2">
+                                    <p className="text-xs text-gray-500">✓ Rifas ilimitadas</p>
+                                    <p className="text-xs text-gray-500">✓ 0% de taxas por criação</p>
+                                    <p className="text-xs text-gray-500">✓ Suporte prioritário</p>
+                                    <p className="text-xs text-gray-500">✓ Relatórios avançados</p>
+                                </div>
+                                <div className="mt-4 pt-4 border-t border-emerald-200">
+                                    <p className="text-lg font-bold text-emerald-600">R$ 49,90/mês</p>
+                                    <p className="text-xs text-gray-500">0% de taxas por rifa</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
             <section 
                 ref={afiliadosRef}
                 className="w-full text-center py-20 md:py-32 px-4 space-y-8 bg-zinc-50"
@@ -274,7 +333,7 @@ export default function Home() {
             
             <section 
                 ref={contatoRef}
-                className="w-full text-center pt-20 pb-12 md:py-20 px-4 space-y-8 bg-zinc-50"
+                className="w-full text-center pt-20 pb-20 md:py-32 px-4 space-y-8 bg-gradient-to-b from-zinc-50 via-green-500 via-30% to-green-500"
             >
                 <div className="relative mb-16">
                     <div className="relative bg-white/80 backdrop-blur-sm rounded-2xl py-6 px-8 mx-auto max-w-2xl shadow-lg border border-white/50 space-y-3">

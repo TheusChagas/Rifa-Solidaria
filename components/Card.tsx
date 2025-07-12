@@ -65,32 +65,32 @@ const Card = ({ id, name, progress, variant, imagensPremioPrincipal, disponivel,
     return (
         <>
             <UICard className={styles.card}>
+                {/* Imagem de capa */}
+                {imagensPremioPrincipal && imagensPremioPrincipal[0] && (
+                    <div className="relative w-full h-48 overflow-hidden rounded-t-lg">
+                        <img
+                            src={imagensPremioPrincipal[0]}
+                            alt="Premio"
+                            className={`w-full h-full object-cover ${!disponivel ? 'opacity-50 grayscale' : ''}`}
+                        />
+                        {!disponivel && (
+                            <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30">
+                                <span className="text-white text-sm font-bold">Bloqueado</span>
+                            </div>
+                        )}
+                    </div>
+                )}
+                
                 <CardHeader className="pb-2">
-                    <div className="flex items-start justify-between">
-                        <div className="flex-1">
-                            <CardTitle className="text-lg font-bold line-clamp-2">
-                                {name}
-                            </CardTitle>
-                            {!disponivel && (
-                                <div className="mt-2">
-                                    <span className="inline-block px-2 py-1 bg-red-100 text-red-700 text-xs rounded-full font-medium">
-                                        Rifa Indisponível
-                                    </span>
-                                </div>
-                            )}
-                        </div>
-                        {imagensPremioPrincipal && imagensPremioPrincipal[0] && (
-                            <div className="relative">
-                                <img
-                                    src={imagensPremioPrincipal[0]}
-                                    alt="Premio"
-                                    className={`w-16 h-16 object-cover rounded-md ml-2 ${!disponivel ? 'opacity-50 grayscale' : ''}`}
-                                />
-                                {!disponivel && (
-                                    <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30 rounded-md ml-2">
-                                        <span className="text-white text-xs font-bold">Bloqueado</span>
-                                    </div>
-                                )}
+                    <div className="flex flex-col">
+                        <CardTitle className="text-lg font-bold line-clamp-2 mb-2">
+                            {name}
+                        </CardTitle>
+                        {!disponivel && (
+                            <div>
+                                <span className="inline-block px-2 py-1 bg-red-100 text-red-700 text-xs rounded-full font-medium">
+                                    Rifa Indisponível
+                                </span>
                             </div>
                         )}
                     </div>

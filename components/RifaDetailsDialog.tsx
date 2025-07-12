@@ -123,22 +123,22 @@ export function RifaDetailsDialog({
                             <h4 className="font-semibold text-lg text-gray-800 mb-3 flex items-center gap-2">
                                 💰 Informações de Venda
                             </h4>
-                            <div className="grid grid-cols-2 gap-4 bg-blue-50 p-4 rounded-lg">
+                            <div className="grid grid-cols-2 gap-4 bg-green-50 p-4 rounded-lg">
                                 <div>
                                     <p className="text-sm text-gray-600">Preço por bilhete</p>
-                                    <p className="font-bold text-lg text-blue-700">R$ {Number(rifa.preco).toFixed(2)}</p>
+                                    <p className="font-bold text-lg text-green-700">R$ {Number(rifa.preco).toFixed(2)}</p>
                                 </div>
                                 <div>
                                     <p className="text-sm text-gray-600">Total de números</p>
-                                    <p className="font-bold text-lg text-blue-700">{rifa.totalNumbers}</p>
+                                    <p className="font-bold text-lg text-green-700">{rifa.totalNumbers}</p>
                                 </div>
                                 <div>
                                     <p className="text-sm text-gray-600">Modo de venda</p>
-                                    <p className="font-medium text-blue-700">{rifa.saleMode}</p>
+                                    <p className="font-medium text-green-700">{rifa.saleMode}</p>
                                 </div>
                                 <div>
                                     <p className="text-sm text-gray-600">Progresso</p>
-                                    <p className="font-medium text-blue-700">
+                                    <p className="font-medium text-green-700">
                                         {rifa.disponivel 
                                             ? `${Math.round((rifa.numerosVendidos.length / rifa.totalNumbers) * 100)}%`
                                             : "Indisponível"
@@ -147,7 +147,7 @@ export function RifaDetailsDialog({
                                 </div>
                                 <div className="col-span-2">
                                     <p className="text-sm text-gray-600">Métodos de pagamento</p>
-                                    <p className="font-medium text-blue-700">{typeof rifa.metodoPagamento === "string" ? rifa.metodoPagamento : ""}</p>
+                                    <p className="font-medium text-green-700">{typeof rifa.metodoPagamento === "string" ? rifa.metodoPagamento : ""}</p>
                                 </div>
                             </div>
                         </div>
@@ -181,20 +181,20 @@ export function RifaDetailsDialog({
                             <h4 className="font-semibold text-lg text-gray-800 mb-3 flex items-center gap-2">
                                 📅 Sorteio
                             </h4>
-                            <div className="bg-purple-50 p-4 rounded-lg">
+                            <div className="bg-green-50 p-4 rounded-lg">
                                 <div className="space-y-2">
                                     <div>
                                         <p className="text-sm text-gray-600">Data e horário</p>
-                                        <p className="font-medium text-purple-700">{new Date(rifa.dataSorteio).toLocaleString("pt-BR", { timeZone: "America/Sao_Paulo" })}</p>
+                                        <p className="font-medium text-green-700">{new Date(rifa.dataSorteio).toLocaleString("pt-BR", { timeZone: "America/Sao_Paulo" })}</p>
                                     </div>
                                     <div>
                                         <p className="text-sm text-gray-600">Canal de transmissão</p>
-                                        <p className="font-medium text-purple-700">{rifa.canalTransmissao}</p>
+                                        <p className="font-medium text-green-700">{rifa.canalTransmissao}</p>
                                     </div>
                                     {rifa.fazendinha !== undefined && (
                                         <div>
                                             <p className="text-sm text-gray-600">Fazendinha</p>
-                                            <p className="font-medium text-purple-700">{rifa.fazendinha ? 'Sim' : 'Não'}</p>
+                                            <p className="font-medium text-green-700">{rifa.fazendinha ? 'Sim' : 'Não'}</p>
                                         </div>
                                     )}
                                 </div>
@@ -208,13 +208,13 @@ export function RifaDetailsDialog({
                             </h4>
                             <div className="space-y-3">
                                 {rifa.contatos.map((c) => (
-                                    <div key={c.telefone} className="flex items-center gap-3 bg-orange-50 p-3 rounded-lg border border-orange-200">
+                                    <div key={c.telefone} className="flex items-center gap-3 bg-green-50 p-3 rounded-lg border border-green-200">
                                         {c.avatarUrl && (
-                                            <img src={c.avatarUrl} alt={c.nome} className="h-10 w-10 rounded-full border-2 border-orange-300" />
+                                            <img src={c.avatarUrl} alt={c.nome} className="h-10 w-10 rounded-full border-2 border-green-300" />
                                         )}
                                         <div>
-                                            <p className="font-medium text-orange-800">{c.nome}</p>
-                                            <p className="text-sm text-orange-600">{c.telefone}</p>
+                                            <p className="font-medium text-green-800">{c.nome}</p>
+                                            <p className="text-sm text-green-600">{c.telefone}</p>
                                         </div>
                                     </div>
                                 ))}

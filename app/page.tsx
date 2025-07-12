@@ -212,7 +212,7 @@ export default function Home() {
                 </div>
             </section>
             
-            <section className="w-full text-center py-20 md:py-32 px-4 space-y-8 bg-white">
+            <section className="w-full text-center py-20 md:py-32 px-4 space-y-8 bg-zinc-50">
                 <div className="relative mb-16">
                     <div className="relative bg-white/80 backdrop-blur-sm rounded-2xl py-6 px-8 mx-auto max-w-2xl shadow-lg border border-white/50 space-y-3">
                         <h3 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-800">
@@ -231,7 +231,7 @@ export default function Home() {
                                 <Play className="h-8 w-8 text-white group-hover:scale-110 transition-transform duration-300" />
                             </div>
                             <div className="text-center">
-                                <h4 className="font-bold text-xl text-slate-800 mb-2">Taxas Regressivas</h4>
+                                <h4 className="font-bold text-xl text-slate-800 mb-2">Plano Padrão</h4>
                                 <p className="text-gray-600 text-sm mb-4">Pague apenas quando criar, com taxas que diminuem conforme sua ambição.</p>
                                 <div className="space-y-2">
                                     <p className="text-xs text-gray-500">✓ Rifas ilimitadas</p>
@@ -247,9 +247,9 @@ export default function Home() {
                         </div>
                     </div>
                     
-                    <div className="group p-6 rounded-2xl bg-gradient-to-br from-emerald-50 to-emerald-100 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2 hover:scale-105 border border-emerald-200">
+                    <div className="group p-6 rounded-2xl bg-gradient-to-br from-green-50 to-green-100 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2 hover:scale-105 border border-green-200">
                         <div className="flex flex-col items-center space-y-4">
-                            <div className="p-4 rounded-full bg-emerald-500 group-hover:bg-emerald-600 transition-colors duration-300">
+                            <div className="p-4 rounded-full bg-green-500 group-hover:bg-green-600 transition-colors duration-300">
                                 <DollarSign className="h-8 w-8 text-white group-hover:scale-110 transition-transform duration-300" />
                             </div>
                             <div className="text-center">
@@ -261,8 +261,8 @@ export default function Home() {
                                     <p className="text-xs text-gray-500">✓ Suporte prioritário</p>
                                     <p className="text-xs text-gray-500">✓ Relatórios avançados</p>
                                 </div>
-                                <div className="mt-4 pt-4 border-t border-emerald-200">
-                                    <p className="text-lg font-bold text-emerald-600">R$ 49,90/mês</p>
+                                <div className="mt-4 pt-4 border-t border-green-200">
+                                    <p className="text-lg font-bold text-green-600">R$ 49,90/mês</p>
                                     <p className="text-xs text-gray-500">0% de taxas por rifa</p>
                                 </div>
                             </div>
@@ -333,7 +333,7 @@ export default function Home() {
             
             <section 
                 ref={contatoRef}
-                className="w-full text-center pt-20 pb-20 md:py-32 px-4 space-y-8 bg-gradient-to-b from-zinc-50 via-green-500 via-30% to-green-500"
+                className="w-full text-center pt-20 pb-20 md:py-32 px-4 space-y-8 bg-gradient-to-b from-zinc-50 via-green-300 via-30% to-green-300"
             >
                 <div className="relative mb-16">
                     <div className="relative bg-white/80 backdrop-blur-sm rounded-2xl py-6 px-8 mx-auto max-w-2xl shadow-lg border border-white/50 space-y-3">

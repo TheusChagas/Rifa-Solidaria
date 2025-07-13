@@ -138,7 +138,7 @@ export default function Home() {
                     style={{ zIndex: -20, transform: "scale(1.1) translate(0, 0)" }}
                 ></div>
                 <div
-                    className="absolute inset-0 bg-gradient-to-b from-white via-slate-200 to-green-500"
+                    className="absolute inset-0 bg-gradient-to-b from-white via-slate-200 to-emerald-300"
                     style={{ zIndex: -10 }}
                 ></div>
                 <div className={`relative max-w-4xl mx-auto ${isPinging ? 'animate-bounce' : ''}`}>
@@ -173,7 +173,7 @@ export default function Home() {
             </section>
             <section 
                 ref={simplesAssimRef}
-                className="relative z-20 w-full bg-gradient-to-b from-green-500 via-green-500 via-70% to-zinc-50 text-white min-h-screen flex flex-col items-center justify-center py-12 md:pb-[350px] px-6 sm:px-12"
+                className="relative z-20 w-full bg-gradient-to-b from-emerald-300 via-emerald-300 via-70% to-zinc-50 text-white min-h-screen flex flex-col items-center justify-center py-12 md:pb-[350px] px-6 sm:px-12"
             >
                 <div className="w-full max-w-5xl mx-auto">
                     <div className="relative mb-12">
@@ -192,7 +192,7 @@ export default function Home() {
                                 key={index}
                                 className="flex flex-col items-center p-6 space-y-4 group transition-all duration-300"
                             >
-                                <div className="p-4 rounded-2xl bg-white/10 backdrop-blur-sm hover:bg-white/20 transition-all duration-300 shadow-xl hover:shadow-2xl">
+                                <div className="p-4 rounded-2xl bg-emerald-400 backdrop-blur-sm hover:bg-emerald-500 transition-all duration-300 shadow-xl hover:shadow-2xl">
                                     <Icon
                                         className={cn(
                                             "w-16 h-16 sm:w-14 sm:h-14 lg:w-16 lg:h-16",
@@ -333,7 +333,7 @@ export default function Home() {
             
             <section 
                 ref={contatoRef}
-                className="w-full text-center pt-20 pb-20 md:py-32 px-4 space-y-8 bg-gradient-to-b from-zinc-50 via-green-300 via-30% to-green-300"
+                className="w-full text-center pt-20 pb-20 md:py-32 px-4 space-y-8 bg-gradient-to-b from-zinc-50 via-emerald-300 via-30% to-green-300"
             >
                 <div className="relative mb-16">
                     <div className="relative bg-white/80 backdrop-blur-sm rounded-2xl py-6 px-8 mx-auto max-w-2xl shadow-lg border border-white/50 space-y-3">

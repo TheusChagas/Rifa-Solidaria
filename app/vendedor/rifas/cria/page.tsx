@@ -17,9 +17,17 @@ import { Rifa } from "@/types";
 import { getAllRifas } from "@/lib/getRifaID";
 
 const drawOptions = [
-    { value: "loteria-federal", label: "Loteria Federal", time: "19:00" },
-    { value: "loteria-estadual", label: "Loteria Estadual", time: "20:00" },
-    { value: "manual", label: "Manual" }
+    { value: "loteria-federal", label: "LOTERIA FEDERAL", time: "19:00" },
+    { value: "canta-galo", label: "CANTA GALO", time: "09:20" },
+    { value: "ptm", label: "PTM", time: "11:20" },
+    { value: "pt", label: "PT", time: "14:20" },
+    { value: "ptv", label: "PTV", time: "16:20" },
+    { value: "ptn", label: "PTN", time: "18:20" },
+    { value: "corujinha", label: "CORUJINHA", time: "21:30" },
+    { value: "tiktok", label: "TIKTOK" },
+    { value: "youtube", label: "YOUTUBE" },
+    { value: "instagram", label: "INSTAGRAM" },
+    { value: "kwai", label: "KWAI" }
 ];
 
 export default function CreateCampaignPage() {
@@ -30,8 +38,6 @@ export default function CreateCampaignPage() {
     const [drawDate, setDrawDate] = useState('');
     const [dragActive, setDragActive] = useState(false);
     const [description, setDescription] = useState('');
-    const [customPrizes, setCustomPrizes] = useState(false);
-    const [customPrizesValue, setCustomPrizesValue] = useState('');
     const [prizeImages, setPrizeImages] = useState<File[][]>([[]]);
     const [prizeDragActive, setPrizeDragActive] = useState<boolean[]>([false]);
 
@@ -40,16 +46,25 @@ export default function CreateCampaignPage() {
     const [ticketPrice, setTicketPrice] = useState('');
     const [ticketQuantity, setTicketQuantity] = useState('');
     const [isCustomQuantity, setIsCustomQuantity] = useState(false);
-    const [errors, setErrors] = useState<{[key: string]: string}>({});
+    const [errors, setErrors] = useState<{ [key: string]: string }>({});
     const [isSubmitting, setIsSubmitting] = useState(false);
-    
+
     // New fields based on Rifa interface
     const [vendedorNome, setVendedorNome] = useState('');
-    const [categoria, setCategoria] = useState('');
-    const [metodoPagamento, setMetodoPagamento] = useState('');
     const [fazendinha, setFazendinha] = useState(false);
     const [pixChave, setPixChave] = useState('');
     const [emailContato, setEmailContato] = useState('');
+    const [regulamento, setRegulamento] = useState('');
+    const [tempoReserva, setTempoReserva] = useState('10');
+    const [isCustomReserva, setIsCustomReserva] = useState(false);
+    const [customReservaValue, setCustomReservaValue] = useState('');
+    const [customReservaUnit, setCustomReservaUnit] = useState('minutos');
+    const [porcentagemMaxima, setPorcentagemMaxima] = useState('10');
+    const [numerosPremiados, setNumerosPremiados] = useState('1');
+    const [isCustomNumerosPremiados, setIsCustomNumerosPremiados] = useState(false);
+    const [customNumerosPremiados, setCustomNumerosPremiados] = useState('');
+    const [numPromocoes, setNumPromocoes] = useState(0);
+    const [promocoes, setPromocoes] = useState<{quantidade: string, valor: string}[]>([]);
 
     const handlePrizeImageUpload = (prizeIndex: number, e: React.ChangeEvent<HTMLInputElement>) => {
         const files = e.target.files;
@@ -143,7 +158,7 @@ export default function CreateCampaignPage() {
 
     // Validação dos campos
     const validateFields = () => {
-        const newErrors: {[key: string]: string} = {};
+        const newErrors: { [key: string]: string } = {};
 
         if (!title.trim()) {
             newErrors.title = 'Título é obrigatório';
@@ -161,12 +176,10 @@ export default function CreateCampaignPage() {
             newErrors.vendedorNome = 'Nome do vendedor é obrigatório';
         }
 
-        if (!categoria.trim()) {
-            newErrors.categoria = 'Categoria é obrigatória';
-        }
-
-        if (!metodoPagamento) {
-            newErrors.metodoPagamento = 'Método de pagamento é obrigatório';
+        if (!regulamento.trim()) {
+            newErrors.regulamento = 'Regulamento é obrigatório';
+        } else if (regulamento.trim().length < 50) {
+            newErrors.regulamento = 'Regulamento deve ter pelo menos 50 caracteres';
         }
 
         const phoneRegex = /^\(\d{2}\) \d{5}-\d{4}$/;
@@ -242,8 +255,8 @@ export default function CreateCampaignPage() {
                 titulo: title,
                 descricao: description,
                 vendedorNome,
-                categoria,
-                metodoPagamento,
+                categoria: 'Outros',
+                metodoPagamento: 'Pix',
                 disponivel: true,
                 preco: parseFloat(ticketPrice.replace(',', '.')),
                 totalNumbers: parseInt(ticketQuantity),
@@ -266,7 +279,7 @@ export default function CreateCampaignPage() {
                 horarioSorteio: drawTime,
                 localSorteio: drawLocation,
                 status: 'ativo',
-                tags: [categoria.toLowerCase()],
+                tags: ['outros'],
                 numerosReservados: [],
                 valorTotal: parseFloat(ticketPrice.replace(',', '.')) * parseInt(ticketQuantity),
                 percentualVendido: 0,
@@ -276,11 +289,12 @@ export default function CreateCampaignPage() {
                 transmissaoAoVivo: true,
                 emailContato,
                 pixChave,
+                regulamento,
                 configPagamento: {
-                    pix: metodoPagamento.includes('Pix'),
-                    cartao: metodoPagamento.includes('Cartão'),
-                    dinheiro: metodoPagamento.includes('Dinheiro'),
-                    boleto: metodoPagamento.includes('Boleto'),
+                    pix: true,
+                    cartao: false,
+                    dinheiro: false,
+                    boleto: false,
                 },
                 limitePorPessoa: 10,
                 permitirReserva: true,
@@ -289,15 +303,15 @@ export default function CreateCampaignPage() {
             };
 
             console.log('Nova rifa criada:', novaRifa);
-            
+
             // Here you would typically send this to your API
             // await createRifa(novaRifa);
-            
+
             alert('Rifa criada com sucesso!');
-            
+
             // Reset form or redirect
             // router.push('/vendedor/rifas');
-            
+
         } catch (error) {
             alert('Erro ao criar rifa. Tente novamente.');
         } finally {
@@ -322,7 +336,7 @@ export default function CreateCampaignPage() {
                             <span className="bg-green-600 text-white rounded-full w-8 h-8 flex items-center justify-center text-sm mr-3">1</span>
                             Informações Básicas
                         </h2>
-                        
+
                         <div className="space-y-6">
                             <div>
                                 <Label className="text-base font-semibold text-gray-700 mb-3 block">Título da Rifa</Label>
@@ -331,13 +345,12 @@ export default function CreateCampaignPage() {
                                     onChange={(e) => {
                                         setTitle(e.target.value);
                                         if (errors.title) {
-                                            setErrors({...errors, title: ''});
+                                            setErrors({ ...errors, title: '' });
                                         }
                                     }}
                                     placeholder="Digite um título atrativo para sua rifa"
-                                    className={`text-lg py-3 h-12 border-2 transition-colors ${
-                                        errors.title ? 'border-red-500 focus:border-red-500' : 'focus:border-green-600'
-                                    }`}
+                                    className={`text-lg py-3 h-12 border-2 transition-colors ${errors.title ? 'border-red-500 focus:border-red-500' : 'focus:border-green-600'
+                                        }`}
                                     maxLength={100}
                                 />
                                 {errors.title && <p className="text-red-500 text-sm mt-1">{errors.title}</p>}
@@ -352,12 +365,11 @@ export default function CreateCampaignPage() {
                                     onChange={(e) => {
                                         setDescription(e.target.value);
                                         if (errors.description) {
-                                            setErrors({...errors, description: ''});
+                                            setErrors({ ...errors, description: '' });
                                         }
                                     }}
-                                    className={`min-h-[120px] border-2 transition-colors resize-none ${
-                                        errors.description ? 'border-red-500 focus:border-red-500' : 'focus:border-green-600'
-                                    }`}
+                                    className={`min-h-[120px] border-2 transition-colors resize-none ${errors.description ? 'border-red-500 focus:border-red-500' : 'focus:border-green-600'
+                                        }`}
                                     maxLength={500}
                                 />
                                 {errors.description && <p className="text-red-500 text-sm mt-1">{errors.description}</p>}
@@ -372,64 +384,37 @@ export default function CreateCampaignPage() {
                                         onChange={(e) => {
                                             setVendedorNome(e.target.value);
                                             if (errors.vendedorNome) {
-                                                setErrors({...errors, vendedorNome: ''});
+                                                setErrors({ ...errors, vendedorNome: '' });
                                             }
                                         }}
                                         placeholder="Seu nome ou da organização"
-                                        className={`h-12 border-2 transition-colors ${
-                                            errors.vendedorNome ? 'border-red-500 focus:border-red-500' : 'focus:border-green-600'
-                                        }`}
+                                        className={`h-12 border-2 transition-colors ${errors.vendedorNome ? 'border-red-500 focus:border-red-500' : 'focus:border-green-600'
+                                            }`}
                                     />
                                     {errors.vendedorNome && <p className="text-red-500 text-sm mt-1">{errors.vendedorNome}</p>}
                                 </div>
 
                                 <div>
-                                    <Label className="text-base font-semibold text-gray-700 mb-3 block">Categoria</Label>
-                                    <Select value={categoria} onValueChange={(value) => {
-                                        setCategoria(value);
-                                        if (errors.categoria) {
-                                            setErrors({...errors, categoria: ''});
-                                        }
-                                    }}>
-                                        <SelectTrigger className={`h-12 border-2 ${
-                                            errors.categoria ? 'border-red-500 focus:border-red-500' : 'focus:border-green-600'
-                                        }`}>
-                                            <SelectValue placeholder="Selecione uma categoria" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem value="Solidária">Solidária</SelectItem>
-                                            <SelectItem value="Eletrônicos">Eletrônicos</SelectItem>
-                                            <SelectItem value="Esportes">Esportes</SelectItem>
-                                            <SelectItem value="Viagem">Viagem</SelectItem>
-                                            <SelectItem value="Natal">Natal</SelectItem>
-                                            <SelectItem value="Outros">Outros</SelectItem>
-                                        </SelectContent>
-                                    </Select>
-                                    {errors.categoria && <p className="text-red-500 text-sm mt-1">{errors.categoria}</p>}
-                                </div>
-                            </div>
-
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div>
                                     <Label className="text-base font-semibold text-gray-700 mb-3 block">Número de Contato</Label>
-                                    <Input 
+                                    <Input
                                         value={phoneNumber}
                                         onChange={(e) => {
                                             const formatted = formatPhoneNumber(e.target.value);
                                             setPhoneNumber(formatted);
                                             if (errors.phoneNumber) {
-                                                setErrors({...errors, phoneNumber: ''});
+                                                setErrors({ ...errors, phoneNumber: '' });
                                             }
                                         }}
-                                        placeholder="(00) 00000-0000" 
-                                        className={`h-12 border-2 transition-colors ${
-                                            errors.phoneNumber ? 'border-red-500 focus:border-red-500' : 'focus:border-green-600'
-                                        }`}
+                                        placeholder="(00) 00000-0000"
+                                        className={`h-12 border-2 transition-colors ${errors.phoneNumber ? 'border-red-500 focus:border-red-500' : 'focus:border-green-600'
+                                            }`}
                                         maxLength={15}
                                     />
                                     {errors.phoneNumber && <p className="text-red-500 text-sm mt-1">{errors.phoneNumber}</p>}
                                 </div>
+                            </div>
 
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
                                     <Label className="text-base font-semibold text-gray-700 mb-3 block">Email de Contato</Label>
                                     <Input
@@ -439,33 +424,6 @@ export default function CreateCampaignPage() {
                                         placeholder="seu@email.com"
                                         className="h-12 border-2 focus:border-green-600 transition-colors"
                                     />
-                                </div>
-                            </div>
-
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div>
-                                    <Label className="text-base font-semibold text-gray-700 mb-3 block">Métodos de Pagamento</Label>
-                                    <Select value={metodoPagamento} onValueChange={(value) => {
-                                        setMetodoPagamento(value);
-                                        if (errors.metodoPagamento) {
-                                            setErrors({...errors, metodoPagamento: ''});
-                                        }
-                                    }}>
-                                        <SelectTrigger className={`h-12 border-2 ${
-                                            errors.metodoPagamento ? 'border-red-500 focus:border-red-500' : 'focus:border-green-600'
-                                        }`}>
-                                            <SelectValue placeholder="Selecione os métodos" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem value="Pix">Pix</SelectItem>
-                                            <SelectItem value="Pix, Cartão">Pix, Cartão</SelectItem>
-                                            <SelectItem value="Pix, Dinheiro">Pix, Dinheiro</SelectItem>
-                                            <SelectItem value="Cartão, Dinheiro">Cartão, Dinheiro</SelectItem>
-                                            <SelectItem value="Pix, Cartão, Dinheiro">Pix, Cartão, Dinheiro</SelectItem>
-                                            <SelectItem value="Pix, Boleto">Pix, Boleto</SelectItem>
-                                        </SelectContent>
-                                    </Select>
-                                    {errors.metodoPagamento && <p className="text-red-500 text-sm mt-1">{errors.metodoPagamento}</p>}
                                 </div>
 
                                 <div>
@@ -480,14 +438,33 @@ export default function CreateCampaignPage() {
                             </div>
 
                             <div className="flex items-center space-x-2">
-                                <Checkbox 
-                                    id="fazendinha" 
+                                <Checkbox
+                                    id="fazendinha"
                                     checked={fazendinha}
                                     onCheckedChange={(checked) => setFazendinha(checked as boolean)}
                                 />
                                 <Label htmlFor="fazendinha" className="text-sm font-medium">
                                     Esta é uma rifa do tipo Fazendinha (Jogo do Bicho)
                                 </Label>
+                            </div>
+
+                            <div>
+                                <Label className="text-base font-semibold text-gray-700 mb-3 block">Regulamento do Sorteio</Label>
+                                <Textarea
+                                    placeholder="Descreva as regras do sorteio: como será realizado, critérios de participação, condições de entrega do prêmio, etc..."
+                                    value={regulamento}
+                                    onChange={(e) => {
+                                        setRegulamento(e.target.value);
+                                        if (errors.regulamento) {
+                                            setErrors({ ...errors, regulamento: '' });
+                                        }
+                                    }}
+                                    className={`min-h-[100px] border-2 transition-colors resize-none ${errors.regulamento ? 'border-red-500 focus:border-red-500' : 'focus:border-green-600'
+                                        }`}
+                                    maxLength={1000}
+                                />
+                                {errors.regulamento && <p className="text-red-500 text-sm mt-1">{errors.regulamento}</p>}
+                                <p className="text-gray-500 text-xs mt-1">{regulamento.length}/1000 caracteres</p>
                             </div>
                         </div>
                     </div>
@@ -498,78 +475,300 @@ export default function CreateCampaignPage() {
                             <span className="bg-green-600 text-white rounded-full w-8 h-8 flex items-center justify-center text-sm mr-3">2</span>
                             Configuração da Rifa
                         </h2>
-                        
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                        <div className="space-y-6">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <Label className="text-base font-semibold text-gray-700 mb-3 block">Quantidade de Números</Label>
+                                    <Select
+                                        value={isCustomQuantity ? 'custom' : ticketQuantity}
+                                        onValueChange={(value) => {
+                                            if (value === 'custom') {
+                                                setIsCustomQuantity(true);
+                                                setTicketQuantity('');
+                                            } else {
+                                                setIsCustomQuantity(false);
+                                                setTicketQuantity(value);
+                                            }
+                                            if (errors.ticketQuantity) {
+                                                setErrors({ ...errors, ticketQuantity: '' });
+                                            }
+                                        }}
+                                    >
+                                        <SelectTrigger className={`h-12 border-2 ${errors.ticketQuantity ? 'border-red-500 focus:border-red-500' : 'focus:border-green-600'
+                                            }`}>
+                                            <SelectValue placeholder="Escolha uma opção" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="25">Fazendinha (25 números)</SelectItem>
+                                            <SelectItem value="100">100 números</SelectItem>
+                                            <SelectItem value="1000">1.000 números</SelectItem>
+                                            <SelectItem value="10000">10.000 números</SelectItem>
+                                            <SelectItem value="100000">100.000 números</SelectItem>
+                                            <SelectItem value="custom">Personalizado</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                    {isCustomQuantity && (
+                                        <Input
+                                            type="number"
+                                            value={ticketQuantity}
+                                            onChange={(e) => {
+                                                setTicketQuantity(e.target.value);
+                                                if (errors.ticketQuantity) {
+                                                    setErrors({ ...errors, ticketQuantity: '' });
+                                                }
+                                            }}
+                                            placeholder="Digite a quantidade"
+                                            className="mt-2 h-12 border-2 focus:border-green-600"
+                                            min="1"
+                                            max="1000000"
+                                        />
+                                    )}
+                                    {errors.ticketQuantity && <p className="text-red-500 text-sm mt-1">{errors.ticketQuantity}</p>}
+                                </div>
+
+                                <div>
+                                    <Label className="text-base font-semibold text-gray-700 mb-3 block">Valor da Cota</Label>
+                                    <div className="relative">
+                                        <span className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500 font-medium">R$</span>
+                                        <Input
+                                            value={ticketPrice}
+                                            onChange={(e) => {
+                                                const formatted = formatPrice(e.target.value);
+                                                setTicketPrice(formatted);
+                                                if (errors.ticketPrice) {
+                                                    setErrors({ ...errors, ticketPrice: '' });
+                                                }
+                                            }}
+                                            placeholder="0,00"
+                                            className={`pl-12 h-12 text-lg border-2 transition-colors ${errors.ticketPrice ? 'border-red-500 focus:border-red-500' : 'focus:border-green-600'
+                                                }`}
+                                        />
+                                    </div>
+                                    {errors.ticketPrice && <p className="text-red-500 text-sm mt-1">{errors.ticketPrice}</p>}
+                                </div>
+                            </div>
+
+                            {/* Aviso para rifas com mais de 10.000 números */}
+                            {parseInt(ticketQuantity) > 10000 && (
+                                <div className="mt-3 p-3 bg-amber-50 border border-amber-200 rounded-lg">
+                                    <div className="flex items-start gap-2">
+                                        <div className="w-5 h-5 bg-amber-100 rounded-full flex items-center justify-center mt-0.5">
+                                            <svg className="w-3 h-3 text-amber-600" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                                            </svg>
+                                        </div>
+                                        <div>
+                                            <p className="text-sm font-medium text-amber-800">
+                                                Atenção: Compra Aleatória de Números
+                                            </p>
+                                            <p className="text-xs text-amber-700 mt-1">
+                                                Para rifas com mais de 10.000 números, a compra dos números será feita de forma aleatória para melhor experiência do usuário.
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+
                             <div>
-                                <Label className="text-base font-semibold text-gray-700 mb-3 block">Quantidade de Números</Label>
+                                <Label className="text-base font-semibold text-gray-700 mb-3 block">Números Premiados</Label>
                                 <Select 
-                                    value={isCustomQuantity ? 'custom' : ticketQuantity}
+                                    value={isCustomNumerosPremiados ? 'custom' : numerosPremiados} 
                                     onValueChange={(value) => {
                                         if (value === 'custom') {
-                                            setIsCustomQuantity(true);
-                                            setTicketQuantity('');
+                                            setIsCustomNumerosPremiados(true);
+                                            setNumerosPremiados('');
                                         } else {
-                                            setIsCustomQuantity(false);
-                                            setTicketQuantity(value);
-                                        }
-                                        if (errors.ticketQuantity) {
-                                            setErrors({...errors, ticketQuantity: ''});
+                                            setIsCustomNumerosPremiados(false);
+                                            setNumerosPremiados(value);
                                         }
                                     }}
                                 >
-                                    <SelectTrigger className={`h-12 border-2 ${
-                                        errors.ticketQuantity ? 'border-red-500 focus:border-red-500' : 'focus:border-green-600'
-                                    }`}>
-                                        <SelectValue placeholder="Escolha uma opção" />
+                                    <SelectTrigger className="h-12 border-2 focus:border-green-600">
+                                        <SelectValue placeholder="Selecione quantos números serão premiados" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="25">Fazendinha (25 números)</SelectItem>
-                                        <SelectItem value="100">100 números</SelectItem>
-                                        <SelectItem value="1000">1.000 números</SelectItem>
-                                        <SelectItem value="10000">10.000 números</SelectItem>
-                                        <SelectItem value="100000">100.000 números</SelectItem>
+                                        <SelectItem value="0">0 números premiados (sem ganhadores)</SelectItem>
+                                        {Array.from({ length: 30 }, (_, i) => i + 1).map((num) => (
+                                            <SelectItem key={num} value={num.toString()}>
+                                                {num} {num === 1 ? 'número premiado' : 'números premiados'}
+                                            </SelectItem>
+                                        ))}
                                         <SelectItem value="custom">Personalizado</SelectItem>
                                     </SelectContent>
                                 </Select>
-                                {isCustomQuantity && (
+                                {isCustomNumerosPremiados && (
                                     <Input
                                         type="number"
-                                        value={ticketQuantity}
-                                        onChange={(e) => {
-                                            setTicketQuantity(e.target.value);
-                                            if (errors.ticketQuantity) {
-                                                setErrors({...errors, ticketQuantity: ''});
-                                            }
-                                        }}
-                                        placeholder="Digite a quantidade"
+                                        value={customNumerosPremiados}
+                                        onChange={(e) => setCustomNumerosPremiados(e.target.value)}
+                                        placeholder="Digite a quantidade de números premiados"
                                         className="mt-2 h-12 border-2 focus:border-green-600"
-                                        min="1"
-                                        max="1000000"
+                                        min="0"
+                                        max="100"
                                     />
                                 )}
-                                {errors.ticketQuantity && <p className="text-red-500 text-sm mt-1">{errors.ticketQuantity}</p>}
+                                <p className="text-gray-500 text-xs mt-1">
+                                    Quantidade de números que serão sorteados como ganhadores
+                                </p>
                             </div>
-                            
+
                             <div>
-                                <Label className="text-base font-semibold text-gray-700 mb-3 block">Valor da Cota</Label>
-                                <div className="relative">
-                                    <span className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500 font-medium">R$</span>
-                                    <Input 
-                                        value={ticketPrice}
-                                        onChange={(e) => {
-                                            const formatted = formatPrice(e.target.value);
-                                            setTicketPrice(formatted);
-                                            if (errors.ticketPrice) {
-                                                setErrors({...errors, ticketPrice: ''});
+                                <Label className="text-base font-semibold text-gray-700 mb-3 block">Tempo para Reserva</Label>
+                                <Select
+                                    value={isCustomReserva ? 'custom' : tempoReserva}
+                                    onValueChange={(value) => {
+                                        if (value === 'custom') {
+                                            setIsCustomReserva(true);
+                                            setTempoReserva('');
+                                        } else {
+                                            setIsCustomReserva(false);
+                                            setTempoReserva(value);
+                                        }
+                                    }}
+                                >
+                                    <SelectTrigger className="h-12 border-2 focus:border-green-600">
+                                        <SelectValue placeholder="Escolha o tempo de reserva" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="0">0 minutos (sem reserva)</SelectItem>
+                                        <SelectItem value="10">10 minutos</SelectItem>
+                                        <SelectItem value="30">30 minutos</SelectItem>
+                                        <SelectItem value="60">1 hora</SelectItem>
+                                        <SelectItem value="1440">1 dia</SelectItem>
+                                        <SelectItem value="10080">7 dias</SelectItem>
+                                        <SelectItem value="custom">Personalizado</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                                {isCustomReserva && (
+                                    <div className="mt-2 grid grid-cols-2 gap-2">
+                                        <Input
+                                            type="number"
+                                            value={customReservaValue}
+                                            onChange={(e) => setCustomReservaValue(e.target.value)}
+                                            placeholder="Digite o tempo"
+                                            className="h-12 border-2 focus:border-green-600"
+                                            min="0"
+                                        />
+                                        <Select value={customReservaUnit} onValueChange={setCustomReservaUnit}>
+                                            <SelectTrigger className="h-12 border-2 focus:border-green-600">
+                                                <SelectValue />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="minutos">Minutos</SelectItem>
+                                                <SelectItem value="horas">Horas</SelectItem>
+                                                <SelectItem value="dias">Dias</SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+                                )}
+                                <p className="text-gray-500 text-xs mt-1">
+                                    Tempo que o número ficará reservado para pagamento
+                                </p>
+                            </div>
+
+                            <div>
+                                <Label className="text-base font-semibold text-gray-700 mb-3 block">Porcentagem Máxima de Compra</Label>
+                                <Select
+                                    value={porcentagemMaxima}
+                                    onValueChange={setPorcentagemMaxima}
+                                >
+                                    <SelectTrigger className="h-12 border-2 focus:border-green-600">
+                                        <SelectValue placeholder="Escolha a porcentagem máxima" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="10">10% da rifa total</SelectItem>
+                                        <SelectItem value="15">15% da rifa total</SelectItem>
+                                        <SelectItem value="20">20% da rifa total</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                                <p className="text-gray-500 text-xs mt-1">
+                                    Porcentagem máxima que uma pessoa pode comprar da rifa total
+                                </p>
+                            </div>
+
+                            <div>
+                                <Label className="text-base font-semibold text-gray-700 mb-3 block">Promoções de Pacotes</Label>
+                                <Select 
+                                    value={numPromocoes.toString()}
+                                    onValueChange={(value) => {
+                                        const numValue = parseInt(value);
+                                        setNumPromocoes(numValue);
+                                        setPromocoes(prev => {
+                                            const newPromocoes = [...prev];
+                                            while (newPromocoes.length < numValue) {
+                                                newPromocoes.push({quantidade: '', valor: ''});
                                             }
-                                        }}
-                                        placeholder="0,00" 
-                                        className={`pl-12 h-12 text-lg border-2 transition-colors ${
-                                            errors.ticketPrice ? 'border-red-500 focus:border-red-500' : 'focus:border-green-600'
-                                        }`}
-                                    />
-                                </div>
-                                {errors.ticketPrice && <p className="text-red-500 text-sm mt-1">{errors.ticketPrice}</p>}
+                                            return newPromocoes.slice(0, numValue);
+                                        });
+                                    }}
+                                >
+                                    <SelectTrigger className="h-12 border-2 focus:border-green-600">
+                                        <SelectValue placeholder="Selecione quantas promoções terá" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="0">Sem promoções</SelectItem>
+                                        {Array.from({ length: 5 }, (_, i) => i + 1).map((num) => (
+                                            <SelectItem key={num} value={num.toString()}>
+                                                {num} {num === 1 ? 'promoção' : 'promoções'}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                                <p className="text-gray-500 text-xs mt-1">
+                                    Promoções de pacotes com desconto para incentivar compras maiores
+                                </p>
+
+                                {numPromocoes > 0 && (
+                                    <div className="mt-4 space-y-4">
+                                        {promocoes.map((promocao, index) => (
+                                            <div key={index} className="bg-green-50 border border-green-200 p-4">
+                                                <div className="flex items-center mb-3">
+                                                    <span className="bg-green-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm mr-3 font-semibold">
+                                                        {index + 1}
+                                                    </span>
+                                                    <h4 className="text-lg font-semibold text-green-800">Promoção {index + 1}</h4>
+                                                </div>
+                                                
+                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                    <div>
+                                                        <Label className="text-sm font-medium text-green-700 mb-2 block">Quantidade de Bilhetes</Label>
+                                                        <Input
+                                                            type="number"
+                                                            value={promocao.quantidade}
+                                                            onChange={(e) => {
+                                                                const newPromocoes = [...promocoes];
+                                                                newPromocoes[index].quantidade = e.target.value;
+                                                                setPromocoes(newPromocoes);
+                                                            }}
+                                                            placeholder="Ex: 10"
+                                                            className="h-11 border-2 focus:border-green-600 transition-colors"
+                                                            min="1"
+                                                        />
+                                                    </div>
+                                                    
+                                                    <div>
+                                                        <Label className="text-sm font-medium text-green-700 mb-2 block">Valor Total do Pacote</Label>
+                                                        <div className="relative">
+                                                            <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-green-500 font-medium text-sm">R$</span>
+                                                            <Input
+                                                                value={promocao.valor}
+                                                                onChange={(e) => {
+                                                                    const formatted = formatPrice(e.target.value);
+                                                                    const newPromocoes = [...promocoes];
+                                                                    newPromocoes[index].valor = formatted;
+                                                                    setPromocoes(newPromocoes);
+                                                                }}
+                                                                placeholder="0,00"
+                                                                className="pl-10 h-11 border-2 focus:border-green-600 transition-colors"
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </div>
@@ -591,15 +790,17 @@ export default function CreateCampaignPage() {
                                     onValueChange={(value) => {
                                         const selectedOption = drawOptions.find(opt => opt.value === value);
                                         setDrawLocation(value);
-                                        setDrawTime(selectedOption?.time || '');
+                                        // Set default time only if option has a predefined time and current time is empty
+                                        if (selectedOption?.time && !drawTime) {
+                                            setDrawTime(selectedOption.time);
+                                        }
                                         if (errors.drawLocation) {
-                                            setErrors({...errors, drawLocation: ''});
+                                            setErrors({ ...errors, drawLocation: '' });
                                         }
                                     }}
                                 >
-                                    <SelectTrigger className={`h-12 border-2 ${
-                                        errors.drawLocation ? 'border-red-500 focus:border-red-500' : 'focus:border-green-600'
-                                    }`}>
+                                    <SelectTrigger className={`h-12 border-2 ${errors.drawLocation ? 'border-red-500 focus:border-red-500' : 'focus:border-green-600'
+                                        }`}>
                                         <SelectValue placeholder="Escolha onde será realizado o sorteio" />
                                     </SelectTrigger>
                                     <SelectContent>
@@ -624,16 +825,19 @@ export default function CreateCampaignPage() {
                                                 const formatted = formatTime(e.target.value);
                                                 setDrawTime(formatted);
                                                 if (errors.drawTime) {
-                                                    setErrors({...errors, drawTime: ''});
+                                                    setErrors({ ...errors, drawTime: '' });
                                                 }
                                             }}
-                                            disabled={!!drawOptions.find(opt => opt.value === drawLocation)?.time}
-                                            className={`h-12 border-2 transition-colors ${
-                                                errors.drawTime ? 'border-red-500 focus:border-red-500' : 'focus:border-green-600'
-                                            }`}
+                                            className={`h-12 border-2 transition-colors ${errors.drawTime ? 'border-red-500 focus:border-red-500' : 'focus:border-green-600'
+                                                }`}
                                             maxLength={5}
                                         />
                                         {errors.drawTime && <p className="text-red-500 text-sm mt-1">{errors.drawTime}</p>}
+                                        {drawOptions.find(opt => opt.value === drawLocation)?.time && (
+                                            <p className="text-gray-500 text-xs mt-1">
+                                                Horário padrão: {drawOptions.find(opt => opt.value === drawLocation)?.time} (pode ser alterado)
+                                            </p>
+                                        )}
                                     </div>
 
                                     <div>
@@ -644,14 +848,13 @@ export default function CreateCampaignPage() {
                                             onChange={(e) => {
                                                 setDrawDate(e.target.value);
                                                 if (errors.drawDate) {
-                                                    setErrors({...errors, drawDate: ''});
+                                                    setErrors({ ...errors, drawDate: '' });
                                                 }
                                             }}
                                             min={new Date().toISOString().split('T')[0]}
                                             required
-                                            className={`h-12 border-2 transition-colors ${
-                                                errors.drawDate ? 'border-red-500 focus:border-red-500' : 'focus:border-green-600'
-                                            }`}
+                                            className={`h-12 border-2 transition-colors ${errors.drawDate ? 'border-red-500 focus:border-red-500' : 'focus:border-green-600'
+                                                }`}
                                         />
                                         {errors.drawDate && <p className="text-red-500 text-sm mt-1">{errors.drawDate}</p>}
                                     </div>
@@ -666,42 +869,36 @@ export default function CreateCampaignPage() {
                             <span className="bg-green-600 text-white rounded-full w-8 h-8 flex items-center justify-center text-sm mr-3">4</span>
                             Prêmios da Rifa
                         </h2>
-                        
+
                         <div className="space-y-6">
                             <div>
                                 <Label className="text-base font-semibold text-gray-700 mb-3 block">Quantidade de Prêmios</Label>
-                                <Select 
-                                    value={customPrizes ? 'custom' : numPrizes.toString()}
+                                <Select
+                                    value={numPrizes.toString()}
                                     onValueChange={(value) => {
-                                        if (value === 'custom') {
-                                            setCustomPrizes(true);
-                                            setCustomPrizesValue('');
-                                        } else {
-                                            setCustomPrizes(false);
-                                            const numValue = parseInt(value);
-                                            setNumPrizes(numValue);
-                                            setPrizes(prev => {
-                                                const newPrizes = [...prev];
-                                                while (newPrizes.length < numValue) {
-                                                    newPrizes.push('');
-                                                }
-                                                return newPrizes.slice(0, numValue);
-                                            });
-                                            setPrizeImages(prev => {
-                                                const newImages = [...prev];
-                                                while (newImages.length < numValue) {
-                                                    newImages.push([]);
-                                                }
-                                                return newImages.slice(0, numValue);
-                                            });
-                                            setPrizeDragActive(prev => {
-                                                const newDragActive = [...prev];
-                                                while (newDragActive.length < numValue) {
-                                                    newDragActive.push(false);
-                                                }
-                                                return newDragActive.slice(0, numValue);
-                                            });
-                                        }
+                                        const numValue = parseInt(value);
+                                        setNumPrizes(numValue);
+                                        setPrizes(prev => {
+                                            const newPrizes = [...prev];
+                                            while (newPrizes.length < numValue) {
+                                                newPrizes.push('');
+                                            }
+                                            return newPrizes.slice(0, numValue);
+                                        });
+                                        setPrizeImages(prev => {
+                                            const newImages = [...prev];
+                                            while (newImages.length < numValue) {
+                                                newImages.push([]);
+                                            }
+                                            return newImages.slice(0, numValue);
+                                        });
+                                        setPrizeDragActive(prev => {
+                                            const newDragActive = [...prev];
+                                            while (newDragActive.length < numValue) {
+                                                newDragActive.push(false);
+                                            }
+                                            return newDragActive.slice(0, numValue);
+                                        });
                                     }}
                                 >
                                     <SelectTrigger className="h-12 border-2 focus:border-green-600">
@@ -713,52 +910,9 @@ export default function CreateCampaignPage() {
                                                 {num} {num === 1 ? 'prêmio' : 'prêmios'}
                                             </SelectItem>
                                         ))}
-                                        <SelectItem value="custom">Personalizado</SelectItem>
                                     </SelectContent>
                                 </Select>
                             </div>
-
-                            {customPrizes && (
-                                <div>
-                                    <Label className="text-base font-semibold text-gray-700 mb-3 block">Número Personalizado de Prêmios</Label>
-                                    <Input
-                                        type="number"
-                                        min="1"
-                                        value={customPrizesValue}
-                                        onChange={(e) => {
-                                            const value = e.target.value;
-                                            setCustomPrizesValue(value);
-                                            const numValue = parseInt(value);
-                                            if (!isNaN(numValue) && numValue >= 1) {
-                                                setNumPrizes(numValue);
-                                                setPrizes(prev => {
-                                                    const newPrizes = [...prev];
-                                                    while (newPrizes.length < numValue) {
-                                                        newPrizes.push('');
-                                                    }
-                                                    return newPrizes.slice(0, numValue);
-                                                });
-                                                setPrizeImages(prev => {
-                                                    const newImages = [...prev];
-                                                    while (newImages.length < numValue) {
-                                                        newImages.push([]);
-                                                    }
-                                                    return newImages.slice(0, numValue);
-                                                });
-                                                setPrizeDragActive(prev => {
-                                                    const newDragActive = [...prev];
-                                                    while (newDragActive.length < numValue) {
-                                                        newDragActive.push(false);
-                                                    }
-                                                    return newDragActive.slice(0, numValue);
-                                                });
-                                            }
-                                        }}
-                                        placeholder="Digite a quantidade de prêmios"
-                                        className="h-12 border-2 focus:border-green-600 transition-colors"
-                                    />
-                                </div>
-                            )}
 
                             <div className="space-y-6">
                                 {prizes.map((prize, index) => (
@@ -769,7 +923,7 @@ export default function CreateCampaignPage() {
                                             </span>
                                             <h3 className="text-lg font-semibold text-gray-800">Prêmio {index + 1}</h3>
                                         </div>
-                                        
+
                                         <div className="space-y-4">
                                             <div>
                                                 <Label className="text-sm font-medium text-gray-700 mb-2 block">Título do Prêmio</Label>
@@ -784,14 +938,14 @@ export default function CreateCampaignPage() {
                                                     className="h-11 border-2 focus:border-green-600 transition-colors"
                                                 />
                                             </div>
-                                            
+
                                             <div>
                                                 <Label className="text-sm font-medium text-gray-700 mb-3 block">Imagens do Prêmio</Label>
                                                 <div className="space-y-3">
-                                                    <div 
+                                                    <div
                                                         className={`border-2 border-dashed rounded-xl p-6 text-center transition-all duration-200
-                                                            ${prizeDragActive[index] 
-                                                                ? "border-green-600 bg-green-50 scale-[1.02]" 
+                                                            ${prizeDragActive[index]
+                                                                ? "border-green-600 bg-green-50 scale-[1.02]"
                                                                 : "border-gray-300 hover:border-green-500 hover:bg-green-25"
                                                             }`}
                                                         onDragEnter={(e) => handlePrizeDrag(index, e)}
@@ -823,7 +977,7 @@ export default function CreateCampaignPage() {
                                                             <span className="text-xs text-gray-400">PNG, JPG até 10MB cada</span>
                                                         </div>
                                                     </div>
-                                                    
+
                                                     {prizeImages[index] && prizeImages[index].length > 0 && (
                                                         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
                                                             {prizeImages[index].map((image, imageIndex) => (
@@ -867,7 +1021,7 @@ export default function CreateCampaignPage() {
 
                     {/* Botão de Criação */}
                     <div className="pt-6 border-t-2 border-gray-200">
-                        <Button 
+                        <Button
                             onClick={handleSubmit}
                             disabled={isSubmitting}
                             className="w-full h-14 text-lg font-semibold bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"

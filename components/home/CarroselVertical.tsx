@@ -1,7 +1,7 @@
 // components/VerticalCarousel.tsx
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 
 interface VerticalCarouselProps {
     words: string[];
@@ -15,68 +15,56 @@ export function CarrosselVertical({
     className = "",
 }: VerticalCarouselProps) {
     const [currentIndex, setCurrentIndex] = useState(0);
-    const [wordWidths, setWordWidths] = useState<number[]>([]);
-    const measureRef = useRef<HTMLSpanElement>(null);
 
     useEffect(() => {
-        // Measure width of each word
-        if (measureRef.current) {
-            const widths = words.map((word) => {
-                measureRef.current!.textContent = word;
-                return measureRef.current!.offsetWidth;
-            });
-            setWordWidths(widths);
-        }
-    }, [words]);
+        if (words.length <= 1) return;
 
-    useEffect(() => {
         const timer = setInterval(() => {
             setCurrentIndex((prev) => (prev + 1) % words.length);
         }, interval);
-        return () => clearInterval(timer);
-    }, [words, interval]);
 
-    const currentWidth = wordWidths[currentIndex] || 0;
+        return () => clearInterval(timer);
+    }, [words.length, interval]);
+
+    if (words.length === 0) {
+        return <span className={className}></span>;
+    }
+
+    if (words.length === 1) {
+        return <span className={className}>{words[0]}</span>;
+    }
 
     return (
-        <>
-            {/* Hidden element for measuring text width */}
+        <span
+            className={`inline-block relative overflow-hidden ${className}`}
+            style={{
+                height: "1.3em",
+                minWidth: "120px",
+                verticalAlign: "baseline",
+            }}
+        >
             <span
-                ref={measureRef}
-                className={`absolute opacity-0 pointer-events-none ${className}`}
-                style={{ top: "-9999px" }}
-            />
-
-            <span
-                className={`inline-block relative transition-all duration-500 ${className}`}
+                className="block transition-transform duration-500 ease-in-out"
                 style={{
-                    height: "1.2em",
-                    width: `${currentWidth}px`,
-                    overflow: "hidden",
-                    verticalAlign: "bottom",
+                    transform: `translateY(-${currentIndex * 1.3}em)`,
+                    lineHeight: "1.3em",
                 }}
             >
-                <span
-                    className="block transition-transform duration-500"
-                    style={{
-                        transform: `translateY(-${currentIndex * 1.2}em)`,
-                        lineHeight: "1.2em",
-                    }}
-                >
-                    {words.map((word, index) => (
-                        <span
-                            key={index}
-                            className="block leading-none"
-                            style={{
-                                height: "1.2em",
-                                padding: "0.1em 0",
-                            }}
-                        >
-                            {word}
-                        </span>
-                    ))}
-                </span>
+                {words.map((word, index) => (
+                    <span
+                        key={`${word}-${index}`}
+                        className="block leading-none whitespace-nowrap"
+                        style={{
+                            height: "1.3em",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "flex-start",
+                        }}
+                    >
+                        {word}
+                    </span>
+                ))}
             </span>
-        </>
+        </span>
     );
 }

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from "react";
-import CardApoiador from "@/components/CardApoiador";
+import CardApoiador from "@/components/home/CardApoiador";
 import { ApoiadorProps } from "@/types";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 

@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 import { Card as UICard, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { RifaDetailsDialog } from "@/components/RifaDetailsDialog";
+import { RifaDetailsDialog } from "@/components/vendedor/rifas/RifaDetailsDialog";
 
 export interface CardProps {
   id: string;

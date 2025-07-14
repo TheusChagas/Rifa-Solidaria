@@ -7,10 +7,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { useState } from "react";
-import MinhaConta from "@/components/minhaConta";
-import MetodoPagamento from "@/components/metodoPagamento";
-import MinhasRedesSociais from "@/components/minhasRedesSociais";
-import MeuPlano from "@/components/meuPlano";
+import MinhaConta from "@/components/vendedor/configuracoes/MinhaConta";
+import MetodoPagamento from "@/components/vendedor/configuracoes/MetodoPagamento";
+import MinhasRedesSociais from "@/components/vendedor/configuracoes/MinhasRedesSociais";
+import MeuPlano from "@/components/vendedor/configuracoes/MeuPlano";
 
 export default function ConfiguracoesPage() {
   // Estado para seleção de página

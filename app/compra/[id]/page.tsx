@@ -1,6 +1,6 @@
 // app/compra/[id]/page.tsx
-import PaginaRifa from "@/components/PaginaRifa";
-import PaginaFazendinha from "@/components/PaginaFazendinha";
+import PaginaRifa from "@/components/compra/PaginaRifa";
+import PaginaFazendinha from "@/components/compra/PaginaFazendinha";
 import { getRifaById } from "@/lib/getRifaID";
 import { Rifa } from "@/types";
 

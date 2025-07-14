@@ -4,8 +4,8 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Plus, Ticket } from "lucide-react";
-import Card from "@/components/Card";
-import { RifaDialog } from "@/components/RifaDialog";
+import Card from "@/components/vendedor/rifas/Card";
+import { RifaDialog } from "@/components/vendedor/rifas/RifaDialog";
 import { Rifa as RifaBase } from "@/types";
 
 type Rifa = RifaBase & { progresso: number };

@@ -207,6 +207,12 @@ export interface Apoiador {
     imagem: string;
 }
 
+export interface ApoiadorProps {
+    id: string;
+    nome: string;
+    avatar: string;
+}
+
 export interface Comprador {
     telefone: string; 
     nome: string;

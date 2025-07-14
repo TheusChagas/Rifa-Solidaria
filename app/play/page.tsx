@@ -1,13 +1,13 @@
 'use client'
 
 import { useEffect, useRef, useState } from "react";
-import { Navbar } from "@/components/Navbar";
-import { HeroButtons } from "@/components/HeroButton";
+import { Navbar } from "@/components/shared/Navbar";
+import { HeroButtons } from "@/components/home/HeroButton";
 import { Play, Lightbulb, Send, DollarSign, Phone, Clock, Mail, ChevronDown } from "lucide-react";
-import { SupportButton } from "@/components/SupportButton";
+import { SupportButton } from "@/components/home/SupportButton";
 import { cn } from "@/lib/utils";
 import Logo from "@/assets/Logo.png";
-import { CarrosselVertical } from "@/components/CarroselVertical";
+import { CarrosselVertical } from "@/components/home/CarroselVertical";
 import { Apoiador } from "@/types";
 import { getApoiadores } from "@/lib/getApoiadores";
 

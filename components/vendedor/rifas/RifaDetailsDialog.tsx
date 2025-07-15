@@ -9,6 +9,8 @@ import {
     DialogClose,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Rifa } from '@/types';
 
 interface RifaDetailsDialogProps {
@@ -27,6 +29,21 @@ export function RifaDetailsDialog({
     const [rifa, setRifa] = React.useState<Rifa | null>(rifaProp || null);
     const [loading, setLoading] = React.useState(false);
     const [error, setError] = React.useState<string | null>(null);
+    
+    // Editing states
+    const [editingDrawDate, setEditingDrawDate] = React.useState(false);
+    const [editingChannel, setEditingChannel] = React.useState(false);
+    const [editingContacts, setEditingContacts] = React.useState(false);
+    
+    // Temporary editing values
+    const [tempDrawDate, setTempDrawDate] = React.useState('');
+    const [tempChannel, setTempChannel] = React.useState('');
+    const [tempContacts, setTempContacts] = React.useState<any[]>([]);
+    
+    // Saving states
+    const [savingDrawDate, setSavingDrawDate] = React.useState(false);
+    const [savingChannel, setSavingChannel] = React.useState(false);
+    const [savingContacts, setSavingContacts] = React.useState(false);
 
     React.useEffect(() => {
         // Only fetch if no rifa prop is provided and dialog is open
@@ -51,6 +68,113 @@ export function RifaDetailsDialog({
             setRifa(rifaProp);
         }
     }, [rifaProp]);
+
+    // Helper function to format date for input
+    const formatDateForInput = (date: string | Date) => {
+        const d = new Date(date);
+        return d.toISOString().slice(0, 16);
+    };
+
+    // Save functions
+    const saveDrawDate = async () => {
+        if (!rifa || !tempDrawDate) return;
+        
+        setSavingDrawDate(true);
+        try {
+            const response = await fetch(`/api/rifas/${rifa.id}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ dataSorteio: tempDrawDate })
+            });
+            
+            if (!response.ok) throw new Error('Erro ao salvar data');
+            
+            const updatedRifa = await response.json();
+            setRifa(updatedRifa);
+            setEditingDrawDate(false);
+        } catch (err) {
+            setError(err instanceof Error ? err.message : 'Erro ao salvar data');
+        } finally {
+            setSavingDrawDate(false);
+        }
+    };
+
+    const saveChannel = async () => {
+        if (!rifa || !tempChannel) return;
+        
+        setSavingChannel(true);
+        try {
+            const response = await fetch(`/api/rifas/${rifa.id}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ canalTransmissao: tempChannel })
+            });
+            
+            if (!response.ok) throw new Error('Erro ao salvar canal');
+            
+            const updatedRifa = await response.json();
+            setRifa(updatedRifa);
+            setEditingChannel(false);
+        } catch (err) {
+            setError(err instanceof Error ? err.message : 'Erro ao salvar canal');
+        } finally {
+            setSavingChannel(false);
+        }
+    };
+
+    const saveContacts = async () => {
+        if (!rifa) return;
+        
+        setSavingContacts(true);
+        try {
+            const response = await fetch(`/api/rifas/${rifa.id}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ contatos: tempContacts })
+            });
+            
+            if (!response.ok) throw new Error('Erro ao salvar contatos');
+            
+            const updatedRifa = await response.json();
+            setRifa(updatedRifa);
+            setEditingContacts(false);
+        } catch (err) {
+            setError(err instanceof Error ? err.message : 'Erro ao salvar contatos');
+        } finally {
+            setSavingContacts(false);
+        }
+    };
+
+    // Start editing functions
+    const startEditingDrawDate = () => {
+        setTempDrawDate(formatDateForInput(rifa!.dataSorteio));
+        setEditingDrawDate(true);
+    };
+
+    const startEditingChannel = () => {
+        setTempChannel(rifa!.canalTransmissao);
+        setEditingChannel(true);
+    };
+
+    const startEditingContacts = () => {
+        setTempContacts([...rifa!.contatos]);
+        setEditingContacts(true);
+    };
+
+    // Contact management functions
+    const addContact = () => {
+        setTempContacts([...tempContacts, { nome: '', telefone: '', avatarUrl: '' }]);
+    };
+
+    const updateContact = (index: number, field: string, value: string) => {
+        const updated = [...tempContacts];
+        updated[index] = { ...updated[index], [field]: value };
+        setTempContacts(updated);
+    };
+
+    const removeContact = (index: number) => {
+        setTempContacts(tempContacts.filter((_, i) => i !== index));
+    };
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
@@ -184,12 +308,86 @@ export function RifaDetailsDialog({
                             <div className="bg-green-50 p-4 rounded-lg">
                                 <div className="space-y-2">
                                     <div>
-                                        <p className="text-sm text-gray-600">Data e horário</p>
-                                        <p className="font-medium text-green-700">{new Date(rifa.dataSorteio).toLocaleString("pt-BR", { timeZone: "America/Sao_Paulo" })}</p>
+                                        <div className="flex items-center justify-between mb-2">
+                                            <p className="text-sm text-gray-600">Data e horário</p>
+                                            {!editingDrawDate && (
+                                                <Button
+                                                    variant="outline"
+                                                    size="sm"
+                                                    onClick={startEditingDrawDate}
+                                                >
+                                                    Editar
+                                                </Button>
+                                            )}
+                                        </div>
+                                        {editingDrawDate ? (
+                                            <div className="space-y-2">
+                                                <Input
+                                                    type="datetime-local"
+                                                    value={tempDrawDate}
+                                                    onChange={(e) => setTempDrawDate(e.target.value)}
+                                                />
+                                                <div className="flex gap-2">
+                                                    <Button
+                                                        size="sm"
+                                                        onClick={saveDrawDate}
+                                                        disabled={savingDrawDate}
+                                                    >
+                                                        {savingDrawDate ? 'Salvando...' : 'Salvar'}
+                                                    </Button>
+                                                    <Button
+                                                        size="sm"
+                                                        variant="outline"
+                                                        onClick={() => setEditingDrawDate(false)}
+                                                    >
+                                                        Cancelar
+                                                    </Button>
+                                                </div>
+                                            </div>
+                                        ) : (
+                                            <p className="font-medium text-green-700">{new Date(rifa.dataSorteio).toLocaleString("pt-BR", { timeZone: "America/Sao_Paulo" })}</p>
+                                        )}
                                     </div>
                                     <div>
-                                        <p className="text-sm text-gray-600">Canal de transmissão</p>
-                                        <p className="font-medium text-green-700">{rifa.canalTransmissao}</p>
+                                        <div className="flex items-center justify-between mb-2">
+                                            <p className="text-sm text-gray-600">Canal de transmissão</p>
+                                            {!editingChannel && (
+                                                <Button
+                                                    variant="outline"
+                                                    size="sm"
+                                                    onClick={startEditingChannel}
+                                                >
+                                                    Editar
+                                                </Button>
+                                            )}
+                                        </div>
+                                        {editingChannel ? (
+                                            <div className="space-y-2">
+                                                <Input
+                                                    value={tempChannel}
+                                                    onChange={(e) => setTempChannel(e.target.value)}
+                                                    placeholder="Digite o canal de transmissão"
+                                                />
+                                                <div className="flex gap-2">
+                                                    <Button
+                                                        size="sm"
+                                                        onClick={saveChannel}
+                                                        disabled={savingChannel}
+                                                    >
+                                                        {savingChannel ? 'Salvando...' : 'Salvar'}
+                                                    </Button>
+                                                    <Button
+                                                        size="sm"
+                                                        variant="outline"
+                                                        onClick={() => setEditingChannel(false)}
+                                                    >
+                                                        Cancelar
+                                                    </Button>
+                                                </div>
+                                            </div>
+                                        ) : (
+                                            <p className="font-medium text-green-700">{rifa.canalTransmissao}</p>
+                                        )}
                                     </div>
                                     {rifa.fazendinha !== undefined && (
                                         <div>
@@ -203,22 +401,99 @@ export function RifaDetailsDialog({
 
                         {/* Contatos */}
                         <div>
-                            <h4 className="font-semibold text-lg text-gray-800 mb-3 flex items-center gap-2">
-                                📞 Contatos
-                            </h4>
-                            <div className="space-y-3">
-                                {rifa.contatos.map((c) => (
-                                    <div key={c.telefone} className="flex items-center gap-3 bg-green-50 p-3 rounded-lg border border-green-200">
-                                        {c.avatarUrl && (
-                                            <img src={c.avatarUrl} alt={c.nome} className="h-10 w-10 rounded-full border-2 border-green-300" />
-                                        )}
-                                        <div>
-                                            <p className="font-medium text-green-800">{c.nome}</p>
-                                            <p className="text-sm text-green-600">{c.telefone}</p>
-                                        </div>
-                                    </div>
-                                ))}
+                            <div className="flex items-center justify-between mb-3">
+                                <h4 className="font-semibold text-lg text-gray-800 flex items-center gap-2">
+                                    📞 Contatos
+                                </h4>
+                                {!editingContacts && (
+                                    <Button
+                                        variant="outline"
+                                        size="sm"
+                                        onClick={startEditingContacts}
+                                    >
+                                        Editar
+                                    </Button>
+                                )}
                             </div>
+                            {editingContacts ? (
+                                <div className="space-y-3">
+                                    {tempContacts.map((contact, index) => (
+                                        <div key={index} className="bg-green-50 p-3 rounded-lg border border-green-200">
+                                            <div className="grid grid-cols-1 md:grid-cols-3 gap-2 mb-2">
+                                                <div>
+                                                    <Label htmlFor={`name-${index}`} className="text-xs">Nome</Label>
+                                                    <Input
+                                                        id={`name-${index}`}
+                                                        value={contact.nome}
+                                                        onChange={(e) => updateContact(index, 'nome', e.target.value)}
+                                                        placeholder="Nome"
+                                                    />
+                                                </div>
+                                                <div>
+                                                    <Label htmlFor={`phone-${index}`} className="text-xs">Telefone</Label>
+                                                    <Input
+                                                        id={`phone-${index}`}
+                                                        value={contact.telefone}
+                                                        onChange={(e) => updateContact(index, 'telefone', e.target.value)}
+                                                        placeholder="Telefone"
+                                                    />
+                                                </div>
+                                                <div>
+                                                    <Label htmlFor={`avatar-${index}`} className="text-xs">Avatar URL</Label>
+                                                    <Input
+                                                        id={`avatar-${index}`}
+                                                        value={contact.avatarUrl}
+                                                        onChange={(e) => updateContact(index, 'avatarUrl', e.target.value)}
+                                                        placeholder="URL do Avatar"
+                                                    />
+                                                </div>
+                                            </div>
+                                            <Button
+                                                variant="destructive"
+                                                size="sm"
+                                                onClick={() => removeContact(index)}
+                                            >
+                                                Remover
+                                            </Button>
+                                        </div>
+                                    ))}
+                                    <Button
+                                        variant="outline"
+                                        size="sm"
+                                        onClick={addContact}
+                                    >
+                                        Adicionar Contato
+                                    </Button>
+                                    <div className="flex gap-2 pt-2">
+                                        <Button
+                                            onClick={saveContacts}
+                                            disabled={savingContacts}
+                                        >
+                                            {savingContacts ? 'Salvando...' : 'Salvar Contatos'}
+                                        </Button>
+                                        <Button
+                                            variant="outline"
+                                            onClick={() => setEditingContacts(false)}
+                                        >
+                                            Cancelar
+                                        </Button>
+                                    </div>
+                                </div>
+                            ) : (
+                                <div className="space-y-3">
+                                    {rifa.contatos.map((c) => (
+                                        <div key={c.telefone} className="flex items-center gap-3 bg-green-50 p-3 rounded-lg border border-green-200">
+                                            {c.avatarUrl && (
+                                                <img src={c.avatarUrl} alt={c.nome} className="h-10 w-10 rounded-full border-2 border-green-300" />
+                                            )}
+                                            <div>
+                                                <p className="font-medium text-green-800">{c.nome}</p>
+                                                <p className="text-sm text-green-600">{c.telefone}</p>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
                         </div>
 
                         {/* Informações Técnicas */}

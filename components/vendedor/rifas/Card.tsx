@@ -9,16 +9,16 @@ import { Progress } from "@/components/ui/progress";
 import { RifaDetailsDialog } from "@/components/vendedor/rifas/RifaDetailsDialog";
 
 export interface CardProps {
-  id: string;
-  name: string;
-  progress: number;
-  variant: string;
-  imagensPremioPrincipal?: string[];
-  disponivel: boolean;
-  preco?: number;
-  numerosVendidos?: number[];
-  totalNumbers?: number;
-  rifaData?: any; // Add full rifa data
+    id: string;
+    name: string;
+    progress: number;
+    variant: string;
+    imagensPremioPrincipal?: string[];
+    disponivel: boolean;
+    preco?: number;
+    numerosVendidos?: number[];
+    totalNumbers?: number;
+    rifaData?: any; // Add full rifa data
 }
 
 const Card = ({ id, name, progress, variant, imagensPremioPrincipal, disponivel, preco, numerosVendidos, totalNumbers, rifaData }: CardProps) => {
@@ -80,7 +80,7 @@ const Card = ({ id, name, progress, variant, imagensPremioPrincipal, disponivel,
                         )}
                     </div>
                 )}
-                
+
                 <CardHeader className="pb-2">
                     <div className="flex flex-col">
                         <CardTitle className="text-lg font-bold line-clamp-2 mb-2">
@@ -165,9 +165,9 @@ const Card = ({ id, name, progress, variant, imagensPremioPrincipal, disponivel,
                             >
                                 Visualizar
                             </Button>
-                            
+
                             <Link href={`/compra/${id}`} className="flex-1">
-                                <Button 
+                                <Button
                                     className={cn(
                                         styles.button,
                                         "w-full"

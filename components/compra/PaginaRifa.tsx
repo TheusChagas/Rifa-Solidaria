@@ -87,7 +87,7 @@ export default function PaginaRifa({ config }: { config: RifaConfig & { imagensP
         const lista = Array.from(
             { length: totalNumbers },
             (_, i): { numero: number; status: "disponivel" | "vendido" | "reservado" } => {
-                const numero = i + 1;
+                const numero = i; // Start from 0 instead of i + 1
                 if (numerosVendidos.includes(numero)) {
                     return { numero, status: "vendido" };
                 } else if (config.numerosReservados?.includes(numero)) {
@@ -563,11 +563,11 @@ export default function PaginaRifa({ config }: { config: RifaConfig & { imagensP
                         </div>
 
                         {/* Seletor de números */}
-                        <div className="mb-6">
-                            <h3 className="font-bold text-lg mb-4">Selecione seus números</h3>
+                        <div className="mb-6 -mx-6 md:-mx-4">
+                            <h3 className="font-bold text-lg mb-4 px-6 md:px-4">Selecione seus números</h3>
                             
                             {/* Filtro de números */}
-                            <div className="mb-4">
+                            <div className="mb-4 px-6 md:px-4">
                                 <Label className="text-sm font-medium mb-2 block">Filtrar números:</Label>
                                 <div className="flex flex-wrap gap-2 mb-4">
                                     <Button
@@ -605,36 +605,48 @@ export default function PaginaRifa({ config }: { config: RifaConfig & { imagensP
                                 </div>
                             </div>
 
-                            <div className="grid grid-cols-5 md:grid-cols-8 lg:grid-cols-10 gap-2">
+                            <div className="grid grid-cols-6 md:grid-cols-10 lg:grid-cols-12 gap-[5px] px-1 md:px-2">
                                 {numeros
                                     .filter(n => {
                                         if (numberFilter === "todos") return true;
                                         if (numberFilter === "reservado") return n.status === "reservado";
                                         return n.status === numberFilter;
                                     })
-                                    .map((n) => (
-                                    <button
-                                        key={n.numero}
-                                        onClick={() => {
-                                            if (n.status !== "vendido" && n.status !== "reservado") {
-                                                toggleNumero(n.numero);
-                                            }
-                                        }
-                                        }
-                                        disabled={n.status === "vendido" || n.status === "reservado"}
-                                        className={cn(
-                                            "h-12 rounded-lg text-sm font-medium transition flex items-center justify-center",
-                                            {
-                                                "bg-gray-400 text-white hover:bg-gray-500 border-2 border-gray-500": n.status === "disponivel",
-                                                "bg-blue-600 text-white border-2 border-blue-700": n.status === "selecionado",
-                                                "bg-green-500 text-white cursor-not-allowed": n.status === "vendido",
-                                                "bg-orange-500 text-white cursor-not-allowed border-2 border-orange-600": n.status === "reservado",
-                                            }
-                                        )}
-                                    >
-                                        {n.numero.toString().padStart(2, "0")}
-                                    </button>
-                                ))}
+                                    .map((n) => {
+                                        // Calculate padding based on total numbers
+                                        const maxDigits = (totalNumbers - 1).toString().length;
+                                        
+                                        // Dynamic font size based on number of digits in the maximum number
+                                        const getTextSize = (maxDigits: number) => {
+                                            if (maxDigits <= 2) return "text-lg md:text-base"; // Up to 2 digits (00-99)
+                                            if (maxDigits <= 3) return "text-base md:text-sm"; // Up to 3 digits (000-999)
+                                            return "text-sm md:text-xs"; // 4+ digits (0000+)
+                                        };
+
+                                        return (
+                                            <button
+                                                key={n.numero}
+                                                onClick={() => {
+                                                    if (n.status !== "vendido" && n.status !== "reservado") {
+                                                        toggleNumero(n.numero);
+                                                    }
+                                                }}
+                                                disabled={n.status === "vendido" || n.status === "reservado"}
+                                                className={cn(
+                                                    "h-8 md:h-9 rounded-md font-bold transition flex items-center justify-center",
+                                                    getTextSize(maxDigits),
+                                                    {
+                                                        "bg-gray-400 text-white hover:bg-gray-500 border-2 border-gray-500": n.status === "disponivel",
+                                                        "bg-blue-600 text-white border-2 border-blue-700": n.status === "selecionado",
+                                                        "bg-green-500 text-white cursor-not-allowed": n.status === "vendido",
+                                                        "bg-orange-500 text-white cursor-not-allowed border-2 border-orange-600": n.status === "reservado",
+                                                    }
+                                                )}
+                                            >
+                                                {n.numero.toString().padStart(maxDigits, "0")}
+                                            </button>
+                                        );
+                                    })}
                             </div>
                         </div>
 
@@ -668,7 +680,10 @@ export default function PaginaRifa({ config }: { config: RifaConfig & { imagensP
                                     </p>
                                     <div className="max-h-20 overflow-y-auto">
                                         <p className="text-sm text-blue-600">
-                                            {selecionados.sort((a, b) => a - b).map((x) => x.toString().padStart(2, "0")).join(", ")}
+                                            {selecionados.sort((a, b) => a - b).map((x) => {
+                                                const maxDigits = (totalNumbers - 1).toString().length;
+                                                return x.toString().padStart(maxDigits, "0");
+                                            }).join(", ")}
                                         </p>
                                     </div>
                                 </div>

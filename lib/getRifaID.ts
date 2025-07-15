@@ -12,7 +12,7 @@ export const rifasMockBase: Record<string, Rifa> = {
         totalNumbers: 100,
         premio: 250,
         saleMode: "a dezena",
-        numerosVendidos: Array.from({length: 73}, (_, i) => i + 1),
+        numerosVendidos: Array.from({length: 73}, (_, i) => i), // Start from 0
         dataSorteio: "2025-05-03T18:55:00Z",
         horarioSorteio: "18:55",
         localSorteio: "PTN",
@@ -48,7 +48,7 @@ export const rifasMockBase: Record<string, Rifa> = {
         vendedorNome: "Sophie & Xerifão",
         categoria: "Solidária",
         tags: ["solidária", "ajuda", "comunidade"],
-        numerosReservados: [74, 75, 76],
+        numerosReservados: [73, 74, 75], // Adjusted to 0-based
         valorTotal: 399,
         dataInicio: "2025-04-01T00:00:00Z",
         dataFim: "2025-05-03T18:55:00Z",
@@ -225,7 +225,7 @@ export const rifasMockBase: Record<string, Rifa> = {
         totalNumbers: 200,
         premio: "Bicicleta Aro 29",
         saleMode: "por número",
-        numerosVendidos: Array.from({length: 118}, (_, i) => i + 1),
+        numerosVendidos: Array.from({length: 118}, (_, i) => i), // Start from 0
         dataSorteio: "2025-06-10T20:00:00Z",
         horarioSorteio: "20:00",
         localSorteio: "CANTA GALO",
@@ -306,7 +306,7 @@ export const rifasMockBase: Record<string, Rifa> = {
         vendedorNome: "ONG Amigos dos Animais",
         categoria: "Esportes",
         tags: ["bicicleta", "esportes", "ong", "animais"],
-        numerosReservados: [119, 120],
+        numerosReservados: [118, 119], // Adjusted to 0-based
         valorTotal: 1000,
         dataInicio: "2025-05-01T00:00:00Z",
         dataFim: "2025-06-10T20:00:00Z",
@@ -380,7 +380,7 @@ export const rifasMockBase: Record<string, Rifa> = {
         totalNumbers: 300,
         premio: "Viagem",
         saleMode: "por cota",
-        numerosVendidos: Array.from({length: 87}, (_, i) => i + 1),
+        numerosVendidos: Array.from({length: 87}, (_, i) => i), // Start from 0
         dataSorteio: "2025-08-01T21:00:00Z",
         horarioSorteio: "21:00",
         localSorteio: "instagram",
@@ -451,7 +451,7 @@ export const rifasMockBase: Record<string, Rifa> = {
         vendedorNome: "Fernanda & Rafael",
         categoria: "Viagem",
         tags: ["viagem", "sonhos", "férias", "turismo"],
-        numerosReservados: [88, 89, 90],
+        numerosReservados: [87, 88, 89], // Adjusted to 0-based
         valorTotal: 4500,
         dataInicio: "2025-06-15T00:00:00Z",
         dataFim: "2025-08-01T21:00:00Z",
@@ -525,7 +525,7 @@ export const rifasMockBase: Record<string, Rifa> = {
         totalNumbers: 150,
         premio: "Cesta de Natal",
         saleMode: "por cota",
-        numerosVendidos: Array.from({length: 150}, (_, i) => i + 1),
+        numerosVendidos: Array.from({length: 150}, (_, i) => i), // Start from 0 - all sold
         dataSorteio: "2024-12-20T19:30:00Z",
         horarioSorteio: "19:30",
         localSorteio: "CORUJINHA",
@@ -667,7 +667,7 @@ export const rifasMockBase: Record<string, Rifa> = {
         totalNumbers: 500,
         premio: "Setup Gamer Completo",
         saleMode: "por número",
-        numerosVendidos: Array.from({length: 287}, (_, i) => i + 1),
+        numerosVendidos: Array.from({length: 287}, (_, i) => i), // Start from 0
         dataSorteio: "2025-09-15T20:30:00Z",
         horarioSorteio: "20:30",
         localSorteio: "MEGA SENA",
@@ -766,7 +766,7 @@ export const rifasMockBase: Record<string, Rifa> = {
         vendedorNome: "Tech4All Foundation",
         categoria: "Tecnologia",
         tags: ["tecnologia", "gamer", "pc", "setup", "inclusão digital", "jovens"],
-        numerosReservados: [288, 289, 290, 291, 292],
+        numerosReservados: [287, 288, 289, 290, 291], // Adjusted to 0-based
         valorTotal: 12500,
         dataInicio: "2025-07-01T00:00:00Z",
         dataFim: "2025-09-15T20:30:00Z",
@@ -846,7 +846,7 @@ export const rifasMockBase: Record<string, Rifa> = {
         totalNumbers: 10000,
         premio: "Casa Mobiliada R$ 850.000",
         saleMode: "por cota",
-        numerosVendidos: Array.from({length: 1247}, (_, i) => i + 1),
+        numerosVendidos: Array.from({length: 1247}, (_, i) => i), // Start from 0
         dataSorteio: "2025-12-31T22:00:00Z",
         horarioSorteio: "22:00",
         localSorteio: "LOTERIA FEDERAL",
@@ -1003,7 +1003,7 @@ export const rifasMockBase: Record<string, Rifa> = {
         vendedorNome: "Construindo Sonhos Imobiliária",
         categoria: "Imóveis",
         tags: ["casa", "imóvel", "mobiliada", "sonhos", "orfanato", "caridade", "mega rifa"],
-        numerosReservados: [1248, 1249, 1250, 1251, 1252],
+        numerosReservados: [1247, 1248, 1249, 1250, 1251], // Adjusted to 0-based
         valorTotal: 1000000,
         dataInicio: "2025-09-01T00:00:00Z",
         dataFim: "2025-12-31T22:00:00Z",

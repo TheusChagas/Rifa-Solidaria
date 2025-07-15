@@ -1,7 +1,7 @@
 // components/VerticalCarousel.tsx
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 
 interface VerticalCarouselProps {
     words: string[];
@@ -15,56 +15,60 @@ export function CarrosselVertical({
     className = "",
 }: VerticalCarouselProps) {
     const [currentIndex, setCurrentIndex] = useState(0);
+    const [isMounted, setIsMounted] = useState(false);
+
+    // Garantir que words seja um array válido
+    const validWords = useMemo(() => {
+        if (!Array.isArray(words)) return [];
+        return words.filter(word => word && typeof word === 'string' && word.trim().length > 0);
+    }, [words]);
+
+    // Evitar problemas de hidratação
+    useEffect(() => {
+        setIsMounted(true);
+    }, []);
 
     useEffect(() => {
-        if (words.length <= 1) return;
+        if (!isMounted || validWords.length <= 1) return;
 
         const timer = setInterval(() => {
-            setCurrentIndex((prev) => (prev + 1) % words.length);
+            setCurrentIndex((prev) => (prev + 1) % validWords.length);
         }, interval);
 
         return () => clearInterval(timer);
-    }, [words.length, interval]);
+    }, [validWords, interval, isMounted]);
 
-    if (words.length === 0) {
-        return <span className={className}></span>;
+    // Casos especiais
+    if (validWords.length === 0) {
+        return <span className={className}>carregando...</span>;
     }
 
-    if (words.length === 1) {
-        return <span className={className}>{words[0]}</span>;
+    if (validWords.length === 1) {
+        return <span className={className}>{validWords[0]}</span>;
     }
 
+    // Garantir que apenas uma palavra seja exibida
+    const currentWord = validWords[currentIndex] || validWords[0] || "";
+
+    // Mostrar apenas a primeira palavra até o componente ser totalmente carregado
+    if (!isMounted) {
+        return <span className={className}>{validWords[0]}</span>;
+    }
+
+    // Garantir que sempre há uma palavra visível com o gradiente aplicado corretamente
     return (
-        <span
-            className={`inline-block relative overflow-hidden ${className}`}
+        <span 
+            className={`inline-block ${className}`}
             style={{
-                height: "1.3em",
-                minWidth: "120px",
-                verticalAlign: "baseline",
+                display: 'inline-block',
+                whiteSpace: 'nowrap',
+                minWidth: 'max-content',
+                color: 'inherit', // Herdar a cor do elemento pai
+                WebkitBackgroundClip: 'text',
+                backgroundClip: 'text'
             }}
         >
-            <span
-                className="block transition-transform duration-500 ease-in-out"
-                style={{
-                    transform: `translateY(-${currentIndex * 1.3}em)`,
-                    lineHeight: "1.3em",
-                }}
-            >
-                {words.map((word, index) => (
-                    <span
-                        key={`${word}-${index}`}
-                        className="block leading-none whitespace-nowrap"
-                        style={{
-                            height: "1.3em",
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "flex-start",
-                        }}
-                    >
-                        {word}
-                    </span>
-                ))}
-            </span>
+            {currentWord}
         </span>
     );
 }

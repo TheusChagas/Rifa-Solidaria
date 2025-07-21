@@ -73,6 +73,7 @@ export default function PaginaRifa({ config }: { config: RifaConfig & { imagensP
     const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
     const [selectedMainImage, setSelectedMainImage] = useState<string>("");
     const [currentImageIndex, setCurrentImageIndex] = useState<number>(0);
+    const [currentSecondaryImageIndex, setCurrentSecondaryImageIndex] = useState<number>(0);
     const [phoneNumber, setPhoneNumber] = useState<string>("");
     const [isNewBuyer, setIsNewBuyer] = useState<boolean>(false);
     const [phoneValidated, setPhoneValidated] = useState<boolean>(false);
@@ -297,13 +298,20 @@ export default function PaginaRifa({ config }: { config: RifaConfig & { imagensP
         return [];
     };
 
-    const firstPrizeImages = getFirstPrizeImages();
-
-    const goToPreviousImage = () => {
-        const newIndex = currentImageIndex === 0 ? firstPrizeImages.length - 1 : currentImageIndex - 1;
-        setCurrentImageIndex(newIndex);
-        setSelectedMainImage(firstPrizeImages[newIndex]);
+    const getSecondaryPrizesImages = () => {
+        if (!premios || premios.length <= 1) return [];
+        
+        const allSecondaryImages: string[] = [];
+        premios.slice(1).forEach((premio: { nome: string, imagens?: string[] }) => {
+            if (premio.imagens && premio.imagens.length > 0) {
+                allSecondaryImages.push(...premio.imagens);
+            }
+        });
+        return allSecondaryImages;
     };
+
+    const firstPrizeImages = getFirstPrizeImages();
+    const secondaryPrizesImages = getSecondaryPrizesImages();
 
     const goToNextImage = () => {
         const newIndex = currentImageIndex === firstPrizeImages.length - 1 ? 0 : currentImageIndex + 1;
@@ -311,9 +319,29 @@ export default function PaginaRifa({ config }: { config: RifaConfig & { imagensP
         setSelectedMainImage(firstPrizeImages[newIndex]);
     };
 
+    const goToPreviousImage = () => {
+        const newIndex = currentImageIndex === 0 ? firstPrizeImages.length - 1 : currentImageIndex - 1;
+        setCurrentImageIndex(newIndex);
+        setSelectedMainImage(firstPrizeImages[newIndex]);
+    };
+
     const selectImage = (index: number) => {
         setCurrentImageIndex(index);
         setSelectedMainImage(firstPrizeImages[index]);
+    };
+
+    const goToNextSecondaryImage = () => {
+        const newIndex = currentSecondaryImageIndex === secondaryPrizesImages.length - 1 ? 0 : currentSecondaryImageIndex + 1;
+        setCurrentSecondaryImageIndex(newIndex);
+    };
+
+    const goToPreviousSecondaryImage = () => {
+        const newIndex = currentSecondaryImageIndex === 0 ? secondaryPrizesImages.length - 1 : currentSecondaryImageIndex - 1;
+        setCurrentSecondaryImageIndex(newIndex);
+    };
+
+    const selectSecondaryImage = (index: number) => {
+        setCurrentSecondaryImageIndex(index);
     };
 
     return (
@@ -457,33 +485,87 @@ export default function PaginaRifa({ config }: { config: RifaConfig & { imagensP
                                 <div className="space-y-4">
                                     {premios.slice(1).map((premio: { nome: string, imagens?: string[] }, idx: number) => (
                                         <div key={idx} className="border border-gray-200 rounded-lg p-4 bg-gray-50">
-                                            <div className="flex items-center gap-2 mb-3">
+                                            <div className="flex items-center gap-2">
                                                 <span className="w-6 h-6 bg-gray-400 text-white rounded-full flex items-center justify-center text-sm font-bold">{idx + 2}</span>
                                                 <span className="font-medium">{premio.nome}</span>
                                             </div>
-                                            {premio.imagens && premio.imagens.length > 0 && (
-                                                <div className="flex gap-2 overflow-x-auto">
-                                                    {premio.imagens.map((imagem: string, imgIdx: number) => (
-                                                        <div
-                                                            key={imgIdx}
-                                                            className="flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border border-gray-300 cursor-pointer hover:border-gray-400 transition-all duration-200"
-                                                            onMouseEnter={(e) => handleImageHover(imagem, e)}
-                                                            onMouseLeave={handleImageLeave}
-                                                        >
-                                                            <img
-                                                                src={imagem}
-                                                                alt={`${premio.nome} - Imagem ${imgIdx + 1}`}
-                                                                className="w-full h-full object-cover"
-                                                                onError={(e) => {
-                                                                    e.currentTarget.src = "/placeholder.png";
-                                                                }}
-                                                            />
-                                                        </div>
-                                                    ))}
-                                                </div>
-                                            )}
                                         </div>
                                     ))}
+                                </div>
+                            )}
+
+                            {/* Carrossel de Imagens dos Prêmios Secundários */}
+                            {secondaryPrizesImages.length > 0 && (
+                                <div className="mt-6">
+                                    <h4 className="font-semibold text-md mb-3">Imagens dos Prêmios:</h4>
+                                    <div className="relative">
+                                        {/* Imagem Principal do Carrossel */}
+                                        <div className="relative h-64 bg-gray-100 rounded-lg overflow-hidden">
+                                            <img
+                                                src={secondaryPrizesImages[currentSecondaryImageIndex]}
+                                                alt={`Prêmio ${currentSecondaryImageIndex + 1}`}
+                                                className="w-full h-full object-cover"
+                                                onError={(e) => {
+                                                    e.currentTarget.src = "/placeholder.png";
+                                                }}
+                                            />
+                                            
+                                            {secondaryPrizesImages.length > 1 && (
+                                                <>
+                                                    {/* Botão Anterior */}
+                                                    <button
+                                                        onClick={goToPreviousSecondaryImage}
+                                                        className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 hover:bg-opacity-75 text-white p-2 rounded-full transition-all duration-200"
+                                                    >
+                                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                                                        </svg>
+                                                    </button>
+                                                    
+                                                    {/* Botão Próximo */}
+                                                    <button
+                                                        onClick={goToNextSecondaryImage}
+                                                        className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 hover:bg-opacity-75 text-white p-2 rounded-full transition-all duration-200"
+                                                    >
+                                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                                        </svg>
+                                                    </button>
+                                                    
+                                                    {/* Contador de Imagens */}
+                                                    <div className="absolute top-2 right-2 bg-black bg-opacity-50 text-white px-2 py-1 rounded text-xs">
+                                                        {currentSecondaryImageIndex + 1} / {secondaryPrizesImages.length}
+                                                    </div>
+                                                </>
+                                            )}
+                                        </div>
+
+                                        {/* Miniaturas */}
+                                        {secondaryPrizesImages.length > 1 && (
+                                            <div className="flex gap-2 mt-3 flex-wrap">
+                                                {secondaryPrizesImages.map((imagem: string, imgIdx: number) => (
+                                                    <div
+                                                        key={imgIdx}
+                                                        className={`flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden border-2 cursor-pointer transition-all duration-200 ${
+                                                            imgIdx === currentSecondaryImageIndex 
+                                                                ? 'border-blue-500 ring-2 ring-blue-200' 
+                                                                : 'border-gray-300 hover:border-gray-400'
+                                                        }`}
+                                                        onClick={() => selectSecondaryImage(imgIdx)}
+                                                    >
+                                                        <img
+                                                            src={imagem}
+                                                            alt={`Miniatura ${imgIdx + 1}`}
+                                                            className="w-full h-full object-cover"
+                                                            onError={(e) => {
+                                                                e.currentTarget.src = "/placeholder.png";
+                                                            }}
+                                                        />
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        )}
+                                    </div>
                                 </div>
                             )}
                         </div>
@@ -584,7 +666,7 @@ export default function PaginaRifa({ config }: { config: RifaConfig & { imagensP
                                         onClick={() => setNumberFilter("disponivel")}
                                         className="text-xs flex items-center gap-1 bg-gray-400"
                                     >
-                                        <span className="text-white font-bold">Disponíveis ({numeros.filter(n => n.status === "disponivel").length})</span>
+                                        <span className="text-white font-bold">Disponíveis ({numeros.filter(n => n.status === "disponivel" || n.status === "selecionado").length})</span>
                                     </Button>
                                     <Button
                                         variant={numberFilter === "vendido" ? "default" : "outline"}
@@ -609,6 +691,7 @@ export default function PaginaRifa({ config }: { config: RifaConfig & { imagensP
                                 {numeros
                                     .filter(n => {
                                         if (numberFilter === "todos") return true;
+                                        if (numberFilter === "disponivel") return n.status === "disponivel" || n.status === "selecionado";
                                         if (numberFilter === "reservado") return n.status === "reservado";
                                         return n.status === numberFilter;
                                     })
@@ -636,10 +719,10 @@ export default function PaginaRifa({ config }: { config: RifaConfig & { imagensP
                                                     "h-8 md:h-9 rounded-md font-bold transition flex items-center justify-center",
                                                     getTextSize(maxDigits),
                                                     {
-                                                        "bg-gray-400 text-white hover:bg-gray-500 border-2 border-gray-500": n.status === "disponivel",
-                                                        "bg-blue-600 text-white border-2 border-blue-700": n.status === "selecionado",
+                                                        "bg-gray-400 text-white hover:bg-gray-500": n.status === "disponivel",
+                                                        "bg-blue-600 text-white": n.status === "selecionado",
                                                         "bg-green-500 text-white cursor-not-allowed": n.status === "vendido",
-                                                        "bg-orange-500 text-white cursor-not-allowed border-2 border-orange-600": n.status === "reservado",
+                                                        "bg-orange-500 text-white cursor-not-allowed": n.status === "reservado",
                                                     }
                                                 )}
                                             >
@@ -679,12 +762,21 @@ export default function PaginaRifa({ config }: { config: RifaConfig & { imagensP
                                         Números selecionados ({selecionados.length}):
                                     </p>
                                     <div className="max-h-20 overflow-y-auto">
-                                        <p className="text-sm text-blue-600">
-                                            {selecionados.sort((a, b) => a - b).map((x) => {
+                                        <div className="flex flex-wrap gap-1">
+                                            {selecionados.sort((a, b) => a - b).map((numero) => {
                                                 const maxDigits = (totalNumbers - 1).toString().length;
-                                                return x.toString().padStart(maxDigits, "0");
-                                            }).join(", ")}
-                                        </p>
+                                                return (
+                                                    <button
+                                                        key={numero}
+                                                        onClick={() => toggleNumero(numero)}
+                                                        className="inline-block bg-blue-600 hover:bg-red-500 text-white px-2 py-1 rounded text-xs font-semibold transition-colors duration-200 cursor-pointer"
+                                                        title="Clique para deselecionar"
+                                                    >
+                                                        {numero.toString().padStart(maxDigits, "0")}
+                                                    </button>
+                                                );
+                                            })}
+                                        </div>
                                     </div>
                                 </div>
                                 <div className="text-right flex-shrink-0">
@@ -854,32 +946,31 @@ export default function PaginaRifa({ config }: { config: RifaConfig & { imagensP
                     </div>
                 </div>
             )}
-
-            {/* Image Hover Popup */}
-            {hoveredImage && (
-                <div
-                    className="fixed pointer-events-none z-50 transition-opacity duration-300 ease-in-out"
-                    style={{
-                        left: mousePosition.x + 15,
-                        top: Math.max(10, mousePosition.y - 200),
-                    }}
-                >
-                    <div className="bg-white border border-gray-300 rounded-lg shadow-xl p-4 max-w-lg">
-                        <img
-                            src={hoveredImage}
-                            alt="Preview"
-                            className="w-96 h-96 object-contain rounded transition-opacity duration-300"
-                            style={{
-                                imageRendering: 'auto',
-                                filter: 'contrast(1.1) saturate(1.1)',
-                            }}
-                            onError={(e) => {
-                                e.currentTarget.src = "/placeholder.png";
-                            }}
-                        />
-                    </div>
+        {/* Image Hover Popup */}
+        {hoveredImage && (
+            <div
+                className="fixed pointer-events-none z-50 transition-opacity duration-300 ease-in-out"
+                style={{
+                    left: mousePosition.x + 15,
+                    top: Math.max(10, mousePosition.y - 200),
+                }}
+            >
+                <div className="bg-white border border-gray-300 rounded-lg shadow-xl p-4 max-w-lg">
+                    <img
+                        src={hoveredImage}
+                        alt="Preview"
+                        className="w-96 h-96 object-contain rounded transition-opacity duration-300"
+                        style={{
+                            imageRendering: 'auto',
+                            filter: 'contrast(1.1) saturate(1.1)',
+                        }}
+                        onError={(e) => {
+                            e.currentTarget.src = "/placeholder.png";
+                        }}
+                    />
                 </div>
-            )}
-        </div>
-    );
+            </div>
+        )}
+    </div>
+);
 }

@@ -2,150 +2,371 @@
 
 "use client";
 
-import { Card } from "@/components/ui/card";
+import { useState, useEffect } from "react";
+import { useVendorContext } from "@/app/vendedor/layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
-import { useState } from "react";
-import MinhaConta from "@/components/vendedor/configuracoes/MinhaConta";
-import MetodoPagamento from "@/components/vendedor/configuracoes/MetodoPagamento";
-import MinhasRedesSociais from "@/components/vendedor/configuracoes/MinhasRedesSociais";
-import MeuPlano from "@/components/vendedor/configuracoes/MeuPlano";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
+import { Settings, User, CreditCard, Bell, Shield, Save } from "lucide-react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-export default function ConfiguracoesPage() {
-  // Estado para seleção de página
-  const [selectedPage, setSelectedPage] = useState<"minhaConta" | "metodoPagamento" | "minhasRedesSociais" | "meuPlano">("minhaConta");
-  const [confirmationText, setConfirmationText] = useState("");
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
+export default function Configuracoes() {
+  const { vendorInfo, vendorData, vendorId, loading: vendorLoading } = useVendorContext();
+  const [loading, setLoading] = useState(false);
+  const [formData, setFormData] = useState({
+    nome: '',
+    sobrenome: '',
+    email: '',
+    celular: '',
+    cidade: '',
+    cep: '',
+    pixChave: '',
+    banco: '',
+    agencia: '',
+    conta: '',
+    titular: '',
+    notificacaoEmail: true,
+    notificacaoWhatsapp: true,
+    notificacaoSms: false,
+    exibirNome: true,
+    exibirContato: true,
+    instagram: '',
+    facebook: '',
+    whatsapp: '',
+    youtube: ''
+  });
 
-  const handleDeleteAccount = () => {
-    if (confirmationText === "excluir conta") {
-      alert("Conta excluída permanentemente (simulação).");
-      setConfirmationText("");
-      setIsDialogOpen(false);
+  useEffect(() => {
+    if (vendorData) {
+      setFormData({
+        nome: vendorData.nome || '',
+        sobrenome: vendorData.sobrenome || '',
+        email: vendorData.email || '',
+        celular: vendorData.celular || '',
+        cidade: vendorData.cidade || '',
+        cep: vendorData.cep || '',
+        pixChave: vendorData.configuracoes?.pagamentos?.pixChave || '',
+        banco: vendorData.configuracoes?.pagamentos?.dadosBancarios?.banco || '',
+        agencia: vendorData.configuracoes?.pagamentos?.dadosBancarios?.agencia || '',
+        conta: vendorData.configuracoes?.pagamentos?.dadosBancarios?.conta || '',
+        titular: vendorData.configuracoes?.pagamentos?.dadosBancarios?.titular || '',
+        notificacaoEmail: vendorData.configuracoes?.notificacoes?.email ?? true,
+        notificacaoWhatsapp: vendorData.configuracoes?.notificacoes?.whatsapp ?? true,
+        notificacaoSms: vendorData.configuracoes?.notificacoes?.sms ?? false,
+        exibirNome: vendorData.configuracoes?.privacidade?.exibirNome ?? true,
+        exibirContato: vendorData.configuracoes?.privacidade?.exibirContato ?? true,
+        instagram: vendorData.redesSociais?.instagram || '',
+        facebook: vendorData.redesSociais?.facebook || '',
+        whatsapp: vendorData.redesSociais?.whatsapp || '',
+        youtube: vendorData.redesSociais?.youtube || ''
+      });
+    }
+  }, [vendorData]);
+
+  const handleSave = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch(`/api/vendedor/${vendorId}/configuracoes`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
+      });
+      
+      if (response.ok) {
+        alert('Configurações salvas com sucesso!');
+      }
+    } catch (error) {
+      console.error('Erro ao salvar configurações:', error);
+      alert('Erro ao salvar configurações');
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleDialogClose = () => {
-    setConfirmationText("");
-    setIsDialogOpen(false);
-  };
+  if (vendorLoading) {
+    return (
+      <div className="absolute top-20 left-8 md:top-16 md:left-72 w-[70%] overflow-x-hidden">
+        <div className="flex justify-center items-center py-8">
+          <div className="text-gray-500">Carregando dados do vendedor...</div>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="max-w-3xl mx-auto p-0 bg-[#f7f7f7] min-h-screen">
-      {/* Cabeçalho */}
-      <h1 className="text-2xl font-bold text-gray-700 mb-2 mt-6 ml-4">
-        Configurações
-      </h1>
-      {/* Tabs */}
-      <div className="flex items-center bg-white rounded-t-lg border-b border-gray-200 px-2 pt-2 mb-0">
-        <button
-          className={`px-6 py-2 rounded-t-lg font-medium text-sm focus:outline-none transition-colors
-            ${
-              selectedPage === "minhaConta"
-                ? "text-green-600 border-b-2 border-green-500 bg-white"
-                : "text-gray-700 bg-transparent"
-            }`}
-          onClick={() => setSelectedPage("minhaConta")}
-        >
-          Minha conta
-        </button>
-        <button
-          className={`px-6 py-2 rounded-t-lg font-medium text-sm focus:outline-none transition-colors
-            ${
-              selectedPage === "metodoPagamento"
-                ? "text-green-600 border-b-2 border-green-500 bg-white"
-                : "text-gray-700 bg-transparent"
-            }`}
-          onClick={() => setSelectedPage("metodoPagamento")}
-        >
-          Métodos de Pagamentos
-        </button>
-        <button
-          className={`px-6 py-2 rounded-t-lg font-medium text-sm focus:outline-none transition-colors
-            ${
-              selectedPage === "minhasRedesSociais"
-                ? "text-green-600 border-b-2 border-green-500 bg-white"
-                : "text-gray-700 bg-transparent"
-            }`}
-          onClick={() => setSelectedPage("minhasRedesSociais")}
-        >
-          Minhas Redes Sociais
-        </button>
-        <button
-          className={`px-6 py-2 rounded-t-lg font-medium text-sm focus:outline-none transition-colors
-            ${
-              selectedPage === "meuPlano"
-                ? "text-green-600 border-b-2 border-green-500 bg-white"
-                : "text-gray-700 bg-transparent"
-            }`}
-          onClick={() => setSelectedPage("meuPlano")}
-        >
-          Meu Plano
-        </button>
+    <div className="absolute top-20 left-8 md:top-16 md:left-72 w-[70%] overflow-x-hidden">
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center gap-2 text-lg font-semibold">
+          <Settings size={24} />
+          <span>Configurações - {vendorInfo?.name}</span>
+        </div>
+        <Button onClick={handleSave} disabled={loading} className="bg-verde-500 hover:bg-verde-600">
+          <Save size={16} className="mr-2" />
+          {loading ? 'Salvando...' : 'Salvar Alterações'}
+        </Button>
       </div>
 
-      <div className="bg-white rounded-b-lg shadow p-0 pt-2">
-        {selectedPage === "minhaConta" && <MinhaConta />}
-        {selectedPage === "metodoPagamento" && <MetodoPagamento />}
-        {selectedPage === "minhasRedesSociais" && <MinhasRedesSociais />}
-        {selectedPage === "meuPlano" && <MeuPlano />}
-      </div>
+      <Tabs defaultValue="perfil" className="space-y-6">
+        <TabsList className="grid w-full grid-cols-4">
+          <TabsTrigger value="perfil">Perfil</TabsTrigger>
+          <TabsTrigger value="pagamentos">Pagamentos</TabsTrigger>
+          <TabsTrigger value="notificacoes">Notificações</TabsTrigger>
+          <TabsTrigger value="privacidade">Privacidade</TabsTrigger>
+        </TabsList>
 
-      {/* Bloco de exclusão de conta - só exibe se for Minha Conta */}
-      {selectedPage === "minhaConta" && (
-        <div className="flex flex-col items-center">
-          <div className="h-16" />
-          <Card className="p-6 mb-6 bg-white shadow w-full max-w-2xl">
-            <div className="space-y-4">
-              <h2 className="text-xl font-bold text-destructive">Excluir conta</h2>
-              <p className="text-sm text-muted-foreground">
-                Esta ação é irreversível. Todos os seus dados serão permanentemente removidos.
-              </p>
-              <AlertDialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                <AlertDialogTrigger asChild>
-                  <Button
-                    variant="destructive"
-                    className="w-full md:w-auto"
-                    onClick={() => setIsDialogOpen(true)}
-                  >
-                    Excluir conta permanentemente
-                  </Button>
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>Tem certeza que deseja excluir sua conta?</AlertDialogTitle>
-                    <AlertDialogDescription>
-                      Esta ação não poderá ser desfeita. Todos os seus dados, rifas e histórico serão permanentemente removidos dos nossos servidores.
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <div className="py-4">
-                    <p className="text-sm text-gray-600 mb-2">
-                      Para confirmar, digite <span className="font-mono font-bold bg-gray-100 px-1 rounded">excluir conta</span> no campo abaixo:
-                    </p>
+        <TabsContent value="perfil">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <User size={20} />
+                Informações Pessoais
+              </CardTitle>
+              <CardDescription>
+                Atualize suas informações pessoais e de contato
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="nome">Nome</Label>
+                  <Input
+                    id="nome"
+                    value={formData.nome}
+                    onChange={(e) => setFormData({ ...formData, nome: e.target.value })}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="sobrenome">Sobrenome</Label>
+                  <Input
+                    id="sobrenome"
+                    value={formData.sobrenome}
+                    onChange={(e) => setFormData({ ...formData, sobrenome: e.target.value })}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="email">Email</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="celular">Celular</Label>
+                  <Input
+                    id="celular"
+                    value={formData.celular}
+                    onChange={(e) => setFormData({ ...formData, celular: e.target.value })}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="cidade">Cidade</Label>
+                  <Input
+                    id="cidade"
+                    value={formData.cidade}
+                    onChange={(e) => setFormData({ ...formData, cidade: e.target.value })}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="cep">CEP</Label>
+                  <Input
+                    id="cep"
+                    value={formData.cep}
+                    onChange={(e) => setFormData({ ...formData, cep: e.target.value })}
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <h3 className="text-lg font-medium">Redes Sociais</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="instagram">Instagram</Label>
                     <Input
-                      placeholder="Digite: excluir conta"
-                      value={confirmationText}
-                      onChange={(e) => setConfirmationText(e.target.value)}
-                      className="mt-2"
+                      id="instagram"
+                      placeholder="@usuario"
+                      value={formData.instagram}
+                      onChange={(e) => setFormData({ ...formData, instagram: e.target.value })}
                     />
                   </div>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel onClick={handleDialogClose}>Cancelar</AlertDialogCancel>
-                    <AlertDialogAction
-                      onClick={handleDeleteAccount}
-                      disabled={confirmationText !== "excluir conta"}
-                      className="bg-destructive text-destructive-foreground hover:bg-destructive/90 disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      Excluir permanentemente
-                    </AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
-            </div>
+                  <div>
+                    <Label htmlFor="facebook">Facebook</Label>
+                    <Input
+                      id="facebook"
+                      value={formData.facebook}
+                      onChange={(e) => setFormData({ ...formData, facebook: e.target.value })}
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="whatsapp">WhatsApp</Label>
+                    <Input
+                      id="whatsapp"
+                      value={formData.whatsapp}
+                      onChange={(e) => setFormData({ ...formData, whatsapp: e.target.value })}
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="youtube">YouTube</Label>
+                    <Input
+                      id="youtube"
+                      value={formData.youtube}
+                      onChange={(e) => setFormData({ ...formData, youtube: e.target.value })}
+                    />
+                  </div>
+                </div>
+              </div>
+            </CardContent>
           </Card>
-        </div>
-      )}
+        </TabsContent>
+
+        <TabsContent value="pagamentos">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <CreditCard size={20} />
+                Dados de Pagamento
+              </CardTitle>
+              <CardDescription>
+                Configure suas informações de recebimento
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <Label htmlFor="pixChave">Chave PIX</Label>
+                <Input
+                  id="pixChave"
+                  placeholder="CPF, telefone, email ou chave aleatória"
+                  value={formData.pixChave}
+                  onChange={(e) => setFormData({ ...formData, pixChave: e.target.value })}
+                />
+              </div>
+
+              <div className="space-y-4">
+                <h3 className="text-lg font-medium">Dados Bancários</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="banco">Banco</Label>
+                    <Input
+                      id="banco"
+                      value={formData.banco}
+                      onChange={(e) => setFormData({ ...formData, banco: e.target.value })}
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="agencia">Agência</Label>
+                    <Input
+                      id="agencia"
+                      value={formData.agencia}
+                      onChange={(e) => setFormData({ ...formData, agencia: e.target.value })}
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="conta">Conta</Label>
+                    <Input
+                      id="conta"
+                      value={formData.conta}
+                      onChange={(e) => setFormData({ ...formData, conta: e.target.value })}
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="titular">Titular</Label>
+                    <Input
+                      id="titular"
+                      value={formData.titular}
+                      onChange={(e) => setFormData({ ...formData, titular: e.target.value })}
+                    />
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="notificacoes">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Bell size={20} />
+                Preferências de Notificação
+              </CardTitle>
+              <CardDescription>
+                Configure como deseja receber notificações
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <Label>Notificações por Email</Label>
+                  <p className="text-sm text-gray-500">Receba atualizações por email</p>
+                </div>
+                <Switch
+                  checked={formData.notificacaoEmail}
+                  onCheckedChange={(checked) => setFormData({ ...formData, notificacaoEmail: checked })}
+                />
+              </div>
+              <div className="flex items-center justify-between">
+                <div>
+                  <Label>Notificações por WhatsApp</Label>
+                  <p className="text-sm text-gray-500">Receba mensagens no WhatsApp</p>
+                </div>
+                <Switch
+                  checked={formData.notificacaoWhatsapp}
+                  onCheckedChange={(checked) => setFormData({ ...formData, notificacaoWhatsapp: checked })}
+                />
+              </div>
+              <div className="flex items-center justify-between">
+                <div>
+                  <Label>Notificações por SMS</Label>
+                  <p className="text-sm text-gray-500">Receba SMS para atualizações importantes</p>
+                </div>
+                <Switch
+                  checked={formData.notificacaoSms}
+                  onCheckedChange={(checked) => setFormData({ ...formData, notificacaoSms: checked })}
+                />
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="privacidade">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Shield size={20} />
+                Configurações de Privacidade
+              </CardTitle>
+              <CardDescription>
+                Controle quais informações são exibidas publicamente
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <Label>Exibir Nome Publicamente</Label>
+                  <p className="text-sm text-gray-500">Seu nome será exibido nas rifas</p>
+                </div>
+                <Switch
+                  checked={formData.exibirNome}
+                  onCheckedChange={(checked) => setFormData({ ...formData, exibirNome: checked })}
+                />
+              </div>
+              <div className="flex items-center justify-between">
+                <div>
+                  <Label>Exibir Informações de Contato</Label>
+                  <p className="text-sm text-gray-500">Email e telefone serão visíveis</p>
+                </div>
+                <Switch
+                  checked={formData.exibirContato}
+                  onCheckedChange={(checked) => setFormData({ ...formData, exibirContato: checked })}
+                />
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }

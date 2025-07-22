@@ -1,212 +1,157 @@
 'use client'
 
 import { useState, useEffect } from "react";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Card } from "@/components/ui/card";
+import { useVendorContext } from "@/app/vendedor/layout";
 import { Button } from "@/components/ui/button";
-import { Rifa } from "@/types";
-import { getAllRifas } from "@/lib/getRifaID";
+import { Users, Search, Download } from "lucide-react";
+import { Input } from "@/components/ui/input";
 
 interface Comprador {
+  id: string;
   nome: string;
-  status: "Pago" | "Pendente" | "Cancelado";
-  valor: string;
-  bilhetes: number;
-  numerosSelecionados: number[];
-  dataCompra: string;
-  telefone?: string;
-  email?: string;
+  telefone: string;
+  email: string;
+  cidade: string;
+  estado: string;
+  totalCompras: number;
+  valorTotal: number;
+  ultimaCompra: string;
+  rifasParticipadas: string[];
 }
 
-export default function ClientHistory() {
-  const [selectedRifa, setSelectedRifa] = useState<string>("");
-  const [rifas, setRifas] = useState<Rifa[]>([]);
+export default function Compradores() {
   const [compradores, setCompradores] = useState<Comprador[]>([]);
+  const [filteredCompradores, setFilteredCompradores] = useState<Comprador[]>([]);
+  const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(true);
-  const [loadingCompradores, setLoadingCompradores] = useState(false);
+  
+  const { vendorInfo, vendorData, vendorId, loading: vendorLoading } = useVendorContext();
 
   useEffect(() => {
-    const fetchRifas = async () => {
-      try {
-        setLoading(true);
-        const rifasData = await getAllRifas();
-        setRifas(rifasData);
-        if (rifasData.length > 0) {
-          setSelectedRifa(rifasData[0].id);
-        }
-      } catch (error) {
-        console.error('Erro ao carregar rifas:', error);
-      } finally {
+    if (vendorLoading || !vendorId) return;
+
+    setLoading(true);
+    fetch(`/api/compradores?vendorId=${vendorId}`)
+      .then(res => res.ok ? res.json() : [])
+      .then((data: Comprador[]) => {
+        setCompradores(data);
+        setFilteredCompradores(data);
+      })
+      .catch(error => {
+        console.error('Erro ao carregar compradores:', error);
+        setCompradores([]);
+        setFilteredCompradores([]);
+      })
+      .finally(() => {
         setLoading(false);
-      }
-    };
-
-    fetchRifas();
-  }, []);
+      });
+  }, [vendorId, vendorLoading]);
 
   useEffect(() => {
-    if (selectedRifa) {
-      fetchCompradores(selectedRifa);
-    }
-  }, [selectedRifa]);
+    const filtered = compradores.filter(comprador =>
+      comprador.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      comprador.telefone.includes(searchTerm) ||
+      comprador.email.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    setFilteredCompradores(filtered);
+  }, [searchTerm, compradores]);
 
-  const fetchCompradores = async (rifaId: string) => {
-    setLoadingCompradores(true);
-    try {
-      // Simulate API call - replace with actual API endpoint
-      const rifaSelected = rifas.find(r => r.id === rifaId);
-      if (rifaSelected) {
-        // Generate mock buyers based on sold numbers
-        const mockCompradores: Comprador[] = [];
-        const nomes = [
-          "ERICO SILVA PEREIRA", "JOANA SOUZA", "CARLOS ALBERTO", 
-          "MARIA SANTOS", "JOÃO OLIVEIRA", "ANA COSTA", "PEDRO LIMA"
-        ];
-        
-        let currentIndex = 0;
-        for (let i = 0; i < rifaSelected.numerosVendidos.length; i += Math.floor(Math.random() * 3) + 1) {
-          const bilhetesComprados = Math.min(
-            Math.floor(Math.random() * 3) + 1, 
-            rifaSelected.numerosVendidos.length - i
-          );
-          
-          const numerosSelecionados = rifaSelected.numerosVendidos.slice(i, i + bilhetesComprados);
-          
-          if (numerosSelecionados.length > 0) {
-            mockCompradores.push({
-              nome: nomes[currentIndex % nomes.length],
-              status: Math.random() > 0.2 ? "Pago" : "Pendente",
-              valor: `R$ ${(bilhetesComprados * rifaSelected.preco).toFixed(2)}`,
-              bilhetes: bilhetesComprados,
-              numerosSelecionados,
-              dataCompra: new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000).toISOString(),
-              telefone: `(11) 9${Math.floor(Math.random() * 9000) + 1000}-${Math.floor(Math.random() * 9000) + 1000}`,
-              email: `${nomes[currentIndex % nomes.length].toLowerCase().replace(/\s+/g, '.')}@email.com`
-            });
-            currentIndex++;
-          }
-          
-          i += bilhetesComprados - 1;
-        }
-        
-        setCompradores(mockCompradores);
-      }
-    } catch (error) {
-      console.error('Erro ao carregar compradores:', error);
-    } finally {
-      setLoadingCompradores(false);
-    }
-  };
-
-  if (loading) {
+  if (vendorLoading) {
     return (
-      <div className="max-w-2xl mx-auto py-8 px-4">
-        <div className="animate-pulse">
-          <div className="h-8 bg-gray-200 rounded w-1/2 mb-6"></div>
-          <div className="h-20 bg-gray-200 rounded mb-8"></div>
-          <div className="space-y-4">
-            {[1, 2, 3].map((i) => (
-              <div key={i} className="h-16 bg-gray-200 rounded"></div>
-            ))}
-          </div>
+      <div className="absolute top-20 left-8 md:top-16 md:left-72 w-[70%] overflow-x-hidden">
+        <div className="flex justify-center items-center py-8">
+          <div className="text-gray-500">Carregando dados do vendedor...</div>
         </div>
       </div>
     );
   }
 
-  const selectedRifaData = rifas.find(r => r.id === selectedRifa);
-
   return (
-    <div className="max-w-2xl mx-auto py-8 px-4">
-      <h1 className="text-2xl font-bold mb-6">Histórico de clientes</h1>
-      
-      <Card className="mb-8 p-6">
-        <label className="block text-gray-700 mb-2 font-medium">Selecione uma rifa</label>
-        <Select value={selectedRifa} onValueChange={setSelectedRifa}>
-          <SelectTrigger className="w-full">
-            <SelectValue placeholder="Selecione uma rifa" />
-          </SelectTrigger>
-          <SelectContent>
-            {rifas.map((rifa) => (
-              <SelectItem key={rifa.id} value={rifa.id}>
-                {rifa.titulo} - {rifa.percentualVendido}% vendido
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        
-        {selectedRifaData && (
-          <div className="mt-4 p-4 bg-gray-50 rounded-lg">
-            <div className="grid grid-cols-2 gap-4 text-sm">
-              <div>
-                <span className="font-medium">Total de números:</span> {selectedRifaData.totalNumbers}
-              </div>
-              <div>
-                <span className="font-medium">Vendidos:</span> {selectedRifaData.numerosVendidos.length}
-              </div>
-              <div>
-                <span className="font-medium">Valor por número:</span> R$ {selectedRifaData.preco.toFixed(2)}
-              </div>
-              <div>
-                <span className="font-medium">Total arrecadado:</span> R$ {(selectedRifaData.numerosVendidos.length * selectedRifaData.preco).toFixed(2)}
-              </div>
-            </div>
-          </div>
-        )}
-      </Card>
-
-      <div className="mb-4 text-gray-600 text-sm">
-        {loadingCompradores ? (
-          "Carregando compradores..."
-        ) : (
-          `Mostrando ${compradores.length} de ${compradores.length} resultados`
-        )}
+    <div className="absolute top-20 left-8 md:top-16 md:left-72 w-[70%] overflow-x-hidden">
+      <div className="flex items-center gap-2 text-lg font-semibold mb-6">
+        <Users size={24} />
+        <span>Compradores - {vendorInfo?.name}</span>
       </div>
 
-      <Card className="mb-4 p-0 overflow-hidden">
-        {loadingCompradores ? (
-          <div className="p-8 text-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto"></div>
+      {vendorData?.estatisticas && (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+          <div className="bg-white p-4 rounded-lg shadow-sm">
+            <div className="text-gray-500 text-sm">Total de Compradores</div>
+            <div className="font-bold text-2xl">{compradores.length}</div>
           </div>
-        ) : compradores.length === 0 ? (
-          <div className="p-8 text-center text-gray-500">
-            Nenhum comprador encontrado para esta rifa
+          <div className="bg-white p-4 rounded-lg shadow-sm">
+            <div className="text-gray-500 text-sm">Total de Vendas</div>
+            <div className="font-bold text-2xl">{vendorData.estatisticas.totalVendas}</div>
+          </div>
+          <div className="bg-white p-4 rounded-lg shadow-sm">
+            <div className="text-gray-500 text-sm">Valor Arrecadado</div>
+            <div className="font-bold text-2xl">R$ {vendorData.estatisticas.totalArrecadado?.toLocaleString('pt-BR')}</div>
+          </div>
+        </div>
+      )}
+
+      <div className="bg-white rounded-lg shadow-sm p-6">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-lg font-semibold">Lista de Compradores</h2>
+          <Button className="flex items-center gap-2 bg-verde-500 hover:bg-verde-600">
+            <Download size={16} />
+            Exportar
+          </Button>
+        </div>
+
+        <div className="flex items-center gap-4 mb-4">
+          <div className="relative flex-1">
+            <Search size={16} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+            <Input
+              placeholder="Buscar por nome, telefone ou email..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10"
+            />
+          </div>
+        </div>
+
+        {loading ? (
+          <div className="flex justify-center items-center py-8">
+            <div className="text-gray-500">Carregando compradores...</div>
+          </div>
+        ) : filteredCompradores.length === 0 ? (
+          <div className="text-center py-8 text-gray-500">
+            {searchTerm ? 'Nenhum comprador encontrado' : 'Nenhum comprador cadastrado ainda'}
           </div>
         ) : (
-          compradores.map((c, i) => (
-            <div key={i} className="flex flex-col gap-1 p-4 border-b last:border-b-0 hover:bg-gray-50 transition-colors">
-              <div className="flex justify-between items-center mb-1">
-                <span className="font-medium">{c.nome}</span>
-                <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
-                  c.status === "Pago" 
-                    ? "bg-green-100 text-green-700" 
-                    : c.status === "Pendente"
-                    ? "bg-yellow-100 text-yellow-700"
-                    : "bg-red-100 text-red-700"
-                }`}>
-                  {c.status}
-                </span>
-              </div>
-              <div className="flex justify-between text-xs text-gray-500 mb-1">
-                <span>Valor {c.valor}</span>
-                <span>{c.bilhetes} bilhete{c.bilhetes > 1 ? "s" : ""}</span>
-              </div>
-              <div className="text-xs text-gray-400">
-                <div>Números: {c.numerosSelecionados.map(n => n.toString().padStart(2, '0')).join(', ')}</div>
-                <div className="flex justify-between mt-1">
-                  <span>Data: {new Date(c.dataCompra).toLocaleDateString('pt-BR')}</span>
-                  {c.telefone && <span>Tel: {c.telefone}</span>}
-                </div>
-              </div>
-            </div>
-          ))
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b">
+                  <th className="text-left p-3">Nome</th>
+                  <th className="text-left p-3">Contato</th>
+                  <th className="text-left p-3">Localização</th>
+                  <th className="text-left p-3">Compras</th>
+                  <th className="text-left p-3">Valor Total</th>
+                  <th className="text-left p-3">Última Compra</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredCompradores.map((comprador) => (
+                  <tr key={comprador.id} className="border-b hover:bg-gray-50">
+                    <td className="p-3 font-medium">{comprador.nome}</td>
+                    <td className="p-3">
+                      <div className="text-sm">
+                        <div>{comprador.telefone}</div>
+                        <div className="text-gray-500">{comprador.email}</div>
+                      </div>
+                    </td>
+                    <td className="p-3 text-sm">{comprador.cidade}, {comprador.estado}</td>
+                    <td className="p-3 text-center">{comprador.totalCompras}</td>
+                    <td className="p-3 font-medium">R$ {comprador.valorTotal.toLocaleString('pt-BR')}</td>
+                    <td className="p-3 text-sm">{new Date(comprador.ultimaCompra).toLocaleDateString('pt-BR')}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         )}
-      </Card>
-
-      <div className="flex justify-end mt-4">
-        <Button variant="outline" disabled={compradores.length === 0}>
-          Exportar dados
-        </Button>
       </div>
     </div>
   );

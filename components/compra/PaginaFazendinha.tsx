@@ -356,36 +356,6 @@ export default function PaginaFazendinha({ config }: { config: Rifa }) {
                     </div>
                 </div>
 
-                {/* Contatos Section */}
-                {contatos && contatos.length > 1 && (
-                    <div className="bg-white p-6 rounded-lg shadow-lg mt-6">
-                        <h3 className="text-xl font-semibold mb-4 text-center">👥 Suporte / Contatos</h3>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            {contatos.map((c: any) => (
-                                <div key={c.telefone} className="flex items-center justify-center bg-gray-50 p-4 rounded-lg">
-                                    {c.avatarUrl && (
-                                        <img
-                                            src={c.avatarUrl}
-                                            alt={c.nome}
-                                            className="inline-block h-10 w-10 rounded-full mr-3"
-                                        />
-                                    )}
-                                    <div className="flex-1">
-                                        <p className="font-medium text-gray-800">{c.nome}</p>
-                                        <a
-                                            href={`https://wa.me/${c.telefone.replace(/\D/g, "")}`}
-                                            className="text-green-600 hover:underline text-sm"
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                        >
-                                            {c.telefone}
-                                        </a>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                )}
             </div>
         </div>
     );

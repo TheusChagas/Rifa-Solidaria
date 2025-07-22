@@ -5,7 +5,7 @@ const nextConfig: NextConfig = {
     return [
       {
         source: '/vendedor',
-        destination: '/vendedor/rifas',
+        destination: '/vendedor/dashboard',
         permanent: false,
       },
     ]

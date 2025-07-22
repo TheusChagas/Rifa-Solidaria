@@ -220,3 +220,173 @@ export interface Comprador {
     estado: string;
     email: string;
 }
+
+export interface Vendedor {
+    id: string; // ID público do vendedor
+    secretId: string; // ID secreto para identificação no sistema
+    
+    // Dados do registro
+    nome: string;
+    sobrenome: string;
+    email: string;
+    senha?: string; // Opcional para segurança - não retornar em consultas
+    cpf: string;
+    celular: string;
+    cidade: string;
+    cep: string;
+    
+    // Dados adicionais importantes
+    nomeCompleto?: string; // nome + sobrenome concatenado
+    dataCadastro: string; // ISO date string
+    dataUltimoLogin?: string; // ISO date string
+    status: 'ativo' | 'inativo' | 'suspenso' | 'pendente';
+    emailVerificado: boolean;
+    celularVerificado: boolean;
+    
+    // Configurações do vendedor
+    configuracoes?: {
+        notificacoes?: {
+            email?: boolean;
+            whatsapp?: boolean;
+            sms?: boolean;
+        };
+        privacidade?: {
+            exibirNome?: boolean;
+            exibirContato?: boolean;
+        };
+        pagamentos?: {
+            pixChave?: string;
+            dadosBancarios?: {
+                banco?: string;
+                agencia?: string;
+                conta?: string;
+                titular?: string;
+            };
+        };
+    };
+    
+    // Dados de negócio
+    estatisticas?: {
+        totalRifas?: number;
+        rifasAtivas?: number;
+        totalArrecadado?: number;
+        totalVendas?: number;
+        mediaAvaliacoes?: number;
+        numeroAvaliacoes?: number;
+    };
+    
+    // Informações de plano/assinatura
+    plano?: {
+        tipo: 'gratuito' | 'basico' | 'premium' | 'enterprise';
+        dataInicio?: string;
+        dataVencimento?: string;
+        limitesUtilizados?: {
+            rifasAtivas?: number;
+            limiteRifas?: number;
+            limiteFaturamento?: number;
+        };
+    };
+    
+    // Dados de endereço completo (opcional)
+    endereco?: {
+        logradouro?: string;
+        numero?: string;
+        complemento?: string;
+        bairro?: string;
+        cidade: string;
+        estado?: string;
+        cep: string;
+        pais?: string;
+    };
+    
+    // Redes sociais
+    redesSociais?: {
+        instagram?: string;
+        facebook?: string;
+        tiktok?: string;
+        youtube?: string;
+        whatsapp?: string;
+        telegram?: string;
+    };
+    
+    // Dados de verificação e compliance
+    verificacao?: {
+        documentoEnviado?: boolean;
+        documentoAprovado?: boolean;
+        dataVerificacao?: string;
+        observacoes?: string;
+    };
+    
+    // Histórico de ações importantes
+    historico?: Array<{
+        data: string;
+        acao: string;
+        detalhes?: string;
+        ip?: string;
+        userAgent?: string;
+    }>;
+    
+    // Campos de auditoria
+    criadoPor?: string;
+    atualizadoPor?: string;
+    dataAtualizacao?: string;
+    versao?: number;
+}
+
+// Interface para dados públicos do vendedor (sem informações sensíveis)
+export interface VendedorPublico {
+    id: string;
+    nome: string;
+    sobrenome: string;
+    nomeCompleto?: string;
+    cidade: string;
+    celular?: string; // Opcional conforme configuração de privacidade
+    email?: string; // Opcional conforme configuração de privacidade
+    dataCadastro: string;
+    estatisticas?: {
+        totalRifas?: number;
+        mediaAvaliacoes?: number;
+        numeroAvaliacoes?: number;
+    };
+    redesSociais?: {
+        instagram?: string;
+        facebook?: string;
+        tiktok?: string;
+        youtube?: string;
+    };
+    verificacao?: {
+        documentoAprovado?: boolean;
+    };
+}
+
+// Interface para criação de novo vendedor
+export interface NovoVendedor {
+    nome: string;
+    sobrenome: string;
+    email: string;
+    senha: string;
+    cpf: string;
+    celular: string;
+    cidade: string;
+    cep: string;
+    aceitouTermos: boolean;
+}
+
+// Interface para login do vendedor
+export interface LoginVendedor {
+    email: string;
+    senha: string;
+    lembrarSenha?: boolean;
+}
+
+// Interface para atualização de dados do vendedor
+export interface AtualizarVendedor {
+    nome?: string;
+    sobrenome?: string;
+    celular?: string;
+    cidade?: string;
+    cep?: string;
+    configuracoes?: Vendedor['configuracoes'];
+    endereco?: Vendedor['endereco'];
+    redesSociais?: Vendedor['redesSociais'];
+}

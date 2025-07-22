@@ -147,8 +147,8 @@ export const rifasMockBase: Record<string, Rifa> = {
         fazendinha: true,
         tempoReserva: 12,
         status: "pausado",
-        vendedorId: "vendor2",
-        vendedorNome: "Lucas",
+        vendedorId: "vendor2", 
+        vendedorNome: "Lucas Esperança",
         categoria: "Eletrônicos",
         tags: ["smartphone", "tecnologia", "esperança"],
         numerosReservados: [],
@@ -302,8 +302,8 @@ export const rifasMockBase: Record<string, Rifa> = {
         fazendinha: false,
         tempoReserva: 48,
         status: "ativo",
-        vendedorId: "vendor3",
-        vendedorNome: "ONG Amigos dos Animais",
+        vendedorId: "vendor1", // Changed to vendor1 so Sophie has multiple raffles
+        vendedorNome: "Sophie & Xerifão",
         categoria: "Esportes",
         tags: ["bicicleta", "esportes", "ong", "animais"],
         numerosReservados: [118, 119], // Adjusted to 0-based
@@ -447,8 +447,8 @@ export const rifasMockBase: Record<string, Rifa> = {
         fazendinha: false,
         tempoReserva: 72,
         status: "ativo",
-        vendedorId: "vendor4",
-        vendedorNome: "Fernanda & Rafael",
+        vendedorId: "vendor2", // Keep as vendor2
+        vendedorNome: "Lucas Esperança",
         categoria: "Viagem",
         tags: ["viagem", "sonhos", "férias", "turismo"],
         numerosReservados: [87, 88, 89], // Adjusted to 0-based
@@ -583,8 +583,8 @@ export const rifasMockBase: Record<string, Rifa> = {
         fazendinha: false,
         tempoReserva: 6,
         status: "finalizado",
-        vendedorId: "vendor5",
-        vendedorNome: "João & Maria",
+        vendedorId: "vendor1", // Changed to vendor1
+        vendedorNome: "Sophie & Xerifão",
         categoria: "Natal",
         tags: ["natal", "cesta", "família", "caridade"],
         numerosReservados: [],
@@ -762,7 +762,7 @@ export const rifasMockBase: Record<string, Rifa> = {
         fazendinha: false,
         tempoReserva: 120,
         status: "ativo",
-        vendedorId: "vendor6",
+        vendedorId: "vendor3", // New vendor for diversity
         vendedorNome: "Tech4All Foundation",
         categoria: "Tecnologia",
         tags: ["tecnologia", "gamer", "pc", "setup", "inclusão digital", "jovens"],
@@ -999,8 +999,8 @@ export const rifasMockBase: Record<string, Rifa> = {
         fazendinha: false,
         tempoReserva: 240,
         status: "ativo",
-        vendedorId: "vendor7",
-        vendedorNome: "Construindo Sonhos Imobiliária",
+        vendedorId: "vendor1", // Changed to vendor1
+        vendedorNome: "Sophie & Xerifão",
         categoria: "Imóveis",
         tags: ["casa", "imóvel", "mobiliada", "sonhos", "orfanato", "caridade", "mega rifa"],
         numerosReservados: [1247, 1248, 1249, 1250, 1251], // Adjusted to 0-based
@@ -1109,3 +1109,7 @@ export async function getAllRifas(): Promise<Rifa[]> {
         };
     });
 }
+
+export const getRifasByVendedor = async (vendedorId: string): Promise<Rifa[]> => {
+    return Object.values(rifasMockBase).filter(rifa => rifa.vendedorId === vendedorId);
+};

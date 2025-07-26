@@ -1,30 +1,43 @@
-'use client'
-
 import { getAllRifas } from "@/lib/getRifaID";
 import { Rifa } from "@/types";
 import Link from "next/link";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { MapPin, Calendar, Trophy, Users, Phone, Mail } from "lucide-react";
+import { Calendar, Trophy, Users, Phone, Mail } from "lucide-react";
 import Image from "next/image";
 import logo from "@/assets/Logo.png";
+import { Suspense } from "react";
 
 interface Props {
     params: { id: string };
 }
 
-// Client component for image with error handling
-function RifaImage({ src, alt, className }: { src: string; alt: string; className: string }) {
+// Optimized data filtering function
+function filterRifasByVendor(rifas: Rifa[], vendedorId: string) {
+    const rifasDoVendedor = rifas.filter(rifa => rifa.vendedorId === vendedorId);
+    
+    return {
+        rifasDoVendedor,
+        rifasAtivas: rifasDoVendedor.filter(rifa => rifa.status === 'ativo' && rifa.disponivel),
+        rifasFinalizadas: rifasDoVendedor.filter(rifa => 
+            rifa.status === 'finalizado' || !rifa.disponivel || 
+            Math.round((rifa.numerosVendidos.length / rifa.totalNumbers) * 100) >= 100
+        ),
+        rifasPausadas: rifasDoVendedor.filter(rifa => rifa.status === 'pausado')
+    };
+}
+
+// Loading skeleton component
+function RifaCardSkeleton() {
     return (
-        <img
-            src={src}
-            alt={alt}
-            className={className}
-            onError={(e) => {
-                e.currentTarget.src = "/placeholder.png";
-            }}
-        />
+        <div className="bg-white rounded-lg shadow-lg overflow-hidden animate-pulse">
+            <div className="bg-gray-300 h-2"></div>
+            <div className="h-48 bg-gray-200"></div>
+            <div className="p-6">
+                <div className="h-6 bg-gray-200 rounded mb-4"></div>
+                <div className="h-20 bg-gray-100 rounded mb-4"></div>
+                <div className="h-10 bg-gray-200 rounded"></div>
+            </div>
+        </div>
     );
 }
 
@@ -34,7 +47,7 @@ export default async function VendedorCatalogoPage(props: Props) {
     
     // Fetch all raffles and filter by vendor
     const todasRifas = await getAllRifas();
-    const rifasDoVendedor = todasRifas.filter(rifa => rifa.vendedorId === vendedorId);
+    const { rifasDoVendedor, rifasAtivas, rifasFinalizadas, rifasPausadas } = filterRifasByVendor(todasRifas, vendedorId);
     
     // If no vendor found
     if (rifasDoVendedor.length === 0) {
@@ -50,7 +63,7 @@ export default async function VendedorCatalogoPage(props: Props) {
                     </p>
                     <div className="space-x-2">
                         <Link href="/">
-                            <Button className="bg-green-500 hover:bg-green-600">Voltar ao início</Button>
+                            <Button className="bg-verde-500 hover:bg-verde-600">Voltar ao início</Button>
                         </Link>
                         <Link href="/catalogo/vendor1">
                             <Button variant="outline">Ver Vendor 1</Button>
@@ -66,9 +79,6 @@ export default async function VendedorCatalogoPage(props: Props) {
 
     // Get vendor info from the first raffle
     const vendedorInfo = rifasDoVendedor[0];
-    const rifasAtivas = rifasDoVendedor.filter(rifa => rifa.status === 'ativo' && rifa.disponivel);
-    const rifasFinalizadas = rifasDoVendedor.filter(rifa => rifa.status === 'finalizado' || !rifa.disponivel || rifa.percentualVendido === 100);
-    const rifasPausadas = rifasDoVendedor.filter(rifa => rifa.status === 'pausado');
     
     return (
         <div className="min-h-screen bg-gray-100 p-4">
@@ -82,36 +92,32 @@ export default async function VendedorCatalogoPage(props: Props) {
                             width={40}
                             height={40}
                             className="object-contain"
+                            priority
                         />
                         <h1 className="text-xl font-bold text-gray-800">RIFA ENTRE AMIGOS</h1>
                     </div>
-                    <Link href="/" className="text-green-600 hover:text-green-700 font-medium">
+                    <Link href="/" className="text-verde-600 hover:text-verde-700 font-medium">
                         ← Voltar ao início
                     </Link>
                 </div>
 
-                {/* Vendor Profile Section - White card with shadow like PaginaRifa */}
+                {/* Vendor Profile Section */}
                 <div className="bg-white rounded-lg shadow-lg overflow-hidden mb-8">
-                    {/* Banner similar to PaginaRifa */}
-                    <div className="bg-green-500 text-white text-center py-3 font-bold text-lg">
+                    <div className="bg-verde-500 text-white text-center py-3 font-bold text-lg">
                         Catálogo do Vendedor
                     </div>
 
                     <div className="p-6">
                         <div className="flex items-start justify-between mb-6">
                             <div className="flex items-center space-x-4">
-                                <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
-                                    <Users className="w-8 h-8 text-green-600" />
+                                <div className="w-16 h-16 bg-verde-100 rounded-full flex items-center justify-center">
+                                    <Users className="w-8 h-8 text-verde-600" />
                                 </div>
                                 <div>
                                     <h2 className="text-3xl font-bold text-gray-800 mb-2">
                                         {vendedorInfo.vendedorNome || 'Vendedor'}
                                     </h2>
                                     <div className="flex items-center text-gray-600 space-x-4">
-                                        <div className="flex items-center">
-                                            <MapPin className="w-4 h-4 mr-1" />
-                                            <span className="text-sm">{vendedorInfo.categoria || 'Categoria não informada'}</span>
-                                        </div>
                                         <div className="flex items-center">
                                             <Calendar className="w-4 h-4 mr-1" />
                                             <span className="text-sm">
@@ -124,12 +130,12 @@ export default async function VendedorCatalogoPage(props: Props) {
                             
                             {/* Contact Info */}
                             <div className="flex space-x-2">
-                                {vendedorInfo.contatos && vendedorInfo.contatos[0] && (
+                                {vendedorInfo.contatos?.[0] && (
                                     <a
                                         href={`https://wa.me/${vendedorInfo.contatos[0].telefone.replace(/\D/g, '')}`}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className="inline-flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl"
+                                        className="inline-flex items-center gap-2 bg-verde-500 hover:bg-verde-600 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl"
                                     >
                                         <Phone className="w-4 h-4" />
                                         <span>WhatsApp</span>
@@ -147,27 +153,27 @@ export default async function VendedorCatalogoPage(props: Props) {
                             </div>
                         </div>
                         
-                        {/* Stats Grid - Matching PaginaRifa gradient style */}
+                        {/* Stats Grid */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div className="bg-gradient-to-br from-green-50 to-green-100 p-6 rounded-xl border border-green-200 shadow-sm">
+                            <div className="bg-gradient-to-br from-verde-50 to-verde-100 p-6 rounded-xl border border-verde-200 shadow-sm">
                                 <div className="flex items-center justify-between">
                                     <div>
-                                        <p className="text-sm text-green-600 font-semibold mb-2">Total de Rifas</p>
-                                        <p className="text-3xl font-bold text-green-800">{rifasDoVendedor.length}</p>
-                                        <p className="text-sm text-green-600 mt-1">Todas as rifas</p>
+                                        <p className="text-sm text-verde-600 font-semibold mb-2">Total de Rifas</p>
+                                        <p className="text-3xl font-bold text-verde-800">{rifasDoVendedor.length}</p>
+                                        <p className="text-sm text-verde-600 mt-1">Todas as rifas</p>
                                     </div>
-                                    <Trophy className="w-8 h-8 text-green-600" />
+                                    <Trophy className="w-8 h-8 text-verde-600" />
                                 </div>
                             </div>
                             
-                            <div className="bg-gradient-to-br from-green-50 to-green-100 p-6 rounded-xl border border-green-200 shadow-sm">
+                            <div className="bg-gradient-to-br from-verde-50 to-verde-100 p-6 rounded-xl border border-verde-200 shadow-sm">
                                 <div className="flex items-center justify-between">
                                     <div>
-                                        <p className="text-sm text-green-600 font-semibold mb-2">Rifas Ativas</p>
-                                        <p className="text-3xl font-bold text-green-800">{rifasAtivas.length}</p>
-                                        <p className="text-sm text-green-600 mt-1">Disponíveis para compra</p>
+                                        <p className="text-sm text-verde-600 font-semibold mb-2">Rifas Ativas</p>
+                                        <p className="text-3xl font-bold text-verde-800">{rifasAtivas.length}</p>
+                                        <p className="text-sm text-verde-600 mt-1">Disponíveis para compra</p>
                                     </div>
-                                    <Trophy className="w-8 h-8 text-green-600" />
+                                    <Trophy className="w-8 h-8 text-verde-600" />
                                 </div>
                             </div>
                         </div>
@@ -178,14 +184,20 @@ export default async function VendedorCatalogoPage(props: Props) {
                 {rifasAtivas.length > 0 && (
                     <div className="mb-8">
                         <h2 className="text-2xl font-bold text-gray-800 mb-6 flex items-center">
-                            <Trophy className="w-6 h-6 mr-2 text-green-600" />
+                            <Trophy className="w-6 h-6 mr-2 text-verde-600" />
                             Rifas Ativas ({rifasAtivas.length})
                         </h2>
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            {rifasAtivas.map((rifa) => (
-                                <RifaCard key={rifa.id} rifa={rifa} />
-                            ))}
-                        </div>
+                        <Suspense fallback={
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                {Array.from({length: 6}).map((_, i) => <RifaCardSkeleton key={i} />)}
+                            </div>
+                        }>
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                {rifasAtivas.map((rifa) => (
+                                    <RifaCard key={rifa.id} rifa={rifa} />
+                                ))}
+                            </div>
+                        </Suspense>
                     </div>
                 )}
 
@@ -226,7 +238,7 @@ export default async function VendedorCatalogoPage(props: Props) {
                         <h3 className="text-xl font-medium text-gray-900 mb-2">Nenhuma rifa encontrada</h3>
                         <p className="text-gray-600 mb-6">Este vendedor ainda não criou nenhuma rifa.</p>
                         <Link href="/">
-                            <Button className="bg-green-500 hover:bg-green-600">
+                            <Button className="bg-verde-500 hover:bg-verde-600">
                                 Voltar ao início
                             </Button>
                         </Link>
@@ -237,30 +249,31 @@ export default async function VendedorCatalogoPage(props: Props) {
     );
 }
 
-// Raffle Card Component - Updated to match PaginaRifa styling
-function RifaCard({ rifa }: { rifa: Rifa }) {
+// Optimized Raffle Card Component with memoization
+const RifaCard = ({ rifa }: { rifa: Rifa }) => {
     const progresso = Math.round((rifa.numerosVendidos.length / rifa.totalNumbers) * 100);
     const isFinished = rifa.status === 'finalizado' || !rifa.disponivel || progresso >= 100;
     const isPaused = rifa.status === 'pausado';
     
     return (
         <div className="bg-white rounded-lg shadow-lg overflow-hidden group hover:shadow-xl transition-all duration-200 transform hover:-translate-y-1">
-            {/* Status Banner - Similar to PaginaRifa */}
+            {/* Status Banner */}
             <div className={`text-white text-center py-2 font-bold text-sm ${
-                isFinished ? 'bg-gray-500' : isPaused ? 'bg-yellow-500' : 'bg-green-500'
+                isFinished ? 'bg-gray-500' : isPaused ? 'bg-yellow-500' : 'bg-verde-500'
             }`}>
                 {isFinished ? 'FINALIZADA' : isPaused ? 'PAUSADA' : 'DISPONÍVEL'}
             </div>
 
-            {/* Raffle Image */}
+            {/* Optimized Raffle Image */}
             <div className="relative h-48 bg-gray-100">
-                {rifa.imagensPremioPrincipal && rifa.imagensPremioPrincipal[0] ? (
-                    <RifaImage
+                {rifa.imagensPremioPrincipal?.[0] ? (
+                    <img
                         src={rifa.imagensPremioPrincipal[0]}
                         alt={rifa.titulo}
                         className={`w-full h-full object-cover group-hover:scale-105 transition-transform duration-200 ${
                             (isFinished || isPaused) ? 'opacity-75 grayscale' : ''
                         }`}
+                        loading="lazy"
                     />
                 ) : (
                     <div className="w-full h-full flex items-center justify-center">
@@ -268,11 +281,11 @@ function RifaCard({ rifa }: { rifa: Rifa }) {
                     </div>
                 )}
                 
-                {/* Progress Bar - Bottom overlay like PaginaRifa */}
+                {/* Progress Bar */}
                 <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 p-2">
                     <div className="w-full bg-gray-300 rounded-full h-2">
                         <div 
-                            className="bg-green-500 h-2 rounded-full transition-all duration-300" 
+                            className="bg-verde-500 h-2 rounded-full transition-all duration-300" 
                             style={{ width: `${progresso}%` }}
                         ></div>
                     </div>
@@ -283,15 +296,15 @@ function RifaCard({ rifa }: { rifa: Rifa }) {
             </div>
             
             <div className="p-6">
-                <h3 className="font-bold text-xl mb-4 line-clamp-2 group-hover:text-green-600 transition-colors leading-tight">
+                <h3 className="font-bold text-xl mb-4 line-clamp-2 group-hover:text-verde-600 transition-colors leading-tight">
                     {rifa.titulo}
                 </h3>
                 
-                {/* Info Grid - Similar to PaginaRifa stats */}
+                {/* Info Grid */}
                 <div className="grid grid-cols-1 gap-4 mb-6">
-                    <div className="bg-gradient-to-br from-green-50 to-green-100 p-4 rounded-lg border border-green-200">
-                        <p className="text-sm text-green-600 font-semibold mb-1">VALOR POR NÚMERO</p>
-                        <p className="text-2xl font-bold text-green-800">R$ {rifa.preco.toFixed(2)}</p>
+                    <div className="bg-gradient-to-br from-verde-50 to-verde-100 p-4 rounded-lg border border-verde-200">
+                        <p className="text-sm text-verde-600 font-semibold mb-1">VALOR POR NÚMERO</p>
+                        <p className="text-2xl font-bold text-verde-800">R$ {rifa.preco.toFixed(2)}</p>
                     </div>
                     
                     <div className="grid grid-cols-2 gap-2 text-sm">
@@ -311,7 +324,7 @@ function RifaCard({ rifa }: { rifa: Rifa }) {
                         className={`w-full font-semibold py-3 transition-all duration-200 shadow-lg hover:shadow-xl ${
                             isFinished || isPaused 
                                 ? 'bg-gray-400 hover:bg-gray-500 cursor-not-allowed' 
-                                : 'bg-green-500 hover:bg-green-600'
+                                : 'bg-verde-500 hover:bg-verde-600'
                         }`}
                         disabled={isFinished || isPaused}
                     >
@@ -321,4 +334,4 @@ function RifaCard({ rifa }: { rifa: Rifa }) {
             </div>
         </div>
     );
-}
+};

@@ -812,6 +812,43 @@ export default function PaginaRifa({ config }: { config: RifaConfig & { imagensP
 
                                         {!showAdditionalFields ? (
                                             <form onSubmit={handleFormSubmit} className="grid gap-4 py-4">
+                                                {/* Purchase Summary */}
+                                                <div className="bg-verde-50 p-3 rounded-lg border border-verde-200">
+                                                    <h4 className="font-semibold text-verde-800 mb-2">Resumo da Compra:</h4>
+                                                    <div className="space-y-2">
+                                                        <div className="flex justify-between text-sm">
+                                                            <span>Números selecionados:</span>
+                                                            <span className="font-medium">{selecionados.length}</span>
+                                                        </div>
+                                                        <div className="flex justify-between text-sm">
+                                                            <span>Valor por número:</span>
+                                                            <span className="font-medium">R$ {preco.toFixed(2)}</span>
+                                                        </div>
+                                                        <div className="pt-2 border-t border-verde-200">
+                                                            <div className="flex justify-between">
+                                                                <span className="font-bold text-verde-800">Total:</span>
+                                                                <span className="font-bold text-verde-800">R$ {total.toFixed(2)}</span>
+                                                            </div>
+                                                        </div>
+                                                        <div className="mt-2">
+                                                            <p className="text-xs text-verde-600 mb-1">Números:</p>
+                                                            <div className="flex flex-wrap gap-1 max-h-16 overflow-y-auto">
+                                                                {selecionados.sort((a, b) => a - b).map((numero) => {
+                                                                    const maxDigits = (totalNumbers - 1).toString().length;
+                                                                    return (
+                                                                        <span
+                                                                            key={numero}
+                                                                            className="inline-block bg-verde-500 text-white px-2 py-1 rounded text-xs font-semibold"
+                                                                        >
+                                                                            {numero.toString().padStart(maxDigits, "0")}
+                                                                        </span>
+                                                                    );
+                                                                })}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
                                                 <div className="space-y-2">
                                                     <Label htmlFor="telefone3">Telefone (WhatsApp)</Label>
                                                     <Input 
@@ -823,17 +860,21 @@ export default function PaginaRifa({ config }: { config: RifaConfig & { imagensP
                                                         value={phoneNumber}
                                                         onChange={(e) => setPhoneNumber(e.target.value)}
                                                         disabled={isValidating}
+                                                        className="border-verde-200 focus:border-verde-500"
                                                     />
                                                     {phoneValidated && existingBuyer && (
                                                         <p className="text-sm text-green-600">
                                                             🎉 Bem-vindo de volta {existingBuyer.nome}! Redirecionando em 1 segundo...
                                                         </p>
                                                     )}
+                                                    <p className="text-xs text-gray-600">
+                                                        Você receberá uma confirmação por WhatsApp
+                                                    </p>
                                                 </div>
 
                                                 <Button 
                                                     type="submit" 
-                                                    className="w-full"
+                                                    className="w-full bg-verde-600 hover:bg-verde-700"
                                                     disabled={isValidating || !phoneNumber.trim()}
                                                 >
                                                     {isValidating ? 'Validando...' : 'RESERVAR'}
@@ -846,7 +887,28 @@ export default function PaginaRifa({ config }: { config: RifaConfig & { imagensP
                                                 action="/api/reservar"
                                                 className="grid gap-4 py-4"
                                             >
-                                                {/* Same form fields as above dialog */}
+                                                {/* Purchase Summary for new buyer form */}
+                                                <div className="bg-verde-50 p-3 rounded-lg border border-verde-200">
+                                                    <h4 className="font-semibold text-verde-800 mb-2">Resumo da Compra:</h4>
+                                                    <div className="space-y-2">
+                                                        <div className="flex justify-between text-sm">
+                                                            <span>Números selecionados:</span>
+                                                            <span className="font-medium">{selecionados.length}</span>
+                                                        </div>
+                                                        <div className="flex justify-between text-sm">
+                                                            <span>Valor por número:</span>
+                                                            <span className="font-medium">R$ {preco.toFixed(2)}</span>
+                                                        </div>
+                                                        <div className="pt-2 border-t border-verde-200">
+                                                            <div className="flex justify-between">
+                                                                <span className="font-bold text-verde-800">Total:</span>
+                                                                <span className="font-bold text-verde-800">R$ {total.toFixed(2)}</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                {/* Same form fields as before */}
                                                 <div className="space-y-2">
                                                     <Label htmlFor="telefone_final2">Telefone (WhatsApp)</Label>
                                                     <Input 
@@ -929,11 +991,11 @@ export default function PaginaRifa({ config }: { config: RifaConfig & { imagensP
                                                             setPhoneValidated(false);
                                                             setIsNewBuyer(false);
                                                         }}
-                                                        className="flex-1"
+                                                        className="flex-1 border-verde-300 text-verde-700 hover:bg-verde-50"
                                                     >
                                                         Voltar
                                                     </Button>
-                                                    <Button type="submit" className="flex-1">
+                                                    <Button type="submit" className="flex-1 bg-verde-600 hover:bg-verde-700">
                                                         CONFIRMAR RESERVA
                                                     </Button>
                                                 </div>

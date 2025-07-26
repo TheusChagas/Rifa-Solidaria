@@ -5,6 +5,11 @@ import Image from "next/image";
 import logo from "@/assets/Logo.png";
 import { Rifa, jogoDoBicho } from "@/types";
 import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { X } from "lucide-react";
 
 export default function PaginaFazendinha({ config }: { config: Rifa }) {
     const {
@@ -25,6 +30,10 @@ export default function PaginaFazendinha({ config }: { config: Rifa }) {
     const [selectedMainImage, setSelectedMainImage] = useState<string>("");
     const [currentImageIndex, setCurrentImageIndex] = useState<number>(0);
     const [currentSecondaryImageIndex, setCurrentSecondaryImageIndex] = useState<number>(0);
+    const [selectedAnimals, setSelectedAnimals] = useState<number[]>([]);
+    const [showReservationForm, setShowReservationForm] = useState(false);
+    const [phoneNumber, setPhoneNumber] = useState("");
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     // Set initial main image
     useEffect(() => {
@@ -93,8 +102,82 @@ export default function PaginaFazendinha({ config }: { config: Rifa }) {
         setCurrentSecondaryImageIndex(index);
     };
 
+    const handleAnimalSelection = (animalId: number) => {
+        setSelectedAnimals(prev => {
+            if (prev.includes(animalId)) {
+                return prev.filter(id => id !== animalId);
+            } else {
+                return [...prev, animalId];
+            }
+        });
+    };
+
+    const handleAnimalDeselection = (animalId: number) => {
+        setSelectedAnimals(prev => prev.filter(id => id !== animalId));
+    };
+
+    const isAnimalSelected = (animalId: number) => {
+        return selectedAnimals.includes(animalId);
+    };
+
+    const clearSelection = () => {
+        setSelectedAnimals([]);
+    };
+
+    const totalPrice = selectedAnimals.length * (preco || 0);
+
+    const handleReservation = async () => {
+        if (!phoneNumber.trim()) {
+            alert("Por favor, informe seu telefone para continuar.");
+            return;
+        }
+
+        if (selectedAnimals.length === 0) {
+            alert("Por favor, selecione ao menos um animal.");
+            return;
+        }
+
+        setIsSubmitting(true);
+        
+        try {
+            // TODO: Implement API call for reservation
+            console.log('Reserving animals:', {
+                animals: selectedAnimals,
+                phone: phoneNumber,
+                rifaId: config.id
+            });
+
+            // Simulate API call
+            await new Promise(resolve => setTimeout(resolve, 1000));
+
+            alert(`Reserva realizada com sucesso! ${selectedAnimals.length} animal${selectedAnimals.length > 1 ? 'is' : ''} reservado${selectedAnimals.length > 1 ? 's' : ''}.`);
+            
+            setShowReservationForm(false);
+            setSelectedAnimals([]);
+            setPhoneNumber("");
+        } catch (error) {
+            console.error('Erro ao fazer reserva:', error);
+            alert("Erro ao realizar reserva. Tente novamente.");
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
+    const formatPhoneNumber = (value: string) => {
+        const numbers = value.replace(/\D/g, '');
+        if (numbers.length <= 11) {
+            return numbers.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
+        }
+        return value;
+    };
+
+    const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const formatted = formatPhoneNumber(e.target.value);
+        setPhoneNumber(formatted);
+    };
+
     return (
-        <div className="min-h-screen bg-gray-100 p-4 pb-32">
+        <div className="min-h-screen bg-gray-100 p-4" style={{ paddingBottom: selectedAnimals.length > 0 ? '180px' : '80px' }}>
             <div className="max-w-4xl mx-auto">
                 {/* Header com Logo */}
                 <div className="flex justify-between items-center mb-4">
@@ -333,7 +416,12 @@ export default function PaginaFazendinha({ config }: { config: Rifa }) {
                         {jogoDoBicho.map((animal) => (
                             <Card
                                 key={animal.id}
-                                className="text-center w-full max-w-[160px] p-2 sm:p-3 flex flex-col items-center justify-center hover:shadow-md transition-shadow"
+                                className={`text-center w-full max-w-[160px] p-2 sm:p-3 flex flex-col items-center justify-center transition-all duration-200 cursor-pointer ${
+                                    isAnimalSelected(animal.id)
+                                        ? 'bg-verde-500 text-white shadow-lg ring-2 ring-verde-300'
+                                        : 'hover:shadow-md hover:bg-gray-50'
+                                }`}
+                                onClick={() => handleAnimalSelection(animal.id)}
                             >
                                 <CardContent className="flex flex-col items-center p-0 w-full">
                                     <div className="mt-1 mb-2 mx-auto w-full flex justify-center">
@@ -344,10 +432,14 @@ export default function PaginaFazendinha({ config }: { config: Rifa }) {
                                             loading="lazy"
                                         />
                                     </div>
-                                    <p className="font-bold mt-1 text-xs sm:text-sm">
+                                    <p className={`font-bold mt-1 text-xs sm:text-sm ${
+                                        isAnimalSelected(animal.id) ? 'text-white' : 'text-gray-900'
+                                    }`}>
                                         {String(animal.id).padStart(2, "0")} – {animal.nome}
                                     </p>
-                                    <p className="text-xs text-gray-600 mt-1">
+                                    <p className={`text-xs mt-1 ${
+                                        isAnimalSelected(animal.id) ? 'text-verde-100' : 'text-gray-600'
+                                    }`}>
                                         {animal.numeros.join(", ")}
                                     </p>
                                 </CardContent>
@@ -357,7 +449,152 @@ export default function PaginaFazendinha({ config }: { config: Rifa }) {
                 </div>
 
             </div>
+
+            {/* Fixed Bottom Selected Animals Section */}
+            {selectedAnimals.length > 0 && (
+                <div className="fixed bottom-0 left-0 right-0 bg-white border-t-2 border-verde-200 shadow-2xl z-50 max-h-44 overflow-hidden">
+                    <div className="max-w-4xl mx-auto p-3">
+                        {/* Selected Animals Display */}
+                        <div className="space-y-2">
+                            <h3 className="text-sm font-semibold text-gray-800">Animais Selecionados:</h3>
+                            <div className="flex flex-wrap gap-1.5 max-h-12 overflow-y-auto scrollbar-thin">
+                                {selectedAnimals.map(animalId => {
+                                    const animal = jogoDoBicho.find(a => a.id === animalId);
+                                    if (!animal) return null;
+                                    
+                                    return (
+                                        <div
+                                            key={animalId}
+                                            className="flex items-center gap-1.5 bg-verde-500 text-white px-2 py-1 rounded-md font-medium text-xs"
+                                        >
+                                            <img
+                                                src={typeof animal.icone === "string" ? animal.icone : (animal.icone as { src: string }).src ?? ""}
+                                                alt={animal.nome}
+                                                className="w-3 h-3 object-contain"
+                                            />
+                                            <span className="text-xs">
+                                                {String(animal.id).padStart(2, "0")} - {animal.nome}
+                                            </span>
+                                            <button
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    handleAnimalDeselection(animalId);
+                                                }}
+                                                className="hover:bg-verde-600 rounded-full p-0.5 transition-colors"
+                                                title="Remover animal"
+                                            >
+                                                <X size={10} />
+                                            </button>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        </div>
+
+                        {/* Selection Summary and Actions */}
+                        <div className="mt-2 p-2 bg-verde-50 border border-verde-200 rounded-lg">
+                            <div className="flex flex-col sm:flex-row justify-between items-center gap-2">
+                                <div className="text-center sm:text-left">
+                                    <p className="text-xs text-verde-600 font-medium">
+                                        {selectedAnimals.length} animal{selectedAnimals.length > 1 ? 'is' : ''} selecionado{selectedAnimals.length > 1 ? 's' : ''}
+                                    </p>
+                                    <p className="text-sm font-bold text-verde-800">
+                                        Total: R$ {totalPrice.toFixed(2)}
+                                    </p>
+                                </div>
+                                <div className="flex gap-2">
+                                    <Button
+                                        variant="outline"
+                                        onClick={clearSelection}
+                                        className="border-verde-300 text-verde-700 hover:bg-verde-50 text-xs px-3 py-1"
+                                        size="sm"
+                                    >
+                                        Limpar
+                                    </Button>
+                                    <Dialog open={showReservationForm} onOpenChange={setShowReservationForm}>
+                                        <DialogTrigger asChild>
+                                            <Button
+                                                className="bg-verde-600 hover:bg-verde-700 text-white text-xs px-4 py-1"
+                                                size="sm"
+                                            >
+                                                Continuar
+                                            </Button>
+                                        </DialogTrigger>
+                                        <DialogContent className="sm:max-w-md">
+                                            <DialogHeader>
+                                                <DialogTitle className="text-lg font-bold text-gray-800">
+                                                    Reservar Animais
+                                                </DialogTitle>
+                                            </DialogHeader>
+                                            <div className="space-y-4">
+                                                <div className="bg-verde-50 p-3 rounded-lg border border-verde-200">
+                                                    <h4 className="font-semibold text-verde-800 mb-2">Resumo da Reserva:</h4>
+                                                    <div className="space-y-1">
+                                                        {selectedAnimals.map(animalId => {
+                                                            const animal = jogoDoBicho.find(a => a.id === animalId);
+                                                            if (!animal) return null;
+                                                            return (
+                                                                <div key={animalId} className="flex items-center gap-2 text-sm">
+                                                                    <img
+                                                                        src={typeof animal.icone === "string" ? animal.icone : (animal.icone as { src: string }).src ?? ""}
+                                                                        alt={animal.nome}
+                                                                        className="w-4 h-4 object-contain"
+                                                                    />
+                                                                    <span>{String(animal.id).padStart(2, "0")} - {animal.nome}</span>
+                                                                    <span className="text-verde-600">({animal.numeros.join(", ")})</span>
+                                                                </div>
+                                                            );
+                                                        })}
+                                                    </div>
+                                                    <div className="mt-2 pt-2 border-t border-verde-200">
+                                                        <p className="font-bold text-verde-800">
+                                                            Total: R$ {totalPrice.toFixed(2)}
+                                                        </p>
+                                                    </div>
+                                                </div>
+
+                                                <div className="space-y-2">
+                                                    <Label htmlFor="phone">Telefone/WhatsApp *</Label>
+                                                    <Input
+                                                        id="phone"
+                                                        type="tel"
+                                                        placeholder="(11) 99999-9999"
+                                                        value={phoneNumber}
+                                                        onChange={handlePhoneChange}
+                                                        maxLength={15}
+                                                        className="border-verde-200 focus:border-verde-500"
+                                                    />
+                                                    <p className="text-xs text-gray-600">
+                                                        Você receberá uma confirmação por WhatsApp
+                                                    </p>
+                                                </div>
+
+                                                <div className="flex gap-2 pt-4">
+                                                    <Button
+                                                        variant="outline"
+                                                        onClick={() => setShowReservationForm(false)}
+                                                        className="flex-1 border-verde-300 text-verde-700 hover:bg-verde-50"
+                                                        disabled={isSubmitting}
+                                                    >
+                                                        Cancelar
+                                                    </Button>
+                                                    <Button
+                                                        onClick={handleReservation}
+                                                        className="flex-1 bg-verde-600 hover:bg-verde-700 text-white"
+                                                        disabled={isSubmitting || !phoneNumber.trim()}
+                                                    >
+                                                        {isSubmitting ? "Reservando..." : "Confirmar Reserva"}
+                                                    </Button>
+                                                </div>
+                                            </div>
+                                        </DialogContent>
+                                    </Dialog>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
-

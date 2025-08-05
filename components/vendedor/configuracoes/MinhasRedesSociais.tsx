@@ -2,7 +2,21 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { JSX, useState } from "react";
+import { JSX, useState, useEffect } from "react";
+
+interface VendorData {
+    redesSociais?: {
+        instagram?: string;
+        facebook?: string;
+        whatsapp?: string;
+        youtube?: string;
+    };
+}
+
+interface MinhasRedesSociaisProps {
+    vendorData?: VendorData;
+    vendorId?: string;
+}
 
 // Ícones SVG inline para cada rede social
 const icons: Record<string, JSX.Element> = {
@@ -55,13 +69,26 @@ const icons: Record<string, JSX.Element> = {
     ),
 };
 
-export default function MinhasRedesSociais() {
+export default function MinhasRedesSociais({ vendorData, vendorId }: MinhasRedesSociaisProps) {
     const [redes, setRedes] = useState([
         { nome: "Instagram", url: "" },
         { nome: "Facebook", url: "" },
         { nome: "WhatsApp", url: "" },
         { nome: "YouTube", url: "" },
     ]);
+    const [loading, setLoading] = useState(false);
+
+    // Load vendor social media data when component mounts or vendorData changes
+    useEffect(() => {
+        if (vendorData?.redesSociais) {
+            setRedes([
+                { nome: "Instagram", url: vendorData.redesSociais.instagram || "" },
+                { nome: "Facebook", url: vendorData.redesSociais.facebook || "" },
+                { nome: "WhatsApp", url: vendorData.redesSociais.whatsapp || "" },
+                { nome: "YouTube", url: vendorData.redesSociais.youtube || "" },
+            ]);
+        }
+    }, [vendorData]);
 
     const handleChange = (idx: number, value: string) => {
         setRedes((prev) =>
@@ -69,10 +96,25 @@ export default function MinhasRedesSociais() {
         );
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        // Aqui você pode salvar as redes sociais na API
-        alert("Redes sociais salvas:\n" + JSON.stringify(redes, null, 2));
+        if (!vendorId) return;
+
+        setLoading(true);
+        try {
+            const response = await fetch(`/api/vendedor/${vendorId}/redes-sociais`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(redes),
+            });
+
+            if (!response.ok) throw new Error("Erro ao salvar redes sociais");
+            alert("Redes sociais salvas com sucesso!");
+        } catch (err) {
+            alert("Erro ao salvar redes sociais.");
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -93,8 +135,8 @@ export default function MinhasRedesSociais() {
                         />
                     </div>
                 ))}
-                <Button type="submit" className="w-full md:w-auto mt-4">
-                    Salvar redes sociais
+                <Button type="submit" className="w-full md:w-auto mt-4" disabled={loading}>
+                    {loading ? 'Salvando...' : 'Salvar redes sociais'}
                 </Button>
             </form>
         </Card>

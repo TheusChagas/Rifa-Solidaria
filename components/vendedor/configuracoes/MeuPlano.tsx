@@ -1,12 +1,84 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Check, X, Star, CreditCard, Zap } from "lucide-react";
 
-export default function MeuPlano() {
+interface VendorData {
+    plano?: {
+        tipo?: "premium" | "gratuito" | "basico" | "enterprise";
+        dataInicio?: string;
+        dataVencimento?: string;
+        limitesUtilizados?: {
+            rifasAtivas?: number;
+            limiteRifas?: number;
+            limiteFaturamento?: number;
+        };
+    };
+    // Add other vendor properties that might be used for statistics
+    rifas?: any[];
+    estatisticas?: {
+        rifasCriadas?: number;
+        totalArrecadado?: number;
+        taxasPagas?: number;
+    };
+}
+
+interface MeuPlanoProps {
+    vendorData?: VendorData;
+    vendorId?: string;
+}
+
+export default function MeuPlano({ vendorData, vendorId }: MeuPlanoProps) {
     const [planoAtual, setPlanoAtual] = useState<"padrao" | "premium">("padrao");
     const [showUpgrade, setShowUpgrade] = useState(false);
+    const [estatisticas, setEstatisticas] = useState({
+        rifasCriadas: 0,
+        totalArrecadado: 0,
+        taxasPagas: 0,
+    });
+
+    // Map vendor plan types to component plan types
+    const mapPlanType = (vendorPlanType?: string): "padrao" | "premium" => {
+        switch (vendorPlanType) {
+            case "premium":
+            case "enterprise":
+                return "premium";
+            case "gratuito":
+            case "basico":
+            default:
+                return "padrao";
+        }
+    };
+
+    // Load vendor plan data when component mounts or vendorData changes
+    useEffect(() => {
+        if (vendorData?.plano) {
+            const mappedPlanType = mapPlanType(vendorData.plano.tipo);
+            setPlanoAtual(mappedPlanType);
+        }
+
+        // Load statistics from vendor data or calculate from rifas
+        if (vendorData?.estatisticas) {
+            setEstatisticas({
+                rifasCriadas: vendorData.estatisticas.rifasCriadas || 0,
+                totalArrecadado: vendorData.estatisticas.totalArrecadado || 0,
+                taxasPagas: vendorData.estatisticas.taxasPagas || 0,
+            });
+        } else if (vendorData?.rifas) {
+            // Calculate statistics from rifas if direct statistics are not available
+            const rifasCriadas = vendorData.rifas.length;
+            const totalArrecadado = vendorData.rifas.reduce((total: number, rifa: any) => {
+                return total + (rifa.arrecadado || 0);
+            }, 0);
+
+            setEstatisticas({
+                rifasCriadas,
+                totalArrecadado,
+                taxasPagas: totalArrecadado * 0.02, // Estimate 2% fee
+            });
+        }
+    }, [vendorData]);
 
     const planos = {
         padrao: {
@@ -49,19 +121,46 @@ export default function MeuPlano() {
         }
     };
 
-    const handleUpgrade = () => {
+    const handleUpgrade = async () => {
         setShowUpgrade(true);
-        // Aqui seria implementada a lógica de upgrade
-        setTimeout(() => {
-            alert("Redirecionando para o pagamento...");
+        try {
+            const response = await fetch(`/api/vendedor/${vendorId}/plano/upgrade`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ plano: 'premium' }),
+            });
+
+            if (response.ok) {
+                setPlanoAtual("premium");
+                alert("Upgrade realizado com sucesso!");
+            } else {
+                alert("Erro ao fazer upgrade. Tente novamente.");
+            }
+        } catch (error) {
+            alert("Erro ao processar upgrade.");
+        } finally {
             setShowUpgrade(false);
-        }, 2000);
+        }
     };
 
-    const handleDowngrade = () => {
+    const handleDowngrade = async () => {
         if (window.confirm("Tem certeza que deseja fazer downgrade para o plano padrão? Você perderá os benefícios premium.")) {
-            setPlanoAtual("padrao");
-            alert("Plano alterado para Padrão com sucesso!");
+            try {
+                const response = await fetch(`/api/vendedor/${vendorId}/plano/downgrade`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ plano: 'gratuito' }),
+                });
+
+                if (response.ok) {
+                    setPlanoAtual("padrao");
+                    alert("Plano alterado para Padrão com sucesso!");
+                } else {
+                    alert("Erro ao fazer downgrade. Tente novamente.");
+                }
+            } catch (error) {
+                alert("Erro ao processar downgrade.");
+            }
         }
     };
 
@@ -117,15 +216,19 @@ export default function MeuPlano() {
                     <h3 className="font-semibold text-gray-800 mb-3">Estatísticas do mês</h3>
                     <div className="grid grid-cols-3 gap-4 text-center">
                         <div>
-                            <p className="text-2xl font-bold text-green-600">12</p>
+                            <p className="text-2xl font-bold text-green-600">{estatisticas.rifasCriadas}</p>
                             <p className="text-sm text-gray-600">Rifas criadas</p>
                         </div>
                         <div>
-                            <p className="text-2xl font-bold text-blue-600">R$ 2.450</p>
+                            <p className="text-2xl font-bold text-blue-600">
+                                R$ {estatisticas.totalArrecadado.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                            </p>
                             <p className="text-sm text-gray-600">Arrecadado</p>
                         </div>
                         <div>
-                            <p className="text-2xl font-bold text-purple-600">R$ 49,00</p>
+                            <p className="text-2xl font-bold text-purple-600">
+                                R$ {estatisticas.taxasPagas.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                            </p>
                             <p className="text-sm text-gray-600">Taxas pagas</p>
                         </div>
                     </div>
@@ -141,8 +244,8 @@ export default function MeuPlano() {
                         <div
                             key={key}
                             className={`p-4 rounded-lg border-2 transition-all ${planoAtual === key
-                                    ? `${plano.cor} border-opacity-100`
-                                    : "bg-gray-50 border-gray-200 hover:border-gray-300"
+                                ? `${plano.cor} border-opacity-100`
+                                : "bg-gray-50 border-gray-200 hover:border-gray-300"
                                 }`}
                         >
                             <div className="flex items-center gap-2 mb-3">

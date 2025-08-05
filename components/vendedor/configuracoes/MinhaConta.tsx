@@ -1,21 +1,55 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
-export default function MinhaConta() {
+interface VendorData {
+    nome?: string;
+    sobrenome?: string;
+    email?: string;
+    celular?: string;
+    usuario?: string;
+    avatar?: string;
+}
+
+interface MinhaContaProps {
+    vendorData?: VendorData;
+    vendorId?: string;
+}
+
+export default function MinhaConta({ vendorData, vendorId }: MinhaContaProps) {
     const [formData, setFormData] = useState({
         nome: "",
         sobrenome: "",
-        email: "usuario@teste.com",
+        email: "",
         telefone: "",
         usuario: "",
         codigoPais: "+55",
         avatar: undefined as File | undefined,
     });
     const [avatarPreview, setAvatarPreview] = useState<string | undefined>(undefined);
+    const [loading, setLoading] = useState(false);
+
+    // Load vendor data when component mounts or vendorData changes
+    useEffect(() => {
+        if (vendorData) {
+            setFormData({
+                nome: vendorData.nome || "",
+                sobrenome: vendorData.sobrenome || "",
+                email: vendorData.email || "",
+                telefone: vendorData.celular || "",
+                usuario: vendorData.usuario || "",
+                codigoPais: "+55",
+                avatar: undefined,
+            });
+
+            if (vendorData.avatar) {
+                setAvatarPreview(vendorData.avatar);
+            }
+        }
+    }, [vendorData]);
 
     const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -27,17 +61,22 @@ export default function MinhaConta() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        if (!vendorId) return;
+
+        setLoading(true);
         try {
-            // Exemplo de chamada para API de atualização de conta
-            const res = await fetch("/api/conta", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
+            const response = await fetch(`/api/vendedor/${vendorId}/conta`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(formData),
             });
-            if (!res.ok) throw new Error("Erro ao salvar dados");
+
+            if (!response.ok) throw new Error("Erro ao salvar dados");
             alert("Dados salvos com sucesso!");
         } catch (err) {
             alert("Erro ao salvar dados.");
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -177,14 +216,12 @@ export default function MinhaConta() {
                         </div>
                     </div>
 
-                    <Button type="submit" className="w-full md:w-auto">
-                        Salvar alterações
+                    <Button type="submit" className="w-full md:w-auto" disabled={loading}>
+                        {loading ? 'Salvando...' : 'Salvar alterações'}
                     </Button>
                 </form>
             </Card>
-            {/* Espaço entre os blocos para mostrar o bg da layout */}
-            {/* <div className="h-16" /> */}
-            {/* Bloco de exclusão de conta foi movido para page.tsx */}
         </div>
     );
 }
+
